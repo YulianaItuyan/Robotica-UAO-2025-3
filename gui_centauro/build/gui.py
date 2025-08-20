@@ -24,25 +24,7 @@ class Principal:
         self.window = Tk()
         self.window.title("INTERFAZ CENTAURO")  #
         self.window.geometry("634x563")
-        self.window.configure(bg = "#202021")
 
-
-        self.canvas = Canvas(
-            self.window,
-            bg = "#202021",
-            height = 563,
-            width = 634,
-            bd = 0,
-            highlightthickness = 0,
-            relief = "ridge"
-        )
-
-        self.canvas.place(x = 0, y = 0)
-        self.button_image_1 = PhotoImage(
-            file=relative_to_assets("button_1.png"))
-        self.button_1 = Button(
-            image=self.button_image_1,
-            borderwidth=0,
             highlightthickness=0,
             command= self.cambio_upper_body,
             relief="flat",
