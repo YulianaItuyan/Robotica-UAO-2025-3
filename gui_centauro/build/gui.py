@@ -26,7 +26,13 @@ class Principal:
         self.window.geometry("634x563")
 
             highlightthickness=0,
-            command= self.cambio_upper_body,
+        self.button_image_1 = PhotoImage(
+            file=relative_to_assets("button_1.png"))
+        self.button_1 = Button(
+            image=self.button_image_1,
+            borderwidth=0,
+            highlightthickness=0,
+            command=self.cambio_upper_body,
             relief="flat",
             bg="#202021",              # fondo del botón igual al fondo de la ventana
             activebackground="#202021"
