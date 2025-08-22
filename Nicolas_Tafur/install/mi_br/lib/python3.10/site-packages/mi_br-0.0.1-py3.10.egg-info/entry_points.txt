@@ -1,0 +1,10 @@
+[console_scripts]
+ArmTeleop = mi_br.ArmTeleop:main
+fk_marker = mi_br.fk_marker:main
+joint_commander_deg = mi_br.joint_commander_deg:main
+joint_state_publisher = mi_br.joint_state_publisher:main
+mover_robot = mi_br.mover_robot:main
+pinterfaz = mi_br.pinterfaz:main
+serial_node = mi_br.serial_node:main
+test_arm_movement = mi_br.test_arm_movement:main
+
