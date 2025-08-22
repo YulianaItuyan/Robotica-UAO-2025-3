@@ -34,9 +34,10 @@ def rot_y(theta):
     return R
 
 def to_hom(R, p):
-    T = np.eye(4)
-    T[:3,:3] = R
-    T[:3, 3] = p
+    T = np.eye(4)  #Crea una matriz identidad 4x4
+    T[:3,:3] = R    # Asigna la rotación a la parte superior izquierda
+    T[:3, 3] = p    # Asigna la posición al vector de traslación
+    # T es ahora una matriz homogénea 4x4
     return T
 
 def Tx(L):
@@ -348,6 +349,7 @@ class UpperBody(ctk.CTk):
         self.update_coords(p[0], p[1], p[2])
 
     def gripper(self):
+        
         # Placeholder para manejo del gripper (otro tópico si lo necesitas)
         pass
 
