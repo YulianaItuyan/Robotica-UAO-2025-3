@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="QUIRON7">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.00578282915295339 0.0874179961670575 -0.00989303515041911"
+        rpy="0 0 0" />
+      <mass
+        value="0.874043618143883" />
+      <inertia
+        ixx="0.00090014782593901"
+        ixy="2.96996963115652E-08"
+        ixz="-2.94237260315299E-07"
+        iyy="0.00154758809403066"
+        iyz="-1.68438648058579E-07"
+        izz="0.000882577791370176" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="1">
+    <inertial>
+      <origin
+        xyz="-0.0329343263835957 -0.0110855893364794 0.0267565257812204"
+        rpy="0 0 0" />
+      <mass
+        value="0.042620195466393" />
+      <inertia
+        ixx="1.32638623243409E-05"
+        ixy="-7.312844782768E-07"
+        ixz="2.26181496603605E-06"
+        iyy="9.95976703108748E-06"
+        iyz="8.36846388932156E-07"
+        izz="1.38210798775457E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.647058823529412 0.619607843137255 0.588235294117647 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="1.1"
+    type="revolute">
+    <origin
+      xyz="-0.15635 0.0777 0.014973"
+      rpy="-3.1416 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="1" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="1.2">
+    <inertial>
+      <origin
+        xyz="-0.00654051749530384 0.0252109153330423 0.0223188487542951"
+        rpy="0 0 0" />
+      <mass
+        value="0.0787590269043271" />
+      <inertia
+        ixx="6.95311323108007E-05"
+        ixy="8.50759659078169E-06"
+        ixz="-9.3173624197973E-21"
+        iyy="3.89451056060692E-05"
+        iyz="-7.94094488148321E-20"
+        izz="5.07360068449831E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/1.2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/1.2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="1.2"
+    type="revolute">
+    <origin
+      xyz="-0.022119 -0.0026732 0.03805"
+      rpy="1.5708 0 1.6911" />
+    <parent
+      link="1" />
+    <child
+      link="1.2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="1.3">
+    <inertial>
+      <origin
+        xyz="0.0824733467062866 -0.00153674160004263 -0.0272274163551649"
+        rpy="0 0 0" />
+      <mass
+        value="0.102570276177066" />
+      <inertia
+        ixx="1.04451167085951E-05"
+        ixy="3.10316851170496E-09"
+        ixz="-6.69432956589731E-07"
+        iyy="2.30407494529309E-05"
+        iyz="4.40719055481101E-08"
+        izz="2.2092167506052E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/1.3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.650980392156863 0.619607843137255 0.588235294117647 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/1.3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="1.3"
+    type="revolute">
+    <origin
+      xyz="-0.027623 0.10648 0.045"
+      rpy="0 0 0.97443" />
+    <parent
+      link="1.2" />
+    <child
+      link="1.3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="2">
+    <inertial>
+      <origin
+        xyz="0.0084667228959798 -0.0328439790799264 0.0199322839385306"
+        rpy="0 0 0" />
+      <mass
+        value="0.0407294888215925" />
+      <inertia
+        ixx="9.94550186001036E-06"
+        ixy="9.69221691375817E-07"
+        ixz="-6.61031485119795E-07"
+        iyy="1.31282395881463E-05"
+        iyz="2.31930220539592E-06"
+        izz="1.36728473972807E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="2.1"
+    type="revolute">
+    <origin
+      xyz="0.16775 0.0777 0.0086734"
+      rpy="-3.1416 0 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="2.2">
+    <inertial>
+      <origin
+        xyz="0.026035767617037 -0.000712338141409613 -0.0223188487542951"
+        rpy="0 0 0" />
+      <mass
+        value="0.0787590269043272" />
+      <inertia
+        ixx="3.67641435782604E-05"
+        ixy="9.56891613595238E-07"
+        ixz="3.83735063427656E-20"
+        iyy="7.17120943386096E-05"
+        iyz="8.470329472543E-21"
+        izz="5.07360068449831E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/2.2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/2.2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="2.2"
+    type="revolute">
+    <origin
+      xyz="0.00097002 -0.022259 0.03175"
+      rpy="1.5272 -1.5708 0" />
+    <parent
+      link="2" />
+    <child
+      link="2.2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="2.3">
+    <inertial>
+      <origin
+        xyz="0.0824734208629852 -0.00153673432879109 -0.0272274427306729"
+        rpy="0 0 0" />
+      <mass
+        value="0.102570172391228" />
+      <inertia
+        ixx="1.04451135277757E-05"
+        ixy="3.10561119085743E-09"
+        ixz="-6.69425842178878E-07"
+        iyy="2.30407655439993E-05"
+        iyz="4.4061066481365E-08"
+        izz="2.20921895006837E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/2.3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://QUIRON7/meshes/2.3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="2.3"
+    type="revolute">
+    <origin
+      xyz="0.10996 -0.0030085 -0.045"
+      rpy="3.1416 0 -1.3483" />
+    <parent
+      link="2.2" />
+    <child
+      link="2.3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+</robot>
