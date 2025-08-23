@@ -12,7 +12,7 @@ class SerialBridgeArduino(Node):
         super().__init__('serial_bridge_arduino')
 
         # Parámetros
-        self.declare_parameter('port', '/dev/ttyACM0')
+        self.declare_parameter('port', '/dev/ttyUSB0')
         self.declare_parameter('baud', 115200)
         self.declare_parameter('topic', '/cmd_deg')
         self.declare_parameter('send_only_on_change', True)
