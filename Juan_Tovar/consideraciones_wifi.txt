@@ -1,0 +1,2 @@
+tener en cuenta la conexión a redes privadas, puede generar problemas
+usar un hotspot local; datos del celular etc.
