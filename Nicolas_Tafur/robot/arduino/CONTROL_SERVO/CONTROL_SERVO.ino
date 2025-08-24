@@ -2,6 +2,7 @@
 #define RPWM_PIN 5       // Pin PWM para cerrar
 #define LPWM_PIN 6       // Pin PWM para abrir
 #define GRIPPER_SPEED 150 // Velocidad PWM (0-255)
+#define finalCarrera 4 // Pin del final de carrera del gripper
 
 // ====== SERVOS DEL BRAZO ======
 #include <Servo.h>
@@ -61,8 +62,16 @@ void parseAndApply(const String& s) {
       lastGripperCmd = millis();
 
       if (val == 1) { // cerrar
-        analogWrite(RPWM_PIN, GRIPPER_SPEED);
-        analogWrite(LPWM_PIN, 0);
+        if (digitalRead(finalCarrera) == HIGH) { // Si no está en el final de carrera
+          analogWrite(RPWM_PIN, GRIPPER_SPEED);
+          analogWrite(LPWM_PIN, 0);
+        } else { // Si está en el final de carrera, parar
+          analogWrite(RPWM_PIN, 0);
+          analogWrite(LPWM_PIN, 0);
+          gripperState = 0;  // no estoy seguro de si eso va
+        }
+        // analogWrite(RPWM_PIN, GRIPPER_SPEED);
+        // analogWrite(LPWM_PIN, 0);
       } else if (val == -1) { // abrir
         analogWrite(RPWM_PIN, 0);
         analogWrite(LPWM_PIN, GRIPPER_SPEED);
