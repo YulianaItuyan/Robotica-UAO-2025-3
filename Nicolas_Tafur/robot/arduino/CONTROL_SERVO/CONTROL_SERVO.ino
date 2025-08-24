@@ -1,17 +1,19 @@
 #include <Servo.h>
 
 Servo s1, s2, s3;
-
+int gripper_pos = 90; // Posición inicial del gripper (ajústala si es necesario)
+Servo gripper_servo;  // Objeto para el servo del gripper
 
 String buf;
-int a = 90, b = 90, c = 90;
 
 void setup() {
   Serial.begin(115200);
   s1.attach(9);
   s2.attach(10);
   s3.attach(11);
-  s1.write(a); s2.write(b); s3.write(c);
+  gripper_servo.attach(12); // Pin para el servo del gripper
+  s1.write(90); s2.write(90); s3.write(90);
+  gripper_servo.write(gripper_pos);
 
   Serial.println("📡 Arduino listo, esperando comandos...");
 }
@@ -30,6 +32,23 @@ void loop() {
 }
 
 void parseAndApply(const String& s) {
+  // Maneja el comando del gripper
+  if (s.startsWith("G<")) {
+    int l = s.indexOf('<');
+    int r = s.indexOf('>');
+    if (l != -1 && r != -1) {
+      // Ignoramos el valor y solo damos un pequeño pulso de movimiento
+      gripper_pos += 5; // Mueve el gripper 5 grados para cerrar (ajusta este valor)
+      gripper_pos = constrain(gripper_pos, 0, 180);
+      gripper_servo.write(gripper_pos);
+      Serial.print("Comando Gripper: moviendo a ");
+      Serial.print(gripper_pos);
+      Serial.println("°");
+    }
+    return; // Importante para no seguir con el resto de la función
+  }
+  
+  // Código original para los servos del brazo
   int l = s.indexOf('<');
   int r = s.indexOf('>');
   if (l == -1 || r == -1 || r <= l) return;
@@ -52,7 +71,6 @@ void parseAndApply(const String& s) {
   s2.write(v2);
   s3.write(v3);
 
-  // 💬 Mostrar lo recibido y aplicado
   Serial.print("Recibido: ");
   Serial.println(payload);
   Serial.print("Aplicado -> S1: ");

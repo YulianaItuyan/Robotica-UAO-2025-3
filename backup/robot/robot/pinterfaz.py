@@ -9,6 +9,7 @@ import numpy as np
 # ====== CONFIG ======
 TOPIC_NAME = '/cmd_deg'            # tópico donde publicamos los grados
 JOINT_COUNT = 3
+GRIPPER_TOPIC = '/cmd_gripper'  # tópico para el gripper
 # Longitudes de eslabón (ajusta a tus medidas reales)
 LINK_LENGTHS = [0.35, 0.2, 0.2]  # en metros
 # ====================
@@ -34,9 +35,10 @@ def rot_y(theta):
     return R
 
 def to_hom(R, p):
-    T = np.eye(4)
-    T[:3,:3] = R
-    T[:3, 3] = p
+    T = np.eye(4)  #Crea una matriz identidad 4x4
+    T[:3,:3] = R    # Asigna la rotación a la parte superior izquierda
+    T[:3, 3] = p    # Asigna la posición al vector de traslación
+    # T es ahora una matriz homogénea 4x4
     return T
 
 def Tx(L):
@@ -67,10 +69,14 @@ def forward_kinematics(q_deg, L):
 
 class Ros2Bridge(Node):
     """Nodo mínimo para publicar Float32MultiArray en /cmd_deg."""
-    def __init__(self, topic_name=TOPIC_NAME):
+    def __init__(self, topic_name=TOPIC_NAME, gripper_topic=GRIPPER_TOPIC):
         super().__init__('mi_br_gui_node')
+
+        #print("🚀 Versión ACTUALIZADA de pinterfaz cargada correctamente")
+
         self.publisher_ = self.create_publisher(Float32MultiArray, topic_name, 10)
-        self.get_logger().info(f'Ros2Bridge listo para publicar en {topic_name}')
+        self.gripper_publisher_ = self.create_publisher(Float32MultiArray, gripper_topic, 10)
+        self.get_logger().info(f'Ros2Bridge listo para publickkkkkar en {topic_name} y {gripper_topic}')
 
     def publish_degrees(self, angles_deg):
         """Publica una lista de floats (grados) en /cmd_deg."""
@@ -82,6 +88,13 @@ class Ros2Bridge(Node):
         msg.data = [float(a) for a in angles_deg]
         self.publisher_.publish(msg)
         self.get_logger().info(f'Publicado en {TOPIC_NAME}: {msg.data}')
+
+    def publish_gripper(self, value):
+        """Publica un valor float en /cmd_gripper."""
+        msg = Float32MultiArray()
+        msg.data = [float(value)]
+        self.gripper_publisher_.publish(msg)
+        self.get_logger().info(f'Publicado en {GRIPPER_TOPIC}: {msg.data}')
 
 
 class VentanaPrincipal(ctk.CTk):
@@ -348,8 +361,11 @@ class UpperBody(ctk.CTk):
         self.update_coords(p[0], p[1], p[2])
 
     def gripper(self):
-        # Placeholder para manejo del gripper (otro tópico si lo necesitas)
-        pass
+        # Publicar un mensaje simple en el tópico del gripper
+        #msg = Float32MultiArray()
+        #msg.data = [1.0] # El valor no importa, solo su existencia
+        self.ros.publish_gripper(1.0)
+        self.ros.get_logger().info("⚡ Enviado comando GRIPPER en su tópico")
 
     def home(self):
         # Placeholder para orden de "home"
@@ -406,4 +422,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

@@ -12,23 +12,30 @@ class SerialBridgeArduino(Node):
         super().__init__('serial_bridge_arduino')
 
         # Parámetros
-        self.declare_parameter('port', '/dev/ttyACM0')
+        self.declare_parameter('port', '/dev/ttyUSB0')
         self.declare_parameter('baud', 115200)
         self.declare_parameter('topic', '/cmd_deg')
+        self.declare_parameter('topic_gripper', '/cmd_gripper')
         self.declare_parameter('send_only_on_change', True)
         self.declare_parameter('reconnect_secs', 2.0)
 
         self.port = self.get_parameter('port').value
         self.baud = int(self.get_parameter('baud').value)
         self.topic = self.get_parameter('topic').value
+        
+        # OBTENEMOS EL VALOR DEL PARÁMETRO CORRECTAMENTE
+        self.topic_gripper = self.get_parameter('topic_gripper').value 
+        
         self.send_only_on_change = bool(self.get_parameter('send_only_on_change').value)
         self.reconnect_secs = float(self.get_parameter('reconnect_secs').value)
 
         self.ser = None
         self.last_frame = None
 
-        # Suscripción
+        # Suscripciones
         self.sub = self.create_subscription(Float32MultiArray, self.topic, self.on_cmd, 10)
+        self.sub_gripper = self.create_subscription(Float32MultiArray, self.topic_gripper, self.on_gripper_cmd, 10)
+
 
         # Intentar conectar
         self._connect_serial()
@@ -36,15 +43,15 @@ class SerialBridgeArduino(Node):
         # Timer de reconexión si se cae el puerto
         self.reconnect_timer = self.create_timer(self.reconnect_secs, self._reconnect_if_needed)
 
-        self.get_logger().info(f'Escuchando {self.topic} (Float32MultiArray con 3 grados). '
-                               f'Enviando por {self.port}@{self.baud} en formato "<a,b,c>\\n".')
+        self.get_logger().info(f'Escuchando {self.topic} y {self.topic_gripper}. '
+                               f'Enviando por {self.port}@{self.baud}.')
 
     def _connect_serial(self):
         try:
             if self.ser and self.ser.is_open:
                 return
             self.ser = serial.Serial(self.port, baudrate=self.baud, timeout=0.02)
-            time.sleep(0.2)  # pequeña pausa tras abrir el puerto
+            time.sleep(0.2)
             self.get_logger().info(f'Puerto serie abierto: {self.port} @ {self.baud}')
         except Exception as e:
             self.get_logger().warn(f'No se pudo abrir {self.port}: {e}')
@@ -64,21 +71,28 @@ class SerialBridgeArduino(Node):
         return max(0, min(180, xi))
 
     def on_cmd(self, msg: Float32MultiArray):
+        """Callback para los comandos del brazo."""
         if len(msg.data) != 3:
-            self.get_logger().warn(f'Se esperaban 3 valores, llegaron {len(msg.data)}')
+            self.get_logger().warn(f'Se esperaban 3 valores para el brazo, llegaron {len(msg.data)}')
             return
 
-        # Limpieza y clip a [0, 180]
         a, b, c = [self._sanitize_angle(v) for v in msg.data]
         frame = f"<{a},{b},{c}>\n"
 
-        # Evita tráfico redundante si está activado
         if self.send_only_on_change and frame == self.last_frame:
             return
 
         self.last_frame = frame
+        self._send_frame(frame)
 
-        # Enviar por serie
+    def on_gripper_cmd(self, msg: Float32MultiArray):
+        """Callback para los comandos del gripper."""
+        # Ignoramos el valor de los datos y solo enviamos un comando fijo
+        frame = f"G<1>\n"
+        self._send_frame(frame)
+
+    def _send_frame(self, frame):
+        """Función auxiliar para enviar datos por el puerto serial."""
         if self.ser is None or not self.ser.is_open:
             self.get_logger().warn('Puerto serie no disponible; intentando reconectar...')
             self._connect_serial()
@@ -87,14 +101,13 @@ class SerialBridgeArduino(Node):
 
         try:
             self.ser.write(frame.encode('ascii'))
-            # self.get_logger().info(f'Enviado: {frame.strip()}')  # descomenta si quieres ver cada envío
         except Exception as e:
             self.get_logger().error(f'Error escribiendo al puerto: {e}')
             try:
                 self.ser.close()
             except Exception:
                 pass
-            self.ser = None  # forzar reconexión
+            self.ser = None
 
     def destroy_node(self):
         try:
@@ -116,4 +129,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
