@@ -1,1 +1,0 @@
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/setup.py

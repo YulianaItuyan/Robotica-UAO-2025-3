@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
+
+#pinterfaz.py
+
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32MultiArray
 import customtkinter as ctk
 from PIL import Image  # lo dejamos por si más adelante cargas imágenes
 import numpy as np
+from control_msgs.action import FollowJointTrajectory
+from trajectory_msgs.msg import JointTrajectoryPoint
+from rclpy.action import ActionClient
 
 # ====== CONFIG ======
 TOPIC_NAME = '/cmd_deg'            # tópico donde publicamos los grados
@@ -72,22 +78,42 @@ class Ros2Bridge(Node):
     def __init__(self, topic_name=TOPIC_NAME, gripper_topic=GRIPPER_TOPIC):
         super().__init__('mi_br_gui_node')
 
-        #print("🚀 Versión ACTUALIZADA de pinterfaz cargada correctamente")
-
+        print("🚀 Versión ACTUALIZADA de pinterfaz cargada correctamente")
+        
+        # Publisher principal (para compatibilidad directa)
         self.publisher_ = self.create_publisher(Float32MultiArray, topic_name, 10)
+        
+        # Publisher para movimientos suaves
+        self.smooth_publisher_ = self.create_publisher(Float32MultiArray, '/cmd_deg_smooth', 10)
+        
+        # Publisher para gripper
         self.gripper_publisher_ = self.create_publisher(Float32MultiArray, gripper_topic, 10)
-        self.get_logger().info(f'Ros2Bridge listo para publickkkkkar en {topic_name} y {gripper_topic}')
+        
+        # Parámetro para habilitar movimientos suaves
+        self.declare_parameter('use_smooth_motion', True)
+        self.use_smooth_motion = self.get_parameter('use_smooth_motion').value
+        
+        self.get_logger().info(f'Ros2Bridge listo para publicar en {topic_name} y {gripper_topic}')
+        self.get_logger().info(f'Movimientos suaves: {"habilitados" if self.use_smooth_motion else "deshabilitados"}')
 
     def publish_degrees(self, angles_deg):
-        """Publica una lista de floats (grados) en /cmd_deg."""
+        """Publica una lista de floats (grados) en /cmd_deg y opcionalmente en /cmd_deg_smooth."""
         if len(angles_deg) != JOINT_COUNT:
             self.get_logger().warn(f'publish_degrees: se esperaban {JOINT_COUNT} valores, llegaron {len(angles_deg)}')
             return
+        
         msg = Float32MultiArray()
         # Aseguramos float
         msg.data = [float(a) for a in angles_deg]
-        self.publisher_.publish(msg)
-        self.get_logger().info(f'Publicado en {TOPIC_NAME}: {msg.data}')
+        
+        if self.use_smooth_motion:
+            # Publicar en el tópico para movimientos suaves
+            self.smooth_publisher_.publish(msg)
+            self.get_logger().info(f'Publicado en /cmd_deg_smooth: {msg.data}')
+        else:
+            # Publicar en el tópico directo (comportamiento original)
+            self.publisher_.publish(msg)
+            self.get_logger().info(f'Publicado en {TOPIC_NAME}: {msg.data}')
 
     def publish_gripper(self, value):
         """Publica un valor float en /cmd_gripper."""
@@ -253,7 +279,8 @@ class UpperBody(ctk.CTk):
         debajosliders_frame.grid_columnconfigure(1, weight=0)
         debajosliders_frame.grid_columnconfigure(2, weight=0)
         debajosliders_frame.grid_columnconfigure(3, weight=0)
-        debajosliders_frame.grid_columnconfigure(4, weight=1)
+        debajosliders_frame.grid_columnconfigure(4, weight=0)
+        debajosliders_frame.grid_columnconfigure(5, weight=1)
 
         Confirmar_btn = ctk.CTkButton(debajosliders_frame, text="CONFIRMAR",
                                       command=self.confirmar,
@@ -263,11 +290,33 @@ class UpperBody(ctk.CTk):
         Confirmar_btn.grid(row=0, column=1, padx=10)
 
         gripper_btn = ctk.CTkButton(debajosliders_frame, text="GRIPPER",
-                                    command=self.gripper,
+                                    #command=self.gripper,
                                     fg_color="#737373", text_color="white",
                                     corner_radius=10, font=("Arial", 20),
                                     width=50, height=75, hover_color="#838181")
         gripper_btn.grid(row=0, column=3, padx=10)
+
+        # Vincular eventos de presionar y soltar
+        gripper_btn.bind("<ButtonPress-1>", lambda e: self.start_gripper(1))
+        gripper_btn.bind("<ButtonRelease-1>", lambda e: self.stop_gripper())
+
+        # Variables de control
+        self.gripper_running = False
+        self._after_id = None  # ID del after para poder cancelarlo
+
+
+        abrir_btn = ctk.CTkButton(debajosliders_frame, text="ABRIR GR",
+                                    #command=self.gripper,
+                                    fg_color="#737373", text_color="white",
+                                    corner_radius=10, font=("Arial", 20),
+                                    width=50, height=75, hover_color="#838181")
+        abrir_btn.grid(row=0, column=4, padx=10)
+
+        # Vincular eventos de presionar y soltar
+        abrir_btn.bind("<ButtonPress-1>", lambda e: self.start_gripper(-1))
+        abrir_btn.bind("<ButtonRelease-1>", lambda e: self.stop_gripper())
+
+
 
         # Divisor
         self.divisoria2 = ctk.CTkFrame(self, height=2, corner_radius=0, fg_color="#3B3B3B")
@@ -360,12 +409,21 @@ class UpperBody(ctk.CTk):
         p, R, T = forward_kinematics(shifted, LINK_LENGTHS)
         self.update_coords(p[0], p[1], p[2])
 
-    def gripper(self):
-        # Publicar un mensaje simple en el tópico del gripper
-        #msg = Float32MultiArray()
-        #msg.data = [1.0] # El valor no importa, solo su existencia
-        self.ros.publish_gripper(1.0)
-        self.ros.get_logger().info("⚡ Enviado comando GRIPPER en su tópico")
+
+    def start_gripper(self, direction):
+        self.gripper_running = True
+        self._send_gripper_loop(direction)
+        #self.get_logger().info(f'gripper {direction}')
+
+    def stop_gripper(self):
+        self.gripper_running = False
+        if self._after_id:
+            self.after_cancel(self._after_id)
+
+    def _send_gripper_loop(self, direction):
+        if self.gripper_running:
+            self.ros.publish_gripper(direction)  # 1 = cerrar, -1 = abrir
+            self._after_id = self.after(100, lambda: self._send_gripper_loop(direction))
 
     def home(self):
         # Placeholder para orden de "home"

@@ -26,15 +26,12 @@ setup(
     license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
-        'console_scripts': [
-            'joint_state_publisher = robot.joint_state_publisher:main',
-            'mover_robot = robot.mover_robot:main',
-            'ArmTeleop = robot.ArmTeleop:main',
-            'test_arm_movement = robot.test_arm_movement:main',
-            'joint_commander_deg = robot.joint_commander_deg:main',
-            'fk_marker = robot.fk_marker:main',
-            'pinterfaz = robot.pinterfaz:main',
-            'serial_node = robot.serial_node:main',
+    'console_scripts': [
+        'pinterfaz = robot.pinterfaz:main',
+        'joint_commander_deg = robot.joint_commander_deg:main',
+        'serial_node = robot.serial_node:main',
+        'fk_marker = robot.fk_marker:main',  # si existe
+        'joint_trajectory_smoother = robot.joint_trajectory_smoother:main',  # NUEVA LÍNEA
         ],
     },
 )
