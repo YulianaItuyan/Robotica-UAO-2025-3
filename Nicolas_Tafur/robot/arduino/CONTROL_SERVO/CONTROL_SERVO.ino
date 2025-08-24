@@ -1,19 +1,33 @@
+// ====== CONFIGURACIÓN GRIPPER DC ======
+#define RPWM_PIN 5       // Pin PWM para cerrar
+#define LPWM_PIN 6       // Pin PWM para abrir
+#define GRIPPER_SPEED 150 // Velocidad PWM (0-255)
+
+// ====== SERVOS DEL BRAZO ======
 #include <Servo.h>
 
+
+unsigned long lastGripperCmd = 0;
+int gripperState = 0; // 1=cerrar, -1=abrir, 0=parado
+
 Servo s1, s2, s3;
-int gripper_pos = 90; // Posición inicial del gripper (ajústala si es necesario)
-Servo gripper_servo;  // Objeto para el servo del gripper
 
 String buf;
 
 void setup() {
   Serial.begin(115200);
+
+  // Servos del brazo
   s1.attach(9);
   s2.attach(10);
   s3.attach(11);
-  gripper_servo.attach(12); // Pin para el servo del gripper
   s1.write(90); s2.write(90); s3.write(90);
-  gripper_servo.write(gripper_pos);
+
+  // Motor DC del gripper
+  pinMode(RPWM_PIN, OUTPUT);
+  pinMode(LPWM_PIN, OUTPUT);
+  analogWrite(RPWM_PIN, 0);
+  analogWrite(LPWM_PIN, 0);
 
   Serial.println("📡 Arduino listo, esperando comandos...");
 }
@@ -29,26 +43,38 @@ void loop() {
       else buf = "";
     }
   }
+  if (gripperState != 0 && millis() - lastGripperCmd > 100) {
+    analogWrite(RPWM_PIN, 0);
+    analogWrite(LPWM_PIN, 0);
+    gripperState = 0;
+  }
 }
 
 void parseAndApply(const String& s) {
-  // Maneja el comando del gripper
+  // ====== COMANDO GRIPPER ======
   if (s.startsWith("G<")) {
     int l = s.indexOf('<');
     int r = s.indexOf('>');
     if (l != -1 && r != -1) {
-      // Ignoramos el valor y solo damos un pequeño pulso de movimiento
-      gripper_pos += 5; // Mueve el gripper 5 grados para cerrar (ajusta este valor)
-      gripper_pos = constrain(gripper_pos, 0, 180);
-      gripper_servo.write(gripper_pos);
-      Serial.print("Comando Gripper: moviendo a ");
-      Serial.print(gripper_pos);
-      Serial.println("°");
+      int val = s.substring(l + 1, r).toInt();
+      gripperState = val;
+      lastGripperCmd = millis();
+
+      if (val == 1) { // cerrar
+        analogWrite(RPWM_PIN, GRIPPER_SPEED);
+        analogWrite(LPWM_PIN, 0);
+      } else if (val == -1) { // abrir
+        analogWrite(RPWM_PIN, 0);
+        analogWrite(LPWM_PIN, GRIPPER_SPEED);
+      } else { // parar
+        analogWrite(RPWM_PIN, 0);
+        analogWrite(LPWM_PIN, 0);
+      }
     }
-    return; // Importante para no seguir con el resto de la función
+    return;
   }
-  
-  // Código original para los servos del brazo
+
+  // ====== COMANDO BRAZO ======
   int l = s.indexOf('<');
   int r = s.indexOf('>');
   if (l == -1 || r == -1 || r <= l) return;
@@ -66,18 +92,10 @@ void parseAndApply(const String& s) {
   v2 = constrain(v2, 0, 180);
   v3 = constrain(v3, 0, 180);
 
-  // Mover servos
   s1.write(v1);
   s2.write(v2);
   s3.write(v3);
 
   Serial.print("Recibido: ");
   Serial.println(payload);
-  Serial.print("Aplicado -> S1: ");
-  Serial.print(v1);
-  Serial.print("°, S2: ");
-  Serial.print(v2);
-  Serial.print("°, S3: ");
-  Serial.print(v3);
-  Serial.println("°");
 }

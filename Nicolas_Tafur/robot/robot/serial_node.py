@@ -87,9 +87,12 @@ class SerialBridgeArduino(Node):
 
     def on_gripper_cmd(self, msg: Float32MultiArray):
         """Callback para los comandos del gripper."""
-        # Ignoramos el valor de los datos y solo enviamos un comando fijo
-        frame = f"G<1>\n"
+        if not msg.data:
+            return  # no hay datos
+        val = int(msg.data[0])  # primer valor enviado desde la GUI
+        frame = f"G<{val}>\n"
         self._send_frame(frame)
+
 
     def _send_frame(self, frame):
         """Función auxiliar para enviar datos por el puerto serial."""

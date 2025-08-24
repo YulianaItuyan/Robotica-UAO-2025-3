@@ -253,7 +253,8 @@ class UpperBody(ctk.CTk):
         debajosliders_frame.grid_columnconfigure(1, weight=0)
         debajosliders_frame.grid_columnconfigure(2, weight=0)
         debajosliders_frame.grid_columnconfigure(3, weight=0)
-        debajosliders_frame.grid_columnconfigure(4, weight=1)
+        debajosliders_frame.grid_columnconfigure(4, weight=0)
+        debajosliders_frame.grid_columnconfigure(5, weight=1)
 
         Confirmar_btn = ctk.CTkButton(debajosliders_frame, text="CONFIRMAR",
                                       command=self.confirmar,
@@ -263,11 +264,33 @@ class UpperBody(ctk.CTk):
         Confirmar_btn.grid(row=0, column=1, padx=10)
 
         gripper_btn = ctk.CTkButton(debajosliders_frame, text="GRIPPER",
-                                    command=self.gripper,
+                                    #command=self.gripper,
                                     fg_color="#737373", text_color="white",
                                     corner_radius=10, font=("Arial", 20),
                                     width=50, height=75, hover_color="#838181")
         gripper_btn.grid(row=0, column=3, padx=10)
+
+        # Vincular eventos de presionar y soltar
+        gripper_btn.bind("<ButtonPress-1>", lambda e: self.start_gripper(1))
+        gripper_btn.bind("<ButtonRelease-1>", lambda e: self.stop_gripper())
+
+        # Variables de control
+        self.gripper_running = False
+        self._after_id = None  # ID del after para poder cancelarlo
+
+
+        abrir_btn = ctk.CTkButton(debajosliders_frame, text="ABRIR GR",
+                                    #command=self.gripper,
+                                    fg_color="#737373", text_color="white",
+                                    corner_radius=10, font=("Arial", 20),
+                                    width=50, height=75, hover_color="#838181")
+        abrir_btn.grid(row=0, column=4, padx=10)
+
+        # Vincular eventos de presionar y soltar
+        abrir_btn.bind("<ButtonPress-1>", lambda e: self.start_gripper(-1))
+        abrir_btn.bind("<ButtonRelease-1>", lambda e: self.stop_gripper())
+
+
 
         # Divisor
         self.divisoria2 = ctk.CTkFrame(self, height=2, corner_radius=0, fg_color="#3B3B3B")
@@ -360,12 +383,50 @@ class UpperBody(ctk.CTk):
         p, R, T = forward_kinematics(shifted, LINK_LENGTHS)
         self.update_coords(p[0], p[1], p[2])
 
-    def gripper(self):
-        # Publicar un mensaje simple en el tópico del gripper
-        #msg = Float32MultiArray()
-        #msg.data = [1.0] # El valor no importa, solo su existencia
-        self.ros.publish_gripper(1.0)
-        self.ros.get_logger().info("⚡ Enviado comando GRIPPER en su tópico")
+
+    def start_gripper(self, direction):
+        self.gripper_running = True
+        self._send_gripper_loop(direction)
+        #self.get_logger().info(f'gripper {direction}')
+
+    def stop_gripper(self):
+        self.gripper_running = False
+        if self._after_id:
+            self.after_cancel(self._after_id)
+
+    def _send_gripper_loop(self, direction):
+        if self.gripper_running:
+            self.ros.publish_gripper(direction)  # 1 = cerrar, -1 = abrir
+            self._after_id = self.after(100, lambda: self._send_gripper_loop(direction))
+
+
+
+
+
+    # def start_gripper(self, event=None):
+    #     self.gripper_running = True
+    #     self._after_id = self.after(0, self._send_gripper_loop)  # 0 = inmediato
+
+    # def stop_gripper(self, event=None):
+    #     self.gripper_running = False
+    #     if hasattr(self, "_after_id"):
+    #         self.after_cancel(self._after_id)
+
+    # def _send_gripper_loop(self):
+    #     if self.gripper_running:
+    #         self.ros.publish_gripper(1.0)
+    #         self.ros.get_logger().info("⚡ Enviando comando GRIPPER continuo")
+    #         self._after_id = self.after(100, self._send_gripper_loop)
+
+
+
+
+    # def gripper(self):
+    #     # Publicar un mensaje simple en el tópico del gripper
+    #     #msg = Float32MultiArray()
+    #     #msg.data = [1.0] # El valor no importa, solo su existencia
+    #     self.ros.publish_gripper(1.0)
+    #     self.ros.get_logger().info("⚡ Enviado comando GRIPPER en su tópico")
 
     def home(self):
         # Placeholder para orden de "home"
