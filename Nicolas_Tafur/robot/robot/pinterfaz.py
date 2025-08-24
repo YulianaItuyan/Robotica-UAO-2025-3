@@ -222,9 +222,9 @@ class UpperBody(ctk.CTk):
 
         # Radio buttons (opcional)
         self.arm_choise = ctk.IntVar(value=0)
-        rb1 = ctk.CTkRadioButton(top_frame, text="Brazo Izquierdo", variable=self.arm_choise, value=1,
+        rb1 = ctk.CTkRadioButton(top_frame, text="Brazo Izquierdo",command=self.cambio_brazo(3), variable=self.arm_choise, value=1,
                                  text_color="white", font=("Arial", 20))
-        rb2 = ctk.CTkRadioButton(top_frame, text="Brazo Derecho", variable=self.arm_choise, value=2,
+        rb2 = ctk.CTkRadioButton(top_frame, text="Brazo Derecho", command=self.cambio_brazo(2), variable=self.arm_choise, value=2,
                                  text_color="white", font=("Arial", 20))
         rb1.grid(row=0, column=0, sticky="w", pady=2)
         rb2.grid(row=1, column=0, sticky="w", pady=2)
@@ -424,6 +424,13 @@ class UpperBody(ctk.CTk):
         if self.gripper_running:
             self.ros.publish_gripper(direction)  # 1 = cerrar, -1 = abrir
             self._after_id = self.after(100, lambda: self._send_gripper_loop(direction))
+
+
+
+    def cambio_brazo(self, brazo):
+        self.ros.publish_gripper(brazo)  # 3 = izquierdo, 2 = derecho
+        self.ros.get_logger().info(f'Cambiado a brazo ' {"izquierdo" if brazo == 3 else "derecho"})
+
 
     def home(self):
         # Placeholder para orden de "home"

@@ -79,7 +79,7 @@ def generate_launch_description():
         output='screen'
     ))
 
-    # Spawner del JointTrajectoryController
+    # Spawner del JointTrajectoryController ---------- crep qie innecesario
     nodes.append(Node(
         package='controller_manager',
         executable='spawner',
