@@ -12,8 +12,8 @@
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver();
 
 // Configuración de servos
-#define SERVOMIN  150 // Valor mínimo de pulso (aproximadamente 1ms)
-#define SERVOMAX  600 // Valor máximo de pulso (aproximadamente 2ms)
+#define SERVOMIN  150 // Valor mínimo de pulso (aproximadamente 1ms) 172
+#define SERVOMAX  600 // Valor máximo de pulso (aproximadamente 2ms) 565
 
 // Canales PCA9685 para cada brazo
 // Brazo 1 (derecho)
@@ -170,9 +170,10 @@ void parseAndApply(const String& s) {
     Serial.print("🤖 Brazo 1 (canales 0,1,2) - Recibido: ");
   } else {
     // Brazo 2 (izquierdo) - Canales 3, 4, 5
-    servoWrite(SERVO1_BRAZO2, v1);
-    servoWrite(SERVO2_BRAZO2, v2);
-    servoWrite(SERVO3_BRAZO2, v3);
+
+    servoWrite(SERVO1_BRAZO2, v1); // Invertir movimiento para brazo izquierdo
+    servoWrite(SERVO2_BRAZO2, (v2)-180)*-1); // Invertir movimiento para brazo izquierdo
+    servoWrite(SERVO3_BRAZO2, (v3)-180)*-1); // Invertir movimiento para brazo izquierdo
     Serial.print("🤖 Brazo 2 (canales 3,4,5) - Recibido: ");
   }
   
