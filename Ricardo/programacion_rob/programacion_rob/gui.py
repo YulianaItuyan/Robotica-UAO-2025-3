@@ -175,18 +175,6 @@ class UpperBody(ctk.CTkToplevel):  # Change from CTk to CTkToplevel
             range_lbl.grid(row=i, column=4, padx=5, pady=5, sticky="e")
 
 
-            # ok_btn = ctk.CTkButton(sliders_frame, 
-            #                                 text="OK", 
-            #                                 command=lambda j=i: self.enviar_valores(j),
-            #                                 fg_color="#737373",
-            #                                 text_color="white",
-            #                                 corner_radius=10,
-            #                                 font=("Arial", 12),
-            #                                 width=50,
-            #                                 height=30,
-            #                                 hover_color="#838181")
-            # ok_btn.grid(row=i, column=5, padx=5, pady=5, sticky="e")
-
         debajosliders_frame = ctk.CTkFrame(self, fg_color="transparent")
         debajosliders_frame.pack(fill="x", padx=10, pady=10)
 
