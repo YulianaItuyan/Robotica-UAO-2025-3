@@ -4,6 +4,7 @@ from std_msgs.msg import Float32MultiArray
 import socket
 import struct
 import threading
+import time
 
 # Usamos como protocolo TCP, ya que se encarga de la retransmisión de datos en caso de fallar y permite tener una cola,
 # de modo que si se envía una secuencia se garantiza el orden de llegada de los paquetes
@@ -22,6 +23,12 @@ class DegreesSubscriber(Node):
         self.get_logger().info(f'ESP32 Port: {self.esp32_port}')
         self.socket = None
         self.connection_lock = threading.Lock()
+           
+        # Manejo de la reconexión
+        self.reconnect_delay = 1.0   
+        self.max_reconnect_delay = 30.0  
+        self.reconnect_attempts = 0
+        self.last_reconnect_time = 0
         
         self.subscription = self.create_subscription(
             Float32MultiArray,
@@ -66,8 +73,28 @@ class DegreesSubscriber(Node):
         except Exception as e:
             self.get_logger().error(f'Fallo al conectarse con ESP32: {e}')
             self.socket = None
+            
+            #Intento de reconexiones
+            self.reconnect_attempts += 1
+            self.reconnect_delay = min(self.reconnect_delay * 1.5, self.max_reconnect_delay)
+            self.last_reconnect_time = time.time()
+            return False
+        
+    def diagnostico_conexion(self):
+        #Revisamos el estado del socket
+        if not self.socket:
             return False
             
+        try:
+            error = self.socket.getsockopt(socket.SOL_SOCKET, socket.SO_ERROR) #Usamos SO_ERROR para que nos indica si hay fallos en el socket y cual
+            if error:
+                self.get_logger().warn(f'Error en socket: {error}')
+                return False
+            return True
+        except Exception as e:
+            self.get_logger().warn(f'Diagnostico de conexión fallido: {e}')
+            return False
+           
     def enviar_grados_a_esp32(self, float_list):
         if not self.socket:
             self.get_logger().warn('No hay conexión a ESP32')
@@ -86,10 +113,15 @@ class DegreesSubscriber(Node):
                 packed_data = struct.pack(format_string, num_floats, *float_list)
                 
                 # Ponemos un timeout
+                original_timeout = self.socket.gettimeout()
                 self.socket.settimeout(2.0)
-                self.socket.sendall(packed_data)
                 
-                return True
+                try:
+                    self.socket.sendall(packed_data)
+                    return True
+                finally:
+                    # Restauramos el timeout
+                    self.socket.settimeout(original_timeout)
                 
         except socket.timeout:
             self.get_logger().error('Timeout red congestionada')
@@ -103,12 +135,29 @@ class DegreesSubscriber(Node):
             self.get_logger().error(f'Error enviando los datos: {e}')
             return False
     
+    def should_attempt_reconnect(self):
+        #Verificar tiempo para reconexión
+        if not self.last_reconnect_time:
+            return True
+        return (time.time() - self.last_reconnect_time) >= self.reconnect_delay
+    
     def verificar_conexión(self):
-        if not self.socket:
-            self.get_logger().error('Intentando reconectar')
-            self.conectar_a_esp32()
+        if not self.socket or not self.diagnostico_conexion():
+            if self.should_attempt_reconnect():
+                self.get_logger().info(f'Conexión perdida, reintentando... (intento {self.reconnect_attempts + 1})')
+                if self.conectar_a_esp32():
+                    self.get_logger().info('Reconexión exitosa')
+                else:
+                    self.get_logger().warn(f'Reconexión falló, siguiente intento en {self.reconnect_delay:.1f}s')
+            else:
+                remaining_time = self.reconnect_delay - (time.time() - self.last_reconnect_time)
+                self.get_logger().debug(f'Esperando {remaining_time:.1f}s antes del próximo intento de reconexión')
         else:
-            self.get_logger().info('Conexión activa')
+            # Reseteo de reconexión a buen diagnostico
+            if self.reconnect_attempts > 0:
+                self.reconnect_attempts = 0
+                self.reconnect_delay = 1.0
+            self.get_logger().debug('Conexión activa y saludable')
             
     def listener_callback(self, msg):
         self.get_logger().info('Grados recibidos: "%s"' % msg.data)
@@ -120,7 +169,10 @@ class DegreesSubscriber(Node):
         else:
             self.get_logger().warn('Fallo en el envío')
             # Intentar reconexión
-            self.conectar_a_esp32()
+            if self.should_attempt_reconnect():
+                self.get_logger().info('Intentando reconexión inmediata')
+                if self.conectar_a_esp32():
+                    self.get_logger().info('Reconexión exitosa tras fallo de envío')
             
     def destroy_node(self):
         if self.socket:
