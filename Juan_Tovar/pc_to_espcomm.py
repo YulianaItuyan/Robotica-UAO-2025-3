@@ -111,6 +111,8 @@ class DegreesSubscriber(Node):
                 # Transformamos los datos de float a bytes y añadimos un byte sin signo que indique cuantos bytes debe recibir la ESP
                 format_string = f'B{num_floats}f'
                 packed_data = struct.pack(format_string, num_floats, *float_list)
+                self.get_logger().info("Packed data (hex):", packed_data.hex())
+                self.get_logger().info("Length:", len(packed_data))
                 
                 # Ponemos un timeout
                 original_timeout = self.socket.gettimeout()
