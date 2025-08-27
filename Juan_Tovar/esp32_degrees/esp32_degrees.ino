@@ -47,7 +47,7 @@ const int FRL_J3 = 17;
 
 // Manejo de conexión
 unsigned long lastDataReceived = 0;
-const unsigned long connectionTimeout = 30000; 
+const unsigned long connectionTimeout = 60000; 
 bool clientConnected = false;
 
 void setup() {
@@ -108,11 +108,15 @@ void handleClientConnection() {
 
 void handleClientData() {
   // Leer cantidad de floats
-  if (client.available() < 1) {
+  if (client.available() < 4) {
     return; // Esperar al menos el byte de conteo
   }
   
-  uint8_t numFloats = client.read();
+  uint32_t numFloats = 0;
+  if (client.readBytes((char*)&numFloats, sizeof(numFloats)) != sizeof(numFloats)) {
+    Serial.println("Error leyendo el contador de floats");
+    return;
+  }
   Serial.printf("Se esperan %d floats\n", numFloats);
   
   // Validar
@@ -287,7 +291,7 @@ void moveFRightLeg(float j1, float j2, float j3) {
 }
 void checkConnectionTimeout() {
   if (clientConnected && (millis() - lastDataReceived > connectionTimeout)) {
-    Serial.println("Timeout no se recibieron datos por 30 segundos");
+    Serial.println("Timeout no se recibieron datos por 60 segundos");
     client.stop();
     clientConnected = false;
   }
