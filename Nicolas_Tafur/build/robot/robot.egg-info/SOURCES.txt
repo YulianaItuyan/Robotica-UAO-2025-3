@@ -11,6 +11,13 @@ setup.py
 config/joint_trajectory_controller.yaml
 launch/centauro.launch.py
 launch/display.launch.py
+meshes/base_link.STL
+meshes/link_1.STL
+meshes/link_2.STL
+meshes/link_3.STL
+meshes/link_5.STL
+meshes/link_6.STL
+meshes/link_7.STL
 resource/robot
 robot/ArmTeleop.py
 robot/__init__.py
@@ -25,4 +32,6 @@ robot/serial_node.py
 test/test_copyright.py
 test/test_flake8.py
 test/test_pep257.py
+urdf/SOLID.urdf
+urdf/mi_br.urdf
 urdf/robot.xacro
