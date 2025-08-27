@@ -1,0 +1,67 @@
+running egg_info
+creating build/robot/robot.egg-info
+writing build/robot/robot.egg-info/PKG-INFO
+writing dependency_links to build/robot/robot.egg-info/dependency_links.txt
+writing entry points to build/robot/robot.egg-info/entry_points.txt
+writing requirements to build/robot/robot.egg-info/requires.txt
+writing top-level names to build/robot/robot.egg-info/top_level.txt
+writing manifest file 'build/robot/robot.egg-info/SOURCES.txt'
+reading manifest file 'build/robot/robot.egg-info/SOURCES.txt'
+writing manifest file 'build/robot/robot.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build
+creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib
+creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+copying robot/pinterfaz.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+copying robot/joint_commander_deg.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+copying robot/ArmTeleop.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+copying robot/fk_3dof_zyy.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+copying robot/fk_marker.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+copying robot/__init__.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+copying robot/joint_state_publisher.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+copying robot/serial_node.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+running install
+running install_lib
+creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/pinterfaz.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/joint_commander_deg.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/ArmTeleop.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/fk_3dof_zyy.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/fk_marker.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/__init__.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/joint_state_publisher.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/serial_node.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/pinterfaz.py to pinterfaz.cpython-310.pyc
+byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/joint_commander_deg.py to joint_commander_deg.cpython-310.pyc
+byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/ArmTeleop.py to ArmTeleop.cpython-310.pyc
+byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/fk_3dof_zyy.py to fk_3dof_zyy.cpython-310.pyc
+byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/fk_marker.py to fk_marker.cpython-310.pyc
+byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/__init__.py to __init__.cpython-310.pyc
+byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/joint_state_publisher.py to joint_state_publisher.cpython-310.pyc
+byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/serial_node.py to serial_node.cpython-310.pyc
+running install_data
+creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/ament_index
+creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/ament_index/resource_index
+creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/ament_index/resource_index/packages
+copying resource/robot -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/ament_index/resource_index/packages
+copying package.xml -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot
+creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/launch
+copying launch/display.launch.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/launch
+copying launch/centauro.launch.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/launch
+creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/urdf
+copying urdf/robot.xacro -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/urdf
+creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/config
+creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/rviz
+running install_egg_info
+Copying build/robot/robot.egg-info to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot-0.0.0-py3.10.egg-info
+running install_scripts
+Installing ArmTeleop script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+Installing fk_marker script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+Installing joint_commander_deg script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+Installing joint_state_publisher script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+Installing mover_robot script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+Installing pinterfaz script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+Installing serial_node script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+Installing test_arm_movement script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+writing list of installed files to '/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/install.log'

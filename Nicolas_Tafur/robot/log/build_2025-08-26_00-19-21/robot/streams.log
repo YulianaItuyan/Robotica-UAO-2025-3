@@ -1,0 +1,69 @@
+[0.400s] Invoking command in '/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot': PYTHONPATH=/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base build/robot build --build-base /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build install --record /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/install.log --single-version-externally-managed install_data
+[0.534s] running egg_info
+[0.534s] creating build/robot/robot.egg-info
+[0.534s] writing build/robot/robot.egg-info/PKG-INFO
+[0.534s] writing dependency_links to build/robot/robot.egg-info/dependency_links.txt
+[0.535s] writing entry points to build/robot/robot.egg-info/entry_points.txt
+[0.535s] writing requirements to build/robot/robot.egg-info/requires.txt
+[0.535s] writing top-level names to build/robot/robot.egg-info/top_level.txt
+[0.535s] writing manifest file 'build/robot/robot.egg-info/SOURCES.txt'
+[0.536s] reading manifest file 'build/robot/robot.egg-info/SOURCES.txt'
+[0.536s] writing manifest file 'build/robot/robot.egg-info/SOURCES.txt'
+[0.536s] running build
+[0.536s] running build_py
+[0.536s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build
+[0.536s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib
+[0.536s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+[0.537s] copying robot/pinterfaz.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+[0.537s] copying robot/joint_commander_deg.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+[0.537s] copying robot/ArmTeleop.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+[0.537s] copying robot/fk_3dof_zyy.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+[0.539s] copying robot/fk_marker.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+[0.539s] copying robot/__init__.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+[0.539s] copying robot/joint_state_publisher.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+[0.539s] copying robot/serial_node.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot
+[0.539s] running install
+[0.539s] running install_lib
+[0.539s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+[0.539s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/pinterfaz.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+[0.539s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/joint_commander_deg.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+[0.540s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/ArmTeleop.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+[0.540s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/fk_3dof_zyy.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+[0.540s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/fk_marker.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+[0.540s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/__init__.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+[0.540s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/joint_state_publisher.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+[0.540s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build/lib/robot/serial_node.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot
+[0.540s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/pinterfaz.py to pinterfaz.cpython-310.pyc
+[0.542s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/joint_commander_deg.py to joint_commander_deg.cpython-310.pyc
+[0.543s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/ArmTeleop.py to ArmTeleop.cpython-310.pyc
+[0.543s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/fk_3dof_zyy.py to fk_3dof_zyy.cpython-310.pyc
+[0.544s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/fk_marker.py to fk_marker.cpython-310.pyc
+[0.544s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/__init__.py to __init__.cpython-310.pyc
+[0.544s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/joint_state_publisher.py to joint_state_publisher.cpython-310.pyc
+[0.544s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot/serial_node.py to serial_node.cpython-310.pyc
+[0.545s] running install_data
+[0.545s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/ament_index
+[0.545s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/ament_index/resource_index
+[0.545s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/ament_index/resource_index/packages
+[0.545s] copying resource/robot -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/ament_index/resource_index/packages
+[0.545s] copying package.xml -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot
+[0.546s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/launch
+[0.546s] copying launch/display.launch.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/launch
+[0.546s] copying launch/centauro.launch.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/launch
+[0.546s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/urdf
+[0.546s] copying urdf/robot.xacro -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/urdf
+[0.546s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/config
+[0.546s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/rviz
+[0.546s] running install_egg_info
+[0.547s] Copying build/robot/robot.egg-info to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot-0.0.0-py3.10.egg-info
+[0.547s] running install_scripts
+[0.560s] Installing ArmTeleop script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+[0.560s] Installing fk_marker script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+[0.560s] Installing joint_commander_deg script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+[0.560s] Installing joint_state_publisher script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+[0.560s] Installing mover_robot script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+[0.560s] Installing pinterfaz script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+[0.560s] Installing serial_node script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+[0.560s] Installing test_arm_movement script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+[0.560s] writing list of installed files to '/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/install.log'
+[0.577s] Invoked command in '/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot' returned '0': PYTHONPATH=/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base build/robot build --build-base /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build install --record /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/install.log --single-version-externally-managed install_data
