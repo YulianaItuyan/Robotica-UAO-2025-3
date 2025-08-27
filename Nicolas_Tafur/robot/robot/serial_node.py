@@ -1,4 +1,4 @@
-# mi_br/mi_br/serial_bridge_arduino.py
+# ronot/robot/serial_bridge_arduino.py
 #!/usr/bin/env python3
 import rclpy
 from rclpy.node import Node
