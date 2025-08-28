@@ -80,40 +80,20 @@ class Ros2Bridge(Node):
 
         print("🚀 Versión ACTUALIZADA de pinterfaz cargada correctamente")
         
-        # Publisher principal (para compatibilidad directa)
         self.publisher_ = self.create_publisher(Float32MultiArray, topic_name, 10)
-        
-        # Publisher para movimientos suaves
-        self.smooth_publisher_ = self.create_publisher(Float32MultiArray, '/cmd_deg_smooth', 10)
-        
-        # Publisher para gripper
         self.gripper_publisher_ = self.create_publisher(Float32MultiArray, gripper_topic, 10)
-        
-        # Parámetro para habilitar movimientos suaves
-        self.declare_parameter('use_smooth_motion', True)
-        self.use_smooth_motion = self.get_parameter('use_smooth_motion').value
-        
-        self.get_logger().info(f'Ros2Bridge listo para publicar en {topic_name} y {gripper_topic}')
-        self.get_logger().info(f'Movimientos suaves: {"habilitados" if self.use_smooth_motion else "deshabilitados"}')
+        self.get_logger().info(f'Ros2Bridge listo para paaaaaaublicar en {topic_name} y {gripper_topic}')
 
     def publish_degrees(self, angles_deg):
-        """Publica una lista de floats (grados) en /cmd_deg y opcionalmente en /cmd_deg_smooth."""
+        """Publica una lista de floats (grados) en /cmd_deg."""
         if len(angles_deg) != JOINT_COUNT:
             self.get_logger().warn(f'publish_degrees: se esperaban {JOINT_COUNT} valores, llegaron {len(angles_deg)}')
             return
-        
         msg = Float32MultiArray()
         # Aseguramos float
         msg.data = [float(a) for a in angles_deg]
-        
-        if self.use_smooth_motion:
-            # Publicar en el tópico para movimientos suaves
-            self.smooth_publisher_.publish(msg)
-            self.get_logger().info(f'Publicado en /cmd_deg_smooth: {msg.data}')
-        else:
-            # Publicar en el tópico directo (comportamiento original)
-            self.publisher_.publish(msg)
-            self.get_logger().info(f'Publicado en {TOPIC_NAME}: {msg.data}')
+        self.publisher_.publish(msg)
+        self.get_logger().info(f'Publicado en {TOPIC_NAME}: {msg.data}')
 
     def publish_gripper(self, value):
         """Publica un valor float en /cmd_gripper."""
@@ -222,9 +202,9 @@ class UpperBody(ctk.CTk):
 
         # Radio buttons (opcional)
         self.arm_choise = ctk.IntVar(value=0)
-        rb1 = ctk.CTkRadioButton(top_frame, text="Brazo Izquierdo",command=self.cambio_brazo(3), variable=self.arm_choise, value=1,
+        rb1 = ctk.CTkRadioButton(top_frame, text="Brazo Izquierdo", variable=self.arm_choise, value=1,
                                  text_color="white", font=("Arial", 20))
-        rb2 = ctk.CTkRadioButton(top_frame, text="Brazo Derecho", command=self.cambio_brazo(2), variable=self.arm_choise, value=2,
+        rb2 = ctk.CTkRadioButton(top_frame, text="Brazo Derecho", variable=self.arm_choise, value=2,
                                  text_color="white", font=("Arial", 20))
         rb1.grid(row=0, column=0, sticky="w", pady=2)
         rb2.grid(row=1, column=0, sticky="w", pady=2)
@@ -398,6 +378,7 @@ class UpperBody(ctk.CTk):
         # p es (x,y,z) en las unidades de LINK_LENGTHS (m)
         self.update_coords(p[0], p[1], p[2])
         # ---------------------------------------------------------------------
+        #
 
     def stop(self):
         # Publicar posición neutra (90°, que el otro nodo convertirá a 0° reales)
@@ -427,10 +408,32 @@ class UpperBody(ctk.CTk):
 
 
 
-    def cambio_brazo(self, brazo):
-        self.ros.publish_gripper(brazo)  # 3 = izquierdo, 2 = derecho
-        self.ros.get_logger().info(f'Cambiado a brazo ' {"izquierdo" if brazo == 3 else "derecho"})
 
+
+    # def start_gripper(self, event=None):
+    #     self.gripper_running = True
+    #     self._after_id = self.after(0, self._send_gripper_loop)  # 0 = inmediato
+
+    # def stop_gripper(self, event=None):
+    #     self.gripper_running = False
+    #     if hasattr(self, "_after_id"):
+    #         self.after_cancel(self._after_id)
+
+    # def _send_gripper_loop(self):
+    #     if self.gripper_running:
+    #         self.ros.publish_gripper(1.0)
+    #         self.ros.get_logger().info("⚡ Enviando comando GRIPPER continuo")
+    #         self._after_id = self.after(100, self._send_gripper_loop)
+
+
+
+
+    # def gripper(self):
+    #     # Publicar un mensaje simple en el tópico del gripper
+    #     #msg = Float32MultiArray()
+    #     #msg.data = [1.0] # El valor no importa, solo su existencia
+    #     self.ros.publish_gripper(1.0)
+    #     self.ros.get_logger().info("⚡ Enviado comando GRIPPER en su tópico")
 
     def home(self):
         # Placeholder para orden de "home"
