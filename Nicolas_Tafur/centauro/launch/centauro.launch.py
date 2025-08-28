@@ -1,4 +1,5 @@
 # mi_br/launch/centauro.launch.py
+import os
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
@@ -6,10 +7,22 @@ from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitut
 from launch_ros.substitutions import FindPackageShare
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
+from ament_index_python.packages import get_package_share_directory
+
+
 
 def generate_launch_description():
-    pkg_share = FindPackageShare('mi_br')
-    urdf = PathJoinSubstitution([pkg_share, 'urdf', 'mi_br.urdf.xacro'])
+
+    # Ruta a la carpeta share del paquete
+    pkg_share = FindPackageShare('mi_br').find('mi_br')
+
+    # Ruta completa al URDF estático
+    urdf_path = os.path.join(pkg_share, 'urdf', 'URDF_LINKS.urdf')
+
+    # Cargar el contenido del URDF como string
+    with open(urdf_path, 'r') as urdf_file:
+        urdf_content = urdf_file.read()
+
     rviz_cfg = PathJoinSubstitution([pkg_share, 'rviz', 'mi_br.rviz'])
 
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -20,11 +33,9 @@ def generate_launch_description():
     port = LaunchConfiguration('port')
     baud = LaunchConfiguration('baud')
 
-    robot_description = ParameterValue(
-        Command(['xacro', ' ', urdf]),
-        value_type=str
-    )
 
+    robot_description = ParameterValue(urdf_content, value_type=str)
+    
     nodes = []
 
     # Publica TF y robot_description
@@ -53,7 +64,7 @@ def generate_launch_description():
     nodes.append(Node(
         package='mi_br',
         executable='fk_marker',
-        name='fk_marker'
+        name='fk_marker',
 
     ))
 

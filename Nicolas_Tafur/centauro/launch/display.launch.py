@@ -9,7 +9,7 @@ def generate_launch_description():
         'src',
         'mi_br',
         'urdf',
-        'mi_br.urdf.xacro'
+        'UDRF_LINKS.urdf'
     )
 
     return LaunchDescription([

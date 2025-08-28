@@ -16,6 +16,7 @@ setup(
         (os.path.join('share', package_name, 'urdf'), glob('urdf/*.xacro')),
         (os.path.join('share', package_name, 'config'), glob('config/*.yaml')),
         (os.path.join('share', package_name, 'rviz'), glob('rviz/*.rviz')),
+        (os.path.join('share', package_name, 'meshes'), glob('meshes/*.STL')),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
@@ -34,6 +35,8 @@ setup(
             'fk_marker = mi_br.fk_marker:main',
             'pinterfaz = mi_br.pinterfaz:main',
             'serial_node = mi_br.serial_node:main',
+            'spawn_urdf = mi_br.spawn_urdf:main',
+            'mlol = mi_br.mlol:main',
         ],
     },
 )
