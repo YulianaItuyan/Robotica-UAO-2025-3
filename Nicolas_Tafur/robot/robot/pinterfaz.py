@@ -378,6 +378,7 @@ class UpperBody(ctk.CTk):
         # p es (x,y,z) en las unidades de LINK_LENGTHS (m)
         self.update_coords(p[0], p[1], p[2])
         # ---------------------------------------------------------------------
+        #
 
     def stop(self):
         # Publicar posición neutra (90°, que el otro nodo convertirá a 0° reales)
