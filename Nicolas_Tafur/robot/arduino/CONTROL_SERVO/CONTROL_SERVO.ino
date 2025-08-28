@@ -4,8 +4,8 @@
 #include <ESP32Servo.h>
 
 // Configuración WiFi
-const char* ssid = "Sebastian";
-const char* password = "white0385";
+const char* ssid = "iPhone de Sergio Andres";
+const char* password = "mambobatiri";
 const char* mqtt_server = "test.mosquitto.org";  
 
 // Configuración MQTT

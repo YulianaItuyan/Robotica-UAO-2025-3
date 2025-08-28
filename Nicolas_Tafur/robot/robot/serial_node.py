@@ -66,11 +66,11 @@ class MQTTBridgeROS2(Node):
             self.get_logger().info('✅ Conectado a MQTT broker')
         else:
             self.mqtt_connected = False
-            self.get_logger().error(f'❌ Error conectando a MQTT, código: {rc}')
+            self.get_logger().error(f' Error conectando a MQTT, código: {rc}')
 
     def _on_mqtt_disconnect(self, client, userdata, rc):
         self.mqtt_connected = False
-        self.get_logger().warn('⚠️ Desconectado del MQTT broker')
+        self.get_logger().warn(' Desconectado del MQTT broker')
 
     def _reconnect_if_needed(self):
         if not self.mqtt_connected:
