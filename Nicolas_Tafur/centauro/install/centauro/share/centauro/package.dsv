@@ -1,0 +1,6 @@
+source;share/centauro/hook/pythonpath.ps1
+source;share/centauro/hook/pythonpath.dsv
+source;share/centauro/hook/pythonpath.sh
+source;share/centauro/hook/ament_prefix_path.ps1
+source;share/centauro/hook/ament_prefix_path.dsv
+source;share/centauro/hook/ament_prefix_path.sh

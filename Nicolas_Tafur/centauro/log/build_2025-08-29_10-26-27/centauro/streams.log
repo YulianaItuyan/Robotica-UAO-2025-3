@@ -1,0 +1,107 @@
+[0.374s] Invoking command in '/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro': PYTHONPATH=/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base build/centauro build --build-base /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build install --record /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/install.log --single-version-externally-managed install_data
+[0.517s] running egg_info
+[0.517s] creating build/centauro/mi_br.egg-info
+[0.517s] writing build/centauro/mi_br.egg-info/PKG-INFO
+[0.517s] writing dependency_links to build/centauro/mi_br.egg-info/dependency_links.txt
+[0.517s] writing entry points to build/centauro/mi_br.egg-info/entry_points.txt
+[0.517s] writing requirements to build/centauro/mi_br.egg-info/requires.txt
+[0.517s] writing top-level names to build/centauro/mi_br.egg-info/top_level.txt
+[0.517s] writing manifest file 'build/centauro/mi_br.egg-info/SOURCES.txt'
+[0.518s] reading manifest file 'build/centauro/mi_br.egg-info/SOURCES.txt'
+[0.519s] writing manifest file 'build/centauro/mi_br.egg-info/SOURCES.txt'
+[0.519s] running build
+[0.519s] running build_py
+[0.519s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build
+[0.519s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib
+[0.519s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.519s] copying mi_br/fk_dh_test.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.519s] copying mi_br/pinterfaz.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.519s] copying mi_br/joint_commander_deg.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.519s] copying mi_br/mover_robot.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.519s] copying mi_br/ArmTeleop.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.519s] copying mi_br/fk_3dof_zyy.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.519s] copying mi_br/mi_br_interfaz.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.519s] copying mi_br/mlol.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.519s] copying mi_br/fk_marker.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.519s] copying mi_br/test_arm_movement.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.520s] copying mi_br/__init__.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.520s] copying mi_br/joint_state_publisher.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.520s] copying mi_br/serial_node.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.520s] copying mi_br/spawn_urdf.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br
+[0.520s] running install
+[0.520s] running install_lib
+[0.520s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.520s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/fk_dh_test.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.520s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/pinterfaz.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.520s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/joint_commander_deg.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.520s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/mover_robot.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.520s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/ArmTeleop.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.521s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/fk_3dof_zyy.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.521s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/mi_br_interfaz.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.521s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/mlol.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.521s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/fk_marker.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.521s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/test_arm_movement.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.521s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/__init__.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.521s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/joint_state_publisher.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.521s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/serial_node.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.521s] copying /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build/lib/mi_br/spawn_urdf.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br
+[0.521s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/fk_dh_test.py to fk_dh_test.cpython-310.pyc
+[0.522s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/pinterfaz.py to pinterfaz.cpython-310.pyc
+[0.524s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/joint_commander_deg.py to joint_commander_deg.cpython-310.pyc
+[0.524s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/mover_robot.py to mover_robot.cpython-310.pyc
+[0.524s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/ArmTeleop.py to ArmTeleop.cpython-310.pyc
+[0.525s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/fk_3dof_zyy.py to fk_3dof_zyy.cpython-310.pyc
+[0.525s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/mi_br_interfaz.py to mi_br_interfaz.cpython-310.pyc
+[0.527s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/mlol.py to mlol.cpython-310.pyc
+[0.527s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/fk_marker.py to fk_marker.cpython-310.pyc
+[0.528s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/test_arm_movement.py to test_arm_movement.cpython-310.pyc
+[0.528s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/__init__.py to __init__.cpython-310.pyc
+[0.528s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/joint_state_publisher.py to joint_state_publisher.cpython-310.pyc
+[0.528s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/serial_node.py to serial_node.cpython-310.pyc
+[0.529s] byte-compiling /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br/spawn_urdf.py to spawn_urdf.cpython-310.pyc
+[0.529s] running install_data
+[0.529s] copying resource/mi_br -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/ament_index/resource_index/packages
+[0.529s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br
+[0.529s] copying package.xml -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br
+[0.530s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/launch
+[0.530s] copying launch/simulacion.launch.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/launch
+[0.530s] copying launch/centauro_urdf.launch.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/launch
+[0.530s] copying launch/gazebo.launch.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/launch
+[0.530s] copying launch/control.launch.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/launch
+[0.530s] copying launch/display.launch.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/launch
+[0.530s] copying launch/centauro.launch.py -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/launch
+[0.530s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/urdf
+[0.530s] copying urdf/simple_arm_ros2_control.xacro -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/urdf
+[0.530s] copying urdf/mi_br.urdf.xacro -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/urdf
+[0.530s] copying urdf/simple_arm_description.urdf.xacro -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/urdf
+[0.530s] copying urdf/mi_br_2.urdf.xacro -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/urdf
+[0.530s] copying urdf/simple_arm.urdf.xacro -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/urdf
+[0.530s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/config
+[0.530s] copying config/ros2_control.yaml -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/config
+[0.530s] copying config/mi_br_controllers.yaml -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/config
+[0.530s] copying config/joint_names_URDF_LINKS.yaml -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/config
+[0.530s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/rviz
+[0.530s] copying rviz/mi_br.rviz -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/rviz
+[0.530s] creating /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/meshes
+[0.530s] copying meshes/link_3.STL -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/meshes
+[0.532s] copying meshes/base_link.STL -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/meshes
+[0.533s] copying meshes/link_5.STL -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/meshes
+[0.536s] copying meshes/link_7.STL -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/meshes
+[0.539s] copying meshes/link_2.STL -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/meshes
+[0.539s] copying meshes/link_6.STL -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/meshes
+[0.539s] copying meshes/link_1.STL -> /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/share/mi_br/meshes
+[0.542s] running install_egg_info
+[0.544s] Copying build/centauro/mi_br.egg-info to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info
+[0.544s] running install_scripts
+[0.558s] Installing ArmTeleop script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/mi_br
+[0.558s] Installing fk_marker script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/mi_br
+[0.558s] Installing joint_commander_deg script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/mi_br
+[0.558s] Installing joint_state_publisher script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/mi_br
+[0.558s] Installing mlol script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/mi_br
+[0.558s] Installing mover_robot script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/mi_br
+[0.558s] Installing pinterfaz script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/mi_br
+[0.558s] Installing serial_node script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/mi_br
+[0.558s] Installing spawn_urdf script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/mi_br
+[0.558s] Installing test_arm_movement script to /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/mi_br
+[0.558s] writing list of installed files to '/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/install.log'
+[0.576s] Invoked command in '/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro' returned '0': PYTHONPATH=/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/install/centauro/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base build/centauro build --build-base /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/build install --record /home/jean/ros2_ws/src/Robotica-UAO-2025-3/Nicolas_Tafur/centauro/build/centauro/install.log --single-version-externally-managed install_data
