@@ -1,5 +1,6 @@
 # robot/launch/centauro.launch.py
 from launch import LaunchDescription
+import os
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution, FindExecutable
@@ -10,8 +11,9 @@ from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
-    pkg_share = FindPackageShare('robot')
-    urdf = PathJoinSubstitution([pkg_share, 'urdf', 'robot.xacro'])
+    pkg_share = FindPackageShare('robot').find('robot')
+    urdf = os.path.join(pkg_share, 'urdf', 'URDF_LINKS.urdf')
+    #urdf = PathJoinSubstitution([pkg_share, 'urdf', 'URDF_LINKS.urdf'])
     rviz_cfg = PathJoinSubstitution([pkg_share, 'rviz', 'robot.rviz'])
 
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -22,21 +24,12 @@ def generate_launch_description():
     port = LaunchConfiguration('port')
     baud = LaunchConfiguration('baud')
 
+    # Cargar el contenido del URDF como string
+    with open(urdf, 'r') as urdf_file:
+        urdf_content = urdf_file.read()
     
-    robot_description = ParameterValue(
-  Command([
-    'xacro',        # ejecutable
-    ' ',            # inserta espacio
-    PathJoinSubstitution([
-      FindPackageShare('robot'),
-      'urdf',
-      'robot.xacro'
-    ])
-  ]),
-  value_type=str
-    )
-
-
+    robot_description = ParameterValue(urdf_content, value_type=str)
+    
 
     nodes = []
 
@@ -70,7 +63,7 @@ def generate_launch_description():
 
     ))
 
-    # Nodo ros2_control
+    # Nodo ros2_control ------ creo que innecesario
     nodes.append(Node(
         package='controller_manager',
         executable='ros2_control_node',

@@ -1,5 +1,6 @@
 # robot/launch/centauro.launch.py
 from launch import LaunchDescription
+import os
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution, FindExecutable
@@ -10,8 +11,9 @@ from launch.actions import IncludeLaunchDescription
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 
 def generate_launch_description():
-    pkg_share = FindPackageShare('robot')
-    urdf = PathJoinSubstitution([pkg_share, 'urdf', 'URDF_LINKS.urdf'])
+    pkg_share = FindPackageShare('robot').find('robot')
+    urdf = os.path.join(pkg_share, 'urdf', 'URDF_LINKS.urdf')
+    #urdf = PathJoinSubstitution([pkg_share, 'urdf', 'URDF_LINKS.urdf'])
     rviz_cfg = PathJoinSubstitution([pkg_share, 'rviz', 'robot.rviz'])
 
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -21,19 +23,13 @@ def generate_launch_description():
     serial = LaunchConfiguration('serial')
     port = LaunchConfiguration('port')
     baud = LaunchConfiguration('baud')
-    smooth_motion = LaunchConfiguration('smooth_motion')  # Nueva opción
 
+    # Cargar el contenido del URDF como string
+    with open(urdf, 'r') as urdf_file:
+        urdf_content = urdf_file.read()
     
-    robot_description = ParameterValue(
-    PathJoinSubstitution([
-        FindPackageShare('robot'),
-        'urdf',
-        'URDF_LINKS.urdf'
-    ]),
-    value_type=str
-    )
-
-
+    robot_description = ParameterValue(urdf_content, value_type=str)
+    
 
     nodes = []
 
@@ -64,9 +60,10 @@ def generate_launch_description():
         package='robot',
         executable='fk_marker',
         name='fk_marker'
+
     ))
 
-    # Nodo ros2_control
+    # Nodo ros2_control ------ creo que innecesario
     nodes.append(Node(
         package='controller_manager',
         executable='ros2_control_node',
@@ -77,13 +74,13 @@ def generate_launch_description():
         output='screen'
     ))
 
-    # Spawner del JointTrajectoryController ---------- crep qie innecesario
-    nodes.append(Node(
-        package='controller_manager',
-        executable='spawner',
-        arguments=['joint_trajectory_controller'],
-        output='screen'
-    ))
+    # # Spawner del JointTrajectoryController
+    # nodes.append(Node(
+    #     package='controller_manager',
+    #     executable='spawner',
+    #     arguments=['joint_trajectory_controller'],
+    #     output='screen'
+    # ))
 
     # GUI
     nodes.append(Node(
@@ -91,32 +88,30 @@ def generate_launch_description():
         executable='pinterfaz',
         name='pinterfaz',
         output='screen',
-        parameters=[{
-            'use_smooth_motion': smooth_motion
-        }],
         condition=IfCondition(gui)
     ))
 
-    # Commander que traduce /cmd_deg -> /joint_states Y actúa como action server
+    # nodes.append(Node(
+    # package='robot',
+    # executable='joint_states_to_trajectory',
+    # name='joint_states_to_trajectory',
+    # output='screen'
+    # ))
+    nodes.append(Node(
+        package='controller_manager',
+        executable='spawner',
+        arguments=['joint_trajectory_controller'],
+        output='screen'
+    ))
+
+
+    # # Commander que traduce /cmd_deg -> /joint_states
     nodes.append(Node(
         package='robot',
         executable='joint_commander_deg',
         name='joint_commander_deg',
-        output='screen',
+         output='screen',
         condition=IfCondition(commander)
-    ))
-
-    # NUEVO: Nodo para movimientos suaves (solo si smooth_motion está habilitado)
-    nodes.append(Node(
-        package='robot',
-        executable='joint_trajectory_smoother',
-        name='joint_trajectory_smoother',
-        output='screen',
-        parameters=[{
-            'trajectory_duration': 2.0,  # Duración de cada movimiento
-            'interpolation_points': 15   # Puntos de interpolación
-        }],
-        condition=IfCondition(smooth_motion)
     ))
 
     # Puente serial hacia Arduino
@@ -138,7 +133,6 @@ def generate_launch_description():
         DeclareLaunchArgument('gui', default_value='true'),
         DeclareLaunchArgument('commander', default_value='true'),
         DeclareLaunchArgument('serial', default_value='true'),
-        DeclareLaunchArgument('smooth_motion', default_value='true'),  # NUEVO: habilitar movimientos suaves
         DeclareLaunchArgument('port', default_value='/dev/ttyUSB0'),
         DeclareLaunchArgument('baud', default_value='115200'),
         *nodes

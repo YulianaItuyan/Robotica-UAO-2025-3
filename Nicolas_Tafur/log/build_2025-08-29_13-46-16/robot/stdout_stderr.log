@@ -1,0 +1,26 @@
+running egg_info
+writing ../build/robot/robot.egg-info/PKG-INFO
+writing dependency_links to ../build/robot/robot.egg-info/dependency_links.txt
+writing entry points to ../build/robot/robot.egg-info/entry_points.txt
+writing requirements to ../build/robot/robot.egg-info/requires.txt
+writing top-level names to ../build/robot/robot.egg-info/top_level.txt
+reading manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+writing manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+running build
+running build_py
+copying robot/joint_commander_deg.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+running install
+running install_lib
+copying /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/joint_commander_deg.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+byte-compiling /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/joint_commander_deg.py to joint_commander_deg.cpython-310.pyc
+running install_data
+running install_egg_info
+removing '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.1-py3.10.egg-info' (and everything under it)
+Copying ../build/robot/robot.egg-info to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.1-py3.10.egg-info
+running install_scripts
+Installing fk_marker script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+Installing joint_commander_deg script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+Installing joint_trajectory_smoother script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+Installing pinterfaz script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+Installing serial_node script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+writing list of installed files to '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log'

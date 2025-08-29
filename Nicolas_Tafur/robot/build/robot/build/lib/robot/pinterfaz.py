@@ -11,6 +11,7 @@ import numpy as np
 from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 from rclpy.action import ActionClient
+from std_msgs.msg import String 
 
 # ====== CONFIG ======
 TOPIC_NAME = '/cmd_deg'            # tópico donde publicamos los grados
@@ -75,45 +76,27 @@ def forward_kinematics(q_deg, L):
 
 class Ros2Bridge(Node):
     """Nodo mínimo para publicar Float32MultiArray en /cmd_deg."""
-    def __init__(self, topic_name=TOPIC_NAME, gripper_topic=GRIPPER_TOPIC):
-        super().__init__('mi_br_gui_node')
+    def __init__(self, topic_name=TOPIC_NAME, gripper_topic=GRIPPER_TOPIC, select_topic='/cmd_arm_select'):
+        super().__init__('robot_gui_node')
 
         print("🚀 Versión ACTUALIZADA de pinterfaz cargada correctamente")
         
-        # Publisher principal (para compatibilidad directa)
         self.publisher_ = self.create_publisher(Float32MultiArray, topic_name, 10)
-        
-        # Publisher para movimientos suaves
-        self.smooth_publisher_ = self.create_publisher(Float32MultiArray, '/cmd_deg_smooth', 10)
-        
-        # Publisher para gripper
         self.gripper_publisher_ = self.create_publisher(Float32MultiArray, gripper_topic, 10)
-        
-        # Parámetro para habilitar movimientos suaves
-        self.declare_parameter('use_smooth_motion', True)
-        self.use_smooth_motion = self.get_parameter('use_smooth_motion').value
-        
-        self.get_logger().info(f'Ros2Bridge listo para publicar en {topic_name} y {gripper_topic}')
-        self.get_logger().info(f'Movimientos suaves: {"habilitados" if self.use_smooth_motion else "deshabilitados"}')
+        self.arm_select_publisher_ = self.create_publisher(String, select_topic, 10)  # CORREGIDO: String, no Float32MultiArray
+
+        self.get_logger().info(f'Ros2Bridge listo para publicar en {topic_name} y {gripper_topic} y {select_topic}')
 
     def publish_degrees(self, angles_deg):
-        """Publica una lista de floats (grados) en /cmd_deg y opcionalmente en /cmd_deg_smooth."""
+        """Publica una lista de floats (grados) en /cmd_deg."""
         if len(angles_deg) != JOINT_COUNT:
             self.get_logger().warn(f'publish_degrees: se esperaban {JOINT_COUNT} valores, llegaron {len(angles_deg)}')
             return
-        
         msg = Float32MultiArray()
         # Aseguramos float
         msg.data = [float(a) for a in angles_deg]
-        
-        if self.use_smooth_motion:
-            # Publicar en el tópico para movimientos suaves
-            self.smooth_publisher_.publish(msg)
-            self.get_logger().info(f'Publicado en /cmd_deg_smooth: {msg.data}')
-        else:
-            # Publicar en el tópico directo (comportamiento original)
-            self.publisher_.publish(msg)
-            self.get_logger().info(f'Publicado en {TOPIC_NAME}: {msg.data}')
+        self.publisher_.publish(msg)
+        self.get_logger().info(f'Publicado en {TOPIC_NAME}: {msg.data}')
 
     def publish_gripper(self, value):
         """Publica un valor float en /cmd_gripper."""
@@ -121,6 +104,13 @@ class Ros2Bridge(Node):
         msg.data = [float(value)]
         self.gripper_publisher_.publish(msg)
         self.get_logger().info(f'Publicado en {GRIPPER_TOPIC}: {msg.data}')
+
+    def publish_arm_selection(self, arm_code):
+        """Publica 'A' o 'B' en /cmd_arm_select."""
+        msg = String()
+        msg.data = arm_code
+        self.arm_select_publisher_.publish(msg)
+        self.get_logger().info(f'Publicado en /cmd_arm_select: {msg.data}')
 
 
 class VentanaPrincipal(ctk.CTk):
@@ -220,12 +210,17 @@ class UpperBody(ctk.CTk):
         top_frame = ctk.CTkFrame(self, fg_color="transparent", height=50)
         top_frame.pack(fill="x", padx=10, pady=10)
 
-        # Radio buttons (opcional)
-        self.arm_choise = ctk.IntVar(value=0)
-        rb1 = ctk.CTkRadioButton(top_frame, text="Brazo Izquierdo",command=self.cambio_brazo(3), variable=self.arm_choise, value=1,
-                                 text_color="white", font=("Arial", 20))
-        rb2 = ctk.CTkRadioButton(top_frame, text="Brazo Derecho", command=self.cambio_brazo(2), variable=self.arm_choise, value=2,
-                                 text_color="white", font=("Arial", 20))
+        # CORREGIDO: Variable de instancia definida correctamente
+        self.arm_choice = ctk.IntVar(value=1)  # CORREGIDO: era arm_choise
+        
+        rb1 = ctk.CTkRadioButton(top_frame, text="Brazo Izquierdo",
+                         variable=self.arm_choice, value=1,
+                         command=self.on_arm_selection,
+                         text_color="white", font=("Arial", 20))
+        rb2 = ctk.CTkRadioButton(top_frame, text="Brazo Derecho",
+                         variable=self.arm_choice, value=2,
+                         command=self.on_arm_selection,
+                         text_color="white", font=("Arial", 20))
         rb1.grid(row=0, column=0, sticky="w", pady=2)
         rb2.grid(row=1, column=0, sticky="w", pady=2)
 
@@ -304,7 +299,6 @@ class UpperBody(ctk.CTk):
         self.gripper_running = False
         self._after_id = None  # ID del after para poder cancelarlo
 
-
         abrir_btn = ctk.CTkButton(debajosliders_frame, text="ABRIR GR",
                                     #command=self.gripper,
                                     fg_color="#737373", text_color="white",
@@ -315,8 +309,6 @@ class UpperBody(ctk.CTk):
         # Vincular eventos de presionar y soltar
         abrir_btn.bind("<ButtonPress-1>", lambda e: self.start_gripper(-1))
         abrir_btn.bind("<ButtonRelease-1>", lambda e: self.stop_gripper())
-
-
 
         # Divisor
         self.divisoria2 = ctk.CTkFrame(self, height=2, corner_radius=0, fg_color="#3B3B3B")
@@ -409,11 +401,9 @@ class UpperBody(ctk.CTk):
         p, R, T = forward_kinematics(shifted, LINK_LENGTHS)
         self.update_coords(p[0], p[1], p[2])
 
-
     def start_gripper(self, direction):
         self.gripper_running = True
         self._send_gripper_loop(direction)
-        #self.get_logger().info(f'gripper {direction}')
 
     def stop_gripper(self):
         self.gripper_running = False
@@ -425,12 +415,12 @@ class UpperBody(ctk.CTk):
             self.ros.publish_gripper(direction)  # 1 = cerrar, -1 = abrir
             self._after_id = self.after(100, lambda: self._send_gripper_loop(direction))
 
-
-
-    def cambio_brazo(self, brazo):
-        self.ros.publish_gripper(brazo)  # 3 = izquierdo, 2 = derecho
-        self.ros.get_logger().info(f'Cambiado a brazo  {"izquierdo" if brazo == 3 else "derecho"}')
-
+    def on_arm_selection(self):
+        val = self.arm_choice.get()
+        if val == 1:
+            self.ros.publish_arm_selection('A')
+        elif val == 2:
+            self.ros.publish_arm_selection('B')
 
     def home(self):
         # Placeholder para orden de "home"
