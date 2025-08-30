@@ -61,7 +61,7 @@ dh_params = [
 # Pedir al usuario los ángulos de las articulaciones 1, 3 y 4
 entrada = input(
     "Introduce ángulos de joint 1, 3 y 4 (en grados, separados por espacio):\n> "
-) 
+)
 q_input = [float(x) for x in entrada.strip().split()]
 if len(q_input) != 3:
     raise ValueError("Debes ingresar EXACTAMENTE 3 valores (joints 1, 3 y 4).")

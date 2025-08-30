@@ -9,13 +9,14 @@ import numpy as np
 # ====== CONFIG ======
 TOPIC_NAME = '/cmd_deg'            # tópico donde publicamos los grados
 JOINT_COUNT = 6                    # 6 joints: [L1,L2,L3, R1,R2,R3]
+GRIPPER_TOPIC = '/cmd_gripper'     # tópico para el gripper
 # Default link geometry (used by DH FK). Ajusta si cada brazo tiene distinta geometría.
 DH_PARAMS = [
     # [theta_offset (rad), d (m), a (m), alpha (rad)]  for links 1..4 (link2 has theta always 0)
     [ -np.pi/2,   -0.03,  -0.01,     0.0    ],   # link 1
     [   0.0,    0.00,   0.00,   -np.pi/2],   # link 2 (θ always 0)
-    [-np.pi,  0.050, -0.105,    0.0    ],   # link 3
-    [ np.pi,    0.025, -0.16,     0.0    ],   # link 4
+    [ -np.pi,  0.03, -0.105,    0.0    ],   # link 3
+    [ 0.0,    0.025, -0.16,     0.0    ],   # link 4
 ]
 # ====================
 
@@ -60,7 +61,9 @@ class Ros2Bridge(Node):
     def __init__(self, topic_name=TOPIC_NAME):
         super().__init__('mi_br_gui_node')
         self.publisher_ = self.create_publisher(Float32MultiArray, topic_name, 10)
-        self.get_logger().info(f'Ros2Bridge listo para publicar en {topic_name}')
+        # AGREGADO: Publisher para gripper
+        self.gripper_publisher_ = self.create_publisher(Float32MultiArray, GRIPPER_TOPIC, 10)
+        self.get_logger().info(f'Ros2Bridge listo para publicar en {topic_name} y {GRIPPER_TOPIC}')
 
     def publish_degrees(self, angles_deg):
         if len(angles_deg) != JOINT_COUNT:
@@ -70,6 +73,14 @@ class Ros2Bridge(Node):
         msg.data = [float(a) for a in angles_deg]
         self.publisher_.publish(msg)
         self.get_logger().info(f'Publicado en {TOPIC_NAME}: {msg.data}')
+
+    # AGREGADO: Método para publicar gripper
+    def publish_gripper(self, value):
+        """Publica un valor float en /cmd_gripper."""
+        msg = Float32MultiArray()
+        msg.data = [float(value)]
+        self.gripper_publisher_.publish(msg)
+        self.get_logger().info(f'Publicado en {GRIPPER_TOPIC}: {msg.data}')
 
 
 class VentanaPrincipal(ctk.CTk):
@@ -83,15 +94,18 @@ class VentanaPrincipal(ctk.CTk):
         self.grid_columnconfigure(0, weight=1)
 
         self.boton1 = ctk.CTkButton(self, text="UPPER BODY", command=self.cambio_upper_body, fg_color="#737373",
-                                   text_color="white", corner_radius=10, font=("Arial", 20), width=225, height=75)
+                                   text_color="white", corner_radius=10, font=("Arial", 20), width=225, height=75,
+                                   hover_color="#838181")  # AGREGADO: hover_color
         self.boton1.grid(row=0, column=0, pady=10)
 
         self.boton2 = ctk.CTkButton(self, text="LOWER BODY", command=self.cambio_lower_body, fg_color="#737373",
-                                   text_color="white", corner_radius=10, font=("Arial", 20), width=225, height=75)
+                                   text_color="white", corner_radius=10, font=("Arial", 20), width=225, height=75,
+                                   hover_color="#838181")  # AGREGADO: hover_color
         self.boton2.grid(row=2, column=0, pady=10)
 
         self.boton3 = ctk.CTkButton(self, text="GEARS", command=self.cambio_gears, fg_color="#737373",
-                                   text_color="white", corner_radius=10, font=("Arial", 20), width=225, height=75)
+                                   text_color="white", corner_radius=10, font=("Arial", 20), width=225, height=75,
+                                   hover_color="#838181")  # AGREGADO: hover_color
         self.boton3.grid(row=4, column=0, pady=10)
 
         self.linea = ctk.CTkFrame(self, height=2, corner_radius=0, fg_color="#3B3B3B")
@@ -142,6 +156,10 @@ class UpperBody(ctk.CTk):
         # State: all 6 joints (L1..L3, R1..R3) initialized to 90° (neutral)
         self.all_joints = [90.0] * JOINT_COUNT
 
+        # AGREGADO: Variables de control del gripper
+        self.gripper_running = False
+        self._after_id = None  # ID del after para poder cancelarlo
+
         # ---------- TOP FRAME (radio buttons) -----------
         top_frame = ctk.CTkFrame(self, fg_color="transparent", height=60)
         top_frame.pack(fill="x", padx=10, pady=10)
@@ -157,7 +175,8 @@ class UpperBody(ctk.CTk):
 
         # Records button (placeholder)
         self.boton_records = ctk.CTkButton(top_frame, text="RECORDS", fg_color="#737373", text_color="white",
-                                           corner_radius=7, font=("Arial", 16), width=120, height=24)
+                                           corner_radius=7, font=("Arial", 16), width=120, height=24,
+                                           hover_color="#838181")  # AGREGADO: hover_color
         self.boton_records.place(relx=1, x=-10, rely=0.5, anchor="e")
 
         # ---------- SLIDERS FRAME ----------
@@ -170,15 +189,15 @@ class UpperBody(ctk.CTk):
         # Example: limit J1 to [10,170] and invert direction -> (10,170,160,True)
         # YOU MUST SET limits FOR THE 3 SLIDERS (they represent joints 1,3,4 for the DH FK)
         self.LEFT_SLIDER_CONFIGS = [
-            (0.0, 180.0, 180, False),  # Left slider J1 -> joint1
-            (0.0, 180.0, 180, False),  # Left slider J2 -> joint3
-            (0.0, 180.0, 180, False),  # Left slider J3 -> joint4
+            (0.0, 96.0, 96, False),  # Left slider J1 -> joint1
+            (65.0, 180.0, 115, False),  # Left slider J2 -> joint3
+            (0.0, 110.0, 110, False),  # Left slider J3 -> joint4
         ]
         # If right arm has different limits, set them here:
         self.RIGHT_SLIDER_CONFIGS = [
-            (0.0, 180.0, 180, False),  # Right slider J1 -> joint1 (right)
-            (0.0, 180.0, 180, False),  # Right slider J2 -> joint3 (right)
-            (0.0, 180.0, 180, False),  # Right slider J3 -> joint4 (right)
+            (0.0, 96.0, 96, False),  # Right slider J1 -> joint1 (right)
+            (65.0, 180.0, 115, False),  # Right slider J2 -> joint3 (right)
+            (0.0, 110.0, 110, False),  # Right slider J3 -> joint4 (right)
         ]
         # ----------------------------------------------------------------
 
@@ -228,17 +247,36 @@ class UpperBody(ctk.CTk):
         debajosliders_frame.grid_columnconfigure(1, weight=0)
         debajosliders_frame.grid_columnconfigure(2, weight=0)
         debajosliders_frame.grid_columnconfigure(3, weight=0)
-        debajosliders_frame.grid_columnconfigure(4, weight=1)
+        debajosliders_frame.grid_columnconfigure(4, weight=0)
+        debajosliders_frame.grid_columnconfigure(5, weight=1)
 
         Confirmar_btn = ctk.CTkButton(debajosliders_frame, text="CONFIRMAR", command=self.confirmar,
                                       fg_color="#737373", text_color="white",
-                                      corner_radius=10, font=("Arial", 20), width=50, height=75)
+                                      corner_radius=10, font=("Arial", 20), width=50, height=75,
+                                      hover_color="#838181")  # AGREGADO: hover_color
         Confirmar_btn.grid(row=0, column=1, padx=10)
 
-        gripper_btn = ctk.CTkButton(debajosliders_frame, text="GRIPPER", command=self.gripper,
+        # MODIFICADO: Gripper con control por presión (cerrar)
+        gripper_btn = ctk.CTkButton(debajosliders_frame, text="CERRAR GR",
                                     fg_color="#737373", text_color="white", corner_radius=10,
-                                    font=("Arial", 20), width=50, height=75)
-        gripper_btn.grid(row=0, column=3, padx=10)
+                                    font=("Arial", 20), width=50, height=75,
+                                    hover_color="#838181")  # AGREGADO: hover_color
+        gripper_btn.grid(row=0, column=2, padx=10)
+
+        # AGREGADO: Vincular eventos de presionar y soltar para cerrar gripper
+        gripper_btn.bind("<ButtonPress-1>", lambda e: self.start_gripper(1))
+        gripper_btn.bind("<ButtonRelease-1>", lambda e: self.stop_gripper())
+
+        # AGREGADO: Botón para abrir gripper
+        abrir_btn = ctk.CTkButton(debajosliders_frame, text="ABRIR GR",
+                                    fg_color="#737373", text_color="white", corner_radius=10,
+                                    font=("Arial", 20), width=50, height=75,
+                                    hover_color="#838181")
+        abrir_btn.grid(row=0, column=3, padx=10)
+
+        # AGREGADO: Vincular eventos de presionar y soltar para abrir gripper
+        abrir_btn.bind("<ButtonPress-1>", lambda e: self.start_gripper(-1))
+        abrir_btn.bind("<ButtonRelease-1>", lambda e: self.stop_gripper())
 
         # ---------- COORDINATES DISPLAY (X,Y,Z) ----------
         coord_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -274,18 +312,21 @@ class UpperBody(ctk.CTk):
 
         back_btn = ctk.CTkButton(bottom_frame, text="BACK", command=self.volver_menu,
                                  fg_color="#737373", text_color="white",
-                                 corner_radius=20, font=("Arial", 20), width=80, height=70)
+                                 corner_radius=20, font=("Arial", 20), width=80, height=70,
+                                 hover_color="#838181")  # AGREGADO: hover_color
         back_btn.grid(row=0, column=1, padx=10, pady=20)
 
         stop_btn = ctk.CTkButton(bottom_frame, text="STOP", command=self.stop,
                                  fg_color="#737373", text_color="white",
                                  corner_radius=90, font=("Arial", 20),
-                                 width=80, height=100)
+                                 width=80, height=100,
+                                 hover_color="#838181")  # AGREGADO: hover_color
         stop_btn.grid(row=0, column=2, padx=10, pady=20)
 
         home_btn = ctk.CTkButton(bottom_frame, text="HOME", command=self.home,
                                  fg_color="#737373", text_color="white",
-                                 corner_radius=20, font=("Arial", 20), width=80, height=70)
+                                 corner_radius=20, font=("Arial", 20), width=80, height=70,
+                                 hover_color="#838181")  # AGREGADO: hover_color
         home_btn.grid(row=0, column=3, padx=10, pady=20)
 
         self.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -362,7 +403,26 @@ class UpperBody(ctk.CTk):
         T_total, p = fk_from_dh(sliders, DH_PARAMS)
         self.update_coords(p[0], p[1], p[2])
 
+    # AGREGADO: Métodos para control del gripper por presión
+    def start_gripper(self, direction):
+        """Inicia el gripper en la dirección especificada (1=cerrar, -1=abrir)."""
+        self.gripper_running = True
+        self._send_gripper_loop(direction)
+
+    def stop_gripper(self):
+        """Detiene el gripper."""
+        self.gripper_running = False
+        if self._after_id:
+            self.after_cancel(self._after_id)
+
+    def _send_gripper_loop(self, direction):
+        """Loop que envía comandos del gripper mientras esté presionado."""
+        if self.gripper_running:
+            self.ros.publish_gripper(direction)  # 1 = cerrar, -1 = abrir
+            self._after_id = self.after(100, lambda: self._send_gripper_loop(direction))
+
     def gripper(self):
+        # Método original mantenido por compatibilidad (ahora vacío)
         pass
 
     def home(self):
@@ -411,4 +471,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
