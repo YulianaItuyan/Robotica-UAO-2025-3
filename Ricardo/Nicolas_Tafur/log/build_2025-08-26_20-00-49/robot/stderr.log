@@ -1,0 +1,5 @@
+  File "/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/pinterfaz.py", line 432
+    self.ros.get_logger().info(f'Cambiado a brazo ' {"izquierdo" if brazo == 3 else "derecho"})
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: invalid syntax. Perhaps you forgot a comma?
+

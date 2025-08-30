@@ -21,6 +21,7 @@ def generate_launch_description():
     serial = LaunchConfiguration('serial')
     port = LaunchConfiguration('port')
     baud = LaunchConfiguration('baud')
+    #smooth_motion = LaunchConfiguration('smooth_motion')  # Nueva opción
 
     # Cargar el contenido del URDF como string
     with open(urdf, 'r') as urdf_file:
@@ -67,6 +68,19 @@ def generate_launch_description():
         output='screen',
         condition=IfCondition(gui)
     ))
+
+    # NUEVO: Nodo para movimientos suaves (solo si smooth_motion está habilitado)
+    # nodes.append(Node(
+    #     package='robot',
+    #     executable='joint_trajectory_smoother',
+    #     name='joint_trajectory_smoother',
+    #     output='screen',
+    #     parameters=[{
+    #         'trajectory_duration': 2.0,  # Duración de cada movimiento
+    #         'interpolation_points': 15   # Puntos de interpolación
+    #     }],
+    #     condition=IfCondition(smooth_motion)
+    # ))
 
     # Joint Commander con interpolación suave (ESTE ES EL CLAVE)
     nodes.append(Node(

@@ -1,0 +1,29 @@
+[0.567s] Invoking command in '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot': PYTHONPATH=/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot build --build-base /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build install --record /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log --single-version-externally-managed install_data
+[0.769s] running egg_info
+[0.769s] writing ../build/robot/robot.egg-info/PKG-INFO
+[0.769s] writing dependency_links to ../build/robot/robot.egg-info/dependency_links.txt
+[0.769s] writing entry points to ../build/robot/robot.egg-info/entry_points.txt
+[0.770s] writing requirements to ../build/robot/robot.egg-info/requires.txt
+[0.770s] writing top-level names to ../build/robot/robot.egg-info/top_level.txt
+[0.772s] reading manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+[0.773s] writing manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+[0.773s] running build
+[0.773s] running build_py
+[0.773s] running install
+[0.774s] running install_lib
+[0.775s] running install_data
+[0.775s] copying urdf/robot.xacro -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/urdf
+[0.775s] running install_egg_info
+[0.777s] removing '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.0-py3.10.egg-info' (and everything under it)
+[0.777s] Copying ../build/robot/robot.egg-info to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.0-py3.10.egg-info
+[0.778s] running install_scripts
+[0.796s] Installing ArmTeleop script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.796s] Installing fk_marker script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.796s] Installing joint_commander_deg script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.797s] Installing joint_state_publisher script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.797s] Installing mover_robot script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.797s] Installing pinterfaz script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.797s] Installing serial_node script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.797s] Installing test_arm_movement script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.797s] writing list of installed files to '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log'
+[0.827s] Invoked command in '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot' returned '0': PYTHONPATH=/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot build --build-base /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build install --record /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log --single-version-externally-managed install_data

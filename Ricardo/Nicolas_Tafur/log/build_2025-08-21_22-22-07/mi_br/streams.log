@@ -1,0 +1,70 @@
+[0.735s] Invoking command in '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/mi_br': PYTHONPATH=/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/mi_br build --build-base /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build install --record /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/install.log --single-version-externally-managed install_data
+[0.954s] running egg_info
+[0.955s] creating ../build/mi_br/mi_br.egg-info
+[0.955s] writing ../build/mi_br/mi_br.egg-info/PKG-INFO
+[0.956s] writing dependency_links to ../build/mi_br/mi_br.egg-info/dependency_links.txt
+[0.956s] writing entry points to ../build/mi_br/mi_br.egg-info/entry_points.txt
+[0.956s] writing requirements to ../build/mi_br/mi_br.egg-info/requires.txt
+[0.956s] writing top-level names to ../build/mi_br/mi_br.egg-info/top_level.txt
+[0.956s] writing manifest file '../build/mi_br/mi_br.egg-info/SOURCES.txt'
+[0.958s] reading manifest file '../build/mi_br/mi_br.egg-info/SOURCES.txt'
+[0.959s] writing manifest file '../build/mi_br/mi_br.egg-info/SOURCES.txt'
+[0.959s] running build
+[0.959s] running build_py
+[0.960s] creating /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build
+[0.960s] creating /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib
+[0.960s] creating /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br
+[0.960s] copying mi_br/fk_marker.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br
+[0.960s] copying mi_br/joint_state_publisher.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br
+[0.960s] copying mi_br/fk_3dof_zyy.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br
+[0.960s] copying mi_br/pinterfaz.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br
+[0.960s] copying mi_br/serial_node.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br
+[0.961s] copying mi_br/joint_commander_deg.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br
+[0.961s] copying mi_br/ArmTeleop.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br
+[0.961s] copying mi_br/__init__.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br
+[0.961s] running install
+[0.961s] running install_lib
+[0.962s] creating /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br
+[0.962s] copying /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br/fk_marker.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br
+[0.962s] copying /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br/joint_state_publisher.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br
+[0.962s] copying /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br/fk_3dof_zyy.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br
+[0.962s] copying /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br/pinterfaz.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br
+[0.963s] copying /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br/serial_node.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br
+[0.963s] copying /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br/joint_commander_deg.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br
+[0.963s] copying /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br/ArmTeleop.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br
+[0.963s] copying /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build/lib/mi_br/__init__.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br
+[0.963s] byte-compiling /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/fk_marker.py to fk_marker.cpython-310.pyc
+[0.964s] byte-compiling /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/joint_state_publisher.py to joint_state_publisher.cpython-310.pyc
+[0.965s] byte-compiling /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/fk_3dof_zyy.py to fk_3dof_zyy.cpython-310.pyc
+[0.966s] byte-compiling /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/pinterfaz.py to pinterfaz.cpython-310.pyc
+[0.969s] byte-compiling /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/serial_node.py to serial_node.cpython-310.pyc
+[0.969s] byte-compiling /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/joint_commander_deg.py to joint_commander_deg.cpython-310.pyc
+[0.970s] byte-compiling /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/ArmTeleop.py to ArmTeleop.cpython-310.pyc
+[0.970s] byte-compiling /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__init__.py to __init__.cpython-310.pyc
+[0.970s] running install_data
+[0.971s] creating /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/ament_index
+[0.971s] creating /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/ament_index/resource_index
+[0.971s] creating /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/ament_index/resource_index/packages
+[0.971s] copying resource/mi_br -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/ament_index/resource_index/packages
+[0.971s] copying package.xml -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br
+[0.971s] creating /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/launch
+[0.971s] copying launch/display.launch.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/launch
+[0.971s] copying launch/centauro.launch.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/launch
+[0.971s] creating /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/urdf
+[0.971s] copying urdf/mi_br.urdf.xacro -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/urdf
+[0.971s] creating /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/config
+[0.971s] creating /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/rviz
+[0.971s] copying rviz/mi_br.rviz -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/rviz
+[0.971s] running install_egg_info
+[0.973s] Copying ../build/mi_br/mi_br.egg-info to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info
+[0.974s] running install_scripts
+[0.995s] Installing ArmTeleop script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br
+[0.996s] Installing fk_marker script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br
+[0.996s] Installing joint_commander_deg script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br
+[0.996s] Installing joint_state_publisher script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br
+[0.996s] Installing mover_robot script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br
+[0.996s] Installing pinterfaz script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br
+[0.996s] Installing serial_node script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br
+[0.997s] Installing test_arm_movement script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br
+[0.997s] writing list of installed files to '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/install.log'
+[1.061s] Invoked command in '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/mi_br' returned '0': PYTHONPATH=/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/mi_br build --build-base /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/build install --record /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/build/mi_br/install.log --single-version-externally-managed install_data
