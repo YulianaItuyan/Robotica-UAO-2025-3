@@ -1,0 +1,24 @@
+[0.576s] Invoking command in '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot': PYTHONPATH=/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build --no-deps symlink_data
+[0.803s] running develop
+[0.941s] running egg_info
+[0.942s] writing robot.egg-info/PKG-INFO
+[0.942s] writing dependency_links to robot.egg-info/dependency_links.txt
+[0.942s] writing entry points to robot.egg-info/entry_points.txt
+[0.942s] writing requirements to robot.egg-info/requires.txt
+[0.942s] writing top-level names to robot.egg-info/top_level.txt
+[0.943s] reading manifest file 'robot.egg-info/SOURCES.txt'
+[0.944s] writing manifest file 'robot.egg-info/SOURCES.txt'
+[0.945s] running build_ext
+[0.945s] Creating /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot.egg-link (link to .)
+[0.946s] Installing ArmTeleop script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.946s] Installing fk_marker script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.946s] Installing joint_commander_deg script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.946s] Installing joint_state_publisher script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.946s] Installing mover_robot script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.947s] Installing pinterfaz script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.947s] Installing serial_node script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.947s] Installing test_arm_movement script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.947s] 
+[0.947s] Installed /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot
+[0.947s] running symlink_data
+[0.982s] Invoked command in '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot' returned '0': PYTHONPATH=/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build --no-deps symlink_data

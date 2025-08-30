@@ -234,6 +234,7 @@ class UpperBody(ctk.CTk):
         self.divisoria.pack(fill="x", padx=10, pady=20)
 
         # === Sliders ===============================
+                # === Sliders ===============================
         sliders_frame = ctk.CTkFrame(self, fg_color="transparent")
         sliders_frame.pack(fill="x", padx=10, pady=10)
 
@@ -242,29 +243,47 @@ class UpperBody(ctk.CTk):
         sliders_frame.grid_columnconfigure(2, weight=0)
         sliders_frame.grid_columnconfigure(3, weight=0)
         sliders_frame.grid_columnconfigure(4, weight=0)
-        sliders_frame.grid_columnconfigure(5, weight=0)
-        sliders_frame.grid_columnconfigure(6, weight=1)
+        sliders_frame.grid_columnconfigure(5, weight=1)
 
-        self.slider_vars = []  # guardamos las variables para leer en "confirmar"
+        self.slider_vars = []
 
-        for i in range(3):
-            lbl = ctk.CTkLabel(sliders_frame, text=f"J{i+1}", text_color="#737373", font=("Arial", 15))
+        # Configuración de rangos específicos
+        slider_configs = [
+            {"min": 0,   "max": 125},   # J1
+            {"min": 55,  "max": 180},   # J2
+            {"min": 20,  "max": 180}    # J3
+        ]
+
+        for i, cfg in enumerate(slider_configs):
+            lbl = ctk.CTkLabel(sliders_frame, text=f"J{i+1}", 
+                               text_color="#737373", font=("Arial", 15))
             lbl.grid(row=i, column=1, padx=5, pady=5, sticky="w")
 
-            # Valor por defecto colocado en 90 -> esto representa posición "neutra" (0° real en URDF)
-            slider_value = ctk.DoubleVar(value=90)
+            # Valor inicial centrado en el rango
+            init_val = round(((cfg["min"] + cfg["max"]) / 2),0)
+            slider_value = ctk.DoubleVar(value=init_val)
             self.slider_vars.append(slider_value)
 
-            value_lbl = ctk.CTkLabel(sliders_frame, textvariable=slider_value, text_color="white", font=("Arial", 15))
+            # Label dinámico con valor actual
+            value_lbl = ctk.CTkLabel(sliders_frame, textvariable=slider_value, 
+                                     text_color="white", font=("Arial", 15))
             value_lbl.grid(row=i, column=2, padx=5, pady=5, sticky="n")
 
-            slider = ctk.CTkSlider(sliders_frame, from_=0, to=180, number_of_steps=180,
+            # Slider con sus límites personalizados
+            slider = ctk.CTkSlider(sliders_frame, 
+                                   from_=cfg["min"], to=cfg["max"], 
+                                   number_of_steps=int(cfg["max"] - cfg["min"]),
                                    variable=slider_value,
                                    command=lambda val, var=slider_value: var.set(int(float(val))))
             slider.grid(row=i, column=3, padx=5, pady=5, sticky="ew")
 
-            range_lbl = ctk.CTkLabel(sliders_frame, text="0-180", text_color="#737373", font=("Arial", 10))
+            # Mostrar rango real al lado
+            range_lbl = ctk.CTkLabel(sliders_frame, 
+                                     text=f"{cfg['min']} - {cfg['max']}", 
+                                     text_color="#737373", font=("Arial", 10))
             range_lbl.grid(row=i, column=4, padx=5, pady=5, sticky="e")
+
+
 
         # === Botones Confirmar / Gripper ===========
         debajosliders_frame = ctk.CTkFrame(self, fg_color="transparent")

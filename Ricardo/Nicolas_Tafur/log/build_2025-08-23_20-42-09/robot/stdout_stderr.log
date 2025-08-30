@@ -1,0 +1,27 @@
+running develop
+running egg_info
+writing robot.egg-info/PKG-INFO
+writing dependency_links to robot.egg-info/dependency_links.txt
+writing entry points to robot.egg-info/entry_points.txt
+writing requirements to robot.egg-info/requires.txt
+writing top-level names to robot.egg-info/top_level.txt
+reading manifest file 'robot.egg-info/SOURCES.txt'
+writing manifest file 'robot.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot.egg-link (link to .)
+Installing ArmTeleop script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+Installing fk_marker script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+Installing joint_commander_deg script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+Installing joint_state_publisher script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+Installing mover_robot script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+Installing pinterfaz script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+Installing serial_node script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+Installing test_arm_movement script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+
+Installed /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot
+running symlink_data
+symbolically linking /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/resource/robot -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/ament_index/resource_index/packages
+symbolically linking /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/package.xml -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot
+symbolically linking /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/launch/display.launch.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/launch
+symbolically linking /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/launch/centauro.launch.py -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/launch
+symbolically linking /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/urdf/robot.xacro -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/urdf
