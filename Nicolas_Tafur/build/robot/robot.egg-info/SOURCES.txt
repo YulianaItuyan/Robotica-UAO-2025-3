@@ -10,7 +10,6 @@ setup.py
 ../build/robot/robot.egg-info/zip-safe
 config/joint_trajectory_controller.yaml
 launch/centauro.launch.py
-launch/display.launch.py
 meshes/base_link.STL
 meshes/link_1.STL
 meshes/link_2.STL
@@ -19,17 +18,13 @@ meshes/link_5.STL
 meshes/link_6.STL
 meshes/link_7.STL
 resource/robot
-robot/ArmTeleop.py
 robot/__init__.py
-robot/clicks.py
 robot/fk_3dof_zyy.py
 robot/fk_marker.py
 robot/joint_commander_deg.py
-robot/joint_state_publisher.py
-robot/joint_states_to_trajectory.py
-robot/joint_trajectory_smoother.py
 robot/pinterfaz.py
 robot/serial_node.py
+rviz/robot.rviz
 test/test_copyright.py
 test/test_flake8.py
 test/test_pep257.py

@@ -15,63 +15,58 @@ from std_msgs.msg import String
 
 # ====== CONFIG ======
 TOPIC_NAME = '/cmd_deg'            # tópico donde publicamos los grados
-JOINT_COUNT = 3
+JOINT_COUNT = 6
 GRIPPER_TOPIC = '/cmd_gripper'  # tópico para el gripper
-# Longitudes de eslabón (ajusta a tus medidas reales)
-LINK_LENGTHS = [0.35, 0.2, 0.2]  # en metros
-# ====================
 
 # Estilo global UI
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
+# Longitudes de eslabón (ajusta a tus medidas reales)
+DH_PARAMS = [
+    # [theta_offset (rad), d (m), a (m), alpha (rad)]  for links 1..4 (link2 has theta always 0)
+    [ -np.pi/2,   -0.03,  -0.01,     0.0    ],   # link 1
+    [   0.0,    0.00,   0.00,   -np.pi/2],   # link 2 (θ always 0)
+    [ -np.pi,  0.03, -0.105,    0.0    ],   # link 3
+    [ 0.0,    0.025, -0.16,     0.0    ],   # link 4
+]
+# ====================
 
-# ------------------ FUNCIONES DE CINEMÁTICA DIRECTA ------------------
-def rot_z(theta):
-    c, s = np.cos(theta), np.sin(theta)
-    R = np.array([[c, -s, 0.0],
-                  [s,  c, 0.0],
-                  [0.0, 0.0, 1.0]])
-    return R
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
 
-def rot_y(theta):
-    c, s = np.cos(theta), np.sin(theta)
-    R = np.array([[ c, 0.0,  s],
-                  [0.0, 1.0, 0.0],
-                  [-s, 0.0,  c]])
-    return R
+# ------------------ DH FUNCTIONS (denavit) ------------------
+def denavit(theta, d, a, alpha):
+    cth, sth = np.cos(theta), np.sin(theta)
+    cal, sal = np.cos(alpha), np.sin(alpha)
+    return np.array([
+        [ cth,    -sth * cal,   sth * sal,   a * cth ],
+        [ sth,     cth * cal,  -cth * sal,   a * sth ],
+        [ 0.0,        sal,         cal,        d   ],
+        [ 0.0,        0.0,         0.0,      1.0  ]
+    ], dtype=float)
 
-def to_hom(R, p):
-    T = np.eye(4)  #Crea una matriz identidad 4x4
-    T[:3,:3] = R    # Asigna la rotación a la parte superior izquierda
-    T[:3, 3] = p    # Asigna la posición al vector de traslación
-    # T es ahora una matriz homogénea 4x4
-    return T
-
-def Tx(L):
-    T = np.eye(4)
-    T[2,3] = L
-    return T
-
-def forward_kinematics(q_deg, L):
+def fk_from_dh(q_deg_triplet, dh_params=DH_PARAMS):
     """
-    q_deg: [q1_deg, q2_deg, q3_deg] in degrees (already shifted if needed)
-    L:     [L1, L2, L3] link lengths
-    Model: T = Rz(q1) * Tx(L1) * Ry(q2) * Tx(L2) * Ry(q3) * Tx(L3)
-    Returns: p (3,), R (3,3), T (4,4)
+    q_deg_triplet: list/tuple of 3 angles in degrees that correspond to joints:
+        - slider1 -> joint1
+        - slider2 -> joint3
+        - slider3 -> joint4
+    That reconstructs complete q_deg = [q1, 0.0, q3, q4] (link2 theta=0).
+    Returns: T_total (4x4), translation p (3,)
+    IMPORTANT: this function uses the **angles as provided by the GUI** (no shift applied).
     """
-    q = np.deg2rad(np.array(q_deg, dtype=float))
-    L1, L2, L3 = L
+    # Build q_deg list for DH order: [joint1, joint2(always 0), joint3, joint4]
+    q_deg = [float(q_deg_triplet[0]), 0.0, float(q_deg_triplet[1]), float(q_deg_triplet[2])]
 
-    T01 = to_hom(rot_z(q[0]), np.zeros(3)) @ Tx(L1)
-    T12 = to_hom(rot_y(q[1]), np.zeros(3)) @ Tx(L2)
-    T23 = to_hom(rot_y(q[2]), np.zeros(3)) @ Tx(L3)
-
-    T03 = T01 @ T12 @ T23
-    p = T03[:3, 3]
-    R = T03[:3, :3]
-    return p, R, T03
-# --------------------------------------------------------------------
+    T_total = np.eye(4)
+    for i, (theta_off, d, a, alpha) in enumerate(dh_params, start=1):
+        theta = np.deg2rad(q_deg[i-1]) + theta_off
+        T_i = denavit(theta, d, a, alpha)
+        T_total = T_total @ T_i
+    p = T_total[:3, 3]
+    return T_total, p
+# -----------------------------------------------------------
 
 
 class Ros2Bridge(Node):
@@ -84,16 +79,20 @@ class Ros2Bridge(Node):
         self.publisher_ = self.create_publisher(Float32MultiArray, topic_name, 10)
         self.gripper_publisher_ = self.create_publisher(Float32MultiArray, gripper_topic, 10)
         self.arm_select_publisher_ = self.create_publisher(String, select_topic, 10)  # CORREGIDO: String, no Float32MultiArray
+        #self.smooth_publisher_ = self.create_publisher(Float32MultiArray, '/cmd_deg_smooth', 10)  # Para movimientos suaves
 
-        self.get_logger().info(f'Ros2Bridge listo para publicar en {topic_name} y {gripper_topic} y {select_topic}')
+        # parametros
+        self.declare_parameter('use_smooth_motion', False)
+        self.use_smooth_motion = self.get_parameter('use_smooth_motion').value
+        
+        self.get_logger().info(f'Ros2Bridge listo para publicar en {topic_name} y {gripper_topic} y {select_topic} y {"/cmd_deg_smooth"}')
+        self.get_logger().info(f'Movimientos suaves: {"habilitados" if self.use_smooth_motion else "deshabilitados"}')
 
     def publish_degrees(self, angles_deg):
-        """Publica una lista de floats (grados) en /cmd_deg."""
         if len(angles_deg) != JOINT_COUNT:
             self.get_logger().warn(f'publish_degrees: se esperaban {JOINT_COUNT} valores, llegaron {len(angles_deg)}')
             return
         msg = Float32MultiArray()
-        # Aseguramos float
         msg.data = [float(a) for a in angles_deg]
         self.publisher_.publish(msg)
         self.get_logger().info(f'Publicado en {TOPIC_NAME}: {msg.data}')
@@ -209,6 +208,8 @@ class UpperBody(ctk.CTk):
         # === Frame superior ========================
         top_frame = ctk.CTkFrame(self, fg_color="transparent", height=50)
         top_frame.pack(fill="x", padx=10, pady=10)
+
+        self.all_joints = [90.0] * JOINT_COUNT
 
         # CORREGIDO: Variable de instancia definida correctamente
         self.arm_choice = ctk.IntVar(value=1)  # CORREGIDO: era arm_choise
@@ -394,31 +395,51 @@ class UpperBody(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
     # ======= Callbacks UI =======
-    def confirmar(self):
-        # Obtenemos los grados directamente (0..180). Tu nodo 'joint_commander_deg'
-        # ya espera grados en /cmd_deg y hace el shift (-90) internamente.
-        angles_deg = [float(v.get()) for v in self.slider_vars]
-        self.ros.publish_degrees(angles_deg)
 
-        # ---------------------------------------------------------------------
-        # Calcular la FK y actualizar las coordenadas en la interfaz
-        # Aplicamos el mismo shift que usa joint_commander_deg (90° GUI -> 0° real)
-        shifted = [a - 90.0 for a in angles_deg]
-        # Usamos las longitudes definidas en LINK_LENGTHS
-        p, R, T = forward_kinematics(shifted, LINK_LENGTHS)
-        # p es (x,y,z) en las unidades de LINK_LENGTHS (m)
+    def read_sliders(self):
+        """Return list of 3 slider values (float) in the order [s1,s2,s3]."""
+        return [float(v.get()) for v in self.slider_vars]
+    
+    def confirmar(self):
+        sliders = self.read_sliders()  # three values from GUI (these are the angles DH expects)
+        arm = int(self.arm_choice.get())
+        start = 0 if arm == 1 else 3
+
+        # Update internal all_joints state
+        for i, val in enumerate(sliders):
+            self.all_joints[start + i] = val
+
+        # Publish 6 values (L1..L3, R1..R3)
+        self.ros.publish_degrees(self.all_joints)
+
+        # Compute DH FK using the sliders as [joint1, joint3, joint4]
+        # Mapping: slider1 -> joint1, slider2 -> joint3, slider3 -> joint4
+        T_total, p = fk_from_dh(sliders, DH_PARAMS)  # uses the GUI angles directly
+        # Update coordinate display (p is in meters per DH_PARAMS)
         self.update_coords(p[0], p[1], p[2])
         # ---------------------------------------------------------------------
 
     def stop(self):
-        # Publicar posición neutra (90°, que el otro nodo convertirá a 0° reales)
-        neutral = [90.0 for _ in range(JOINT_COUNT)]
-        self.ros.publish_degrees(neutral)
+        # Definir posición neutra
+        neutral = [90, 90, 0,   90, 90, 0]
 
-        # Actualizar la FK para la posición neutra también
-        shifted = [a - 90.0 for a in neutral]
-        p, R, T = forward_kinematics(shifted, LINK_LENGTHS)
+        # Actualizar estado interno
+        self.all_joints = neutral.copy()
+
+        # Publicar al tópico
+        self.ros.publish_degrees(self.all_joints)
+
+        # --- Actualizar sliders del brazo activo ---
+        arm = int(self.arm_choice.get())
+        start = 0 if arm == 1 else 3
+        for i in range(3):
+            self.slider_vars[i].set(self.all_joints[start + i])
+
+        # --- Calcular y mostrar coordenadas ---
+        sliders = self.read_sliders()  # lee los 3 sliders ya actualizados
+        T_total, p = fk_from_dh(sliders, DH_PARAMS)
         self.update_coords(p[0], p[1], p[2])
+
 
     def start_gripper(self, direction):
         self.gripper_running = True
