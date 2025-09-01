@@ -95,17 +95,17 @@ class VentanaPrincipal(ctk.CTk):
 
         self.boton1 = ctk.CTkButton(self, text="UPPER BODY", command=self.cambio_upper_body, fg_color="#737373",
                                    text_color="white", corner_radius=10, font=("Arial", 20), width=225, height=75,
-                                   hover_color="#838181")  # AGREGADO: hover_color
+                                   hover_color="#838181")
         self.boton1.grid(row=0, column=0, pady=10)
 
         self.boton2 = ctk.CTkButton(self, text="LOWER BODY", command=self.cambio_lower_body, fg_color="#737373",
                                    text_color="white", corner_radius=10, font=("Arial", 20), width=225, height=75,
-                                   hover_color="#838181")  # AGREGADO: hover_color
+                                   hover_color="#838181")
         self.boton2.grid(row=2, column=0, pady=10)
 
         self.boton3 = ctk.CTkButton(self, text="GEARS", command=self.cambio_gears, fg_color="#737373",
                                    text_color="white", corner_radius=10, font=("Arial", 20), width=225, height=75,
-                                   hover_color="#838181")  # AGREGADO: hover_color
+                                   hover_color="#838181")
         self.boton3.grid(row=4, column=0, pady=10)
 
         self.linea = ctk.CTkFrame(self, height=2, corner_radius=0, fg_color="#3B3B3B")
@@ -150,7 +150,7 @@ class UpperBody(ctk.CTk):
         self.ros = ros
 
         self.title("UPPER BODY")
-        self.geometry("750x780")
+        self.geometry("750x900")  # Aumenté la altura para la matriz
         self.resizable(False, False)
 
         # State: all 6 joints (L1..L3, R1..R3) initialized to 90° (neutral)
@@ -176,7 +176,7 @@ class UpperBody(ctk.CTk):
         # Records button (placeholder)
         self.boton_records = ctk.CTkButton(top_frame, text="RECORDS", fg_color="#737373", text_color="white",
                                            corner_radius=7, font=("Arial", 16), width=120, height=24,
-                                           hover_color="#838181")  # AGREGADO: hover_color
+                                           hover_color="#838181")
         self.boton_records.place(relx=1, x=-10, rely=0.5, anchor="e")
 
         # ---------- SLIDERS FRAME ----------
@@ -185,9 +185,6 @@ class UpperBody(ctk.CTk):
 
         # ---- HERE: Configure slider limits and inversion per joint ----
         # Format per slider: (min_val, max_val, steps, invert_flag)
-        # Change these tuples to set limits for each slider.
-        # Example: limit J1 to [10,170] and invert direction -> (10,170,160,True)
-        # YOU MUST SET limits FOR THE 3 SLIDERS (they represent joints 1,3,4 for the DH FK)
         self.LEFT_SLIDER_CONFIGS = [
             (0.0, 96.0, 96, False),  # Left slider J1 -> joint1
             (65.0, 180.0, 115, False),  # Left slider J2 -> joint3
@@ -253,14 +250,14 @@ class UpperBody(ctk.CTk):
         Confirmar_btn = ctk.CTkButton(debajosliders_frame, text="CONFIRMAR", command=self.confirmar,
                                       fg_color="#737373", text_color="white",
                                       corner_radius=10, font=("Arial", 20), width=50, height=75,
-                                      hover_color="#838181")  # AGREGADO: hover_color
+                                      hover_color="#838181")
         Confirmar_btn.grid(row=0, column=1, padx=10)
 
         # MODIFICADO: Gripper con control por presión (cerrar)
         gripper_btn = ctk.CTkButton(debajosliders_frame, text="CERRAR GR",
                                     fg_color="#737373", text_color="white", corner_radius=10,
                                     font=("Arial", 20), width=50, height=75,
-                                    hover_color="#838181")  # AGREGADO: hover_color
+                                    hover_color="#838181")
         gripper_btn.grid(row=0, column=2, padx=10)
 
         # AGREGADO: Vincular eventos de presionar y soltar para cerrar gripper
@@ -298,6 +295,33 @@ class UpperBody(ctk.CTk):
             info_label.grid(row=1, column=i+1, padx=5, pady=5)
             self.info_labels.append(info_label)
 
+        # ---------- NUEVA SECCIÓN: MATRIZ DE TRANSFORMACIÓN HOMOGÉNEA 4x4 ----------
+        # Título de la sección
+        matrix_title = ctk.CTkLabel(self, text="Matriz de Transformación Homogénea T", 
+                                   text_color="white", font=("Arial", 16, "bold"))
+        matrix_title.pack(pady=(20, 5))
+
+        matrix_frame = ctk.CTkFrame(self, fg_color="transparent")
+        matrix_frame.pack(fill="both", padx=10, pady=5)
+
+        matrix_frame.grid_columnconfigure(0, weight=1)
+        for j in range(4):
+            matrix_frame.grid_columnconfigure(j+1, weight=0)
+        matrix_frame.grid_columnconfigure(5, weight=1)
+
+        # Crear etiquetas 4x4 para los valores de T
+        self.T_labels = []
+        for i in range(4):
+            row_labels = []
+            for j in range(4):
+                val = ctk.CTkLabel(matrix_frame, text="0.000",
+                                   text_color="white", font=("Arial", 12),
+                                   fg_color="#2B2B2B", corner_radius=6,
+                                   width=80, height=28)
+                val.grid(row=i, column=j+1, padx=2, pady=2)
+                row_labels.append(val)
+            self.T_labels.append(row_labels)
+
         # ---------- bottom buttons ----------
         self.divisoria3 = ctk.CTkFrame(self, height=2, corner_radius=0, fg_color="#3B3B3B")
         self.divisoria3.pack(fill="x", padx=10, pady=10)
@@ -313,20 +337,20 @@ class UpperBody(ctk.CTk):
         back_btn = ctk.CTkButton(bottom_frame, text="BACK", command=self.volver_menu,
                                  fg_color="#737373", text_color="white",
                                  corner_radius=20, font=("Arial", 20), width=80, height=70,
-                                 hover_color="#838181")  # AGREGADO: hover_color
+                                 hover_color="#838181")
         back_btn.grid(row=0, column=1, padx=10, pady=20)
 
         stop_btn = ctk.CTkButton(bottom_frame, text="STOP", command=self.stop,
                                  fg_color="#737373", text_color="white",
                                  corner_radius=90, font=("Arial", 20),
                                  width=80, height=100,
-                                 hover_color="#838181")  # AGREGADO: hover_color
+                                 hover_color="#838181")
         stop_btn.grid(row=0, column=2, padx=10, pady=20)
 
         home_btn = ctk.CTkButton(bottom_frame, text="HOME", command=self.home,
                                  fg_color="#737373", text_color="white",
                                  corner_radius=20, font=("Arial", 20), width=80, height=70,
-                                 hover_color="#838181")  # AGREGADO: hover_color
+                                 hover_color="#838181")
         home_btn.grid(row=0, column=3, padx=10, pady=20)
 
         self.protocol("WM_DELETE_WINDOW", self.on_close)
@@ -341,7 +365,6 @@ class UpperBody(ctk.CTk):
             # update slider widget
             self.slider_widgets[i].configure(from_=from_arg, to=to_arg, number_of_steps=int(steps))
             # update adjacent range label (if present)
-            # we assume the label exists at grid column 4; update it via grid_slaves search:
             parent = self.slider_widgets[i].master
             # find the label in same row column=4
             for w in parent.grid_slaves(row=i, column=4):
@@ -390,8 +413,12 @@ class UpperBody(ctk.CTk):
         # Compute DH FK using the sliders as [joint1, joint3, joint4]
         # Mapping: slider1 -> joint1, slider2 -> joint3, slider3 -> joint4
         T_total, p = fk_from_dh(sliders, DH_PARAMS)  # uses the GUI angles directly
+        
         # Update coordinate display (p is in meters per DH_PARAMS)
         self.update_coords(p[0], p[1], p[2])
+        
+        # NUEVO: Update homogeneous transformation matrix display
+        self.update_T_matrix(T_total)
 
     def stop(self):
         neutral = [90.0] * JOINT_COUNT
@@ -402,6 +429,8 @@ class UpperBody(ctk.CTk):
         sliders = self.read_sliders()
         T_total, p = fk_from_dh(sliders, DH_PARAMS)
         self.update_coords(p[0], p[1], p[2])
+        # NUEVO: Update matrix display for neutral position
+        self.update_T_matrix(T_total)
 
     # AGREGADO: Métodos para control del gripper por presión
     def start_gripper(self, direction):
@@ -455,6 +484,38 @@ class UpperBody(ctk.CTk):
             self.after(0, _apply)
         except Exception:
             _apply()
+
+    # ---------- NUEVO: Update transformation matrix display ----------
+    def update_T_matrix(self, T):
+        """
+        Actualiza las 16 celdas con la matriz de transformación 4x4.
+        Acepta cualquier array-like convertible a (4,4).
+        """
+        def _apply():
+            try:
+                T_array = np.array(T, dtype=float).reshape(4, 4)
+                for i in range(4):
+                    for j in range(4):
+                        try:
+                            self.T_labels[i][j].configure(text=f"{T_array[i, j]:.3f}")
+                        except Exception:
+                            self.T_labels[i][j].configure(text=str(T_array[i, j]))
+            except Exception as e:
+                print(f"[UI] Error actualizando matriz T: {e}")
+                # Si hay error, mostrar matriz identidad
+                for i in range(4):
+                    for j in range(4):
+                        val = 1.0 if i == j else 0.0
+                        try:
+                            self.T_labels[i][j].configure(text=f"{val:.3f}")
+                        except Exception:
+                            self.T_labels[i][j].configure(text=str(val))
+        
+        try:
+            self.after(0, _apply)
+        except Exception:
+            _apply()
+
 
 # ------------------ main ------------------
 def main():
