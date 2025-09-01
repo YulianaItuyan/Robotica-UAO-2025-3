@@ -1,19 +1,23 @@
 #!/usr/bin/env python3
-#centauro.launch.py
-from launch import LaunchDescription
+# centauro.launch.py
+
 import os
+from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument
 from launch.conditions import IfCondition
-from launch.substitutions import LaunchConfiguration, Command, PathJoinSubstitution, FindExecutable
-from launch_ros.substitutions import FindPackageShare
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution, PythonExpression
 from launch_ros.actions import Node
+from launch.conditions import UnlessCondition
 from launch_ros.parameter_descriptions import ParameterValue
+from ament_index_python.packages import get_package_share_directory
 
 def generate_launch_description():
-    pkg_share = FindPackageShare('robot').find('robot')
+    # Rutas de recursos
+    pkg_share = get_package_share_directory('robot')
     urdf = os.path.join(pkg_share, 'urdf', 'URDF_LINKS.urdf')
     rviz_cfg = PathJoinSubstitution([pkg_share, 'rviz', 'robot.rviz'])
 
+    # LaunchConfigurations (argumentos que se pueden pasar por terminal)
     use_sim_time = LaunchConfiguration('use_sim_time')
     rviz = LaunchConfiguration('rviz')
     gui = LaunchConfiguration('gui')
@@ -21,17 +25,17 @@ def generate_launch_description():
     serial = LaunchConfiguration('serial')
     port = LaunchConfiguration('port')
     baud = LaunchConfiguration('baud')
-    #smooth_motion = LaunchConfiguration('smooth_motion')  # Nueva opción
+    move_duration_s = LaunchConfiguration('move_duration_s')
+    #smooth_motion = LaunchConfiguration('smooth_motion')
 
-    # Cargar el contenido del URDF como string
+    # Cargar URDF como string
     with open(urdf, 'r') as urdf_file:
         urdf_content = urdf_file.read()
-    
     robot_description = ParameterValue(urdf_content, value_type=str)
 
     nodes = []
 
-    # Robot State Publisher - Publica TF y robot_description
+    # 1️⃣ Robot State Publisher
     nodes.append(Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -43,7 +47,7 @@ def generate_launch_description():
         }]
     ))
 
-    # RViz
+    # 2️⃣ RViz (opcional)
     nodes.append(Node(
         package='rviz2',
         executable='rviz2',
@@ -53,14 +57,15 @@ def generate_launch_description():
         condition=IfCondition(rviz)
     ))
 
-    # Visualizador de FK 
+
+    # 4️⃣ Visualizador FK
     nodes.append(Node(
         package='robot',
         executable='fk_marker',
         name='fk_marker'
     ))
 
-    # GUI
+    # 5️⃣ GUI (opcional)
     nodes.append(Node(
         package='robot',
         executable='pinterfaz',
@@ -69,33 +74,21 @@ def generate_launch_description():
         condition=IfCondition(gui)
     ))
 
-    # NUEVO: Nodo para movimientos suaves (solo si smooth_motion está habilitado)
-    # nodes.append(Node(
-    #     package='robot',
-    #     executable='joint_trajectory_smoother',
-    #     name='joint_trajectory_smoother',
-    #     output='screen',
-    #     parameters=[{
-    #         'trajectory_duration': 2.0,  # Duración de cada movimiento
-    #         'interpolation_points': 15   # Puntos de interpolación
-    #     }],
-    #     condition=IfCondition(smooth_motion)
-    # ))
-
-    # Joint Commander con interpolación suave (ESTE ES EL CLAVE)
+    # 6️⃣ Joint Commander con interpolación suave (solo si commander y smooth_motion son true)
+    # Joint Commander con interpolación suave
     nodes.append(Node(
         package='robot',
         executable='joint_commander_deg',
         name='joint_commander_deg',
         output='screen',
         parameters=[{
-            'trajectory_duration': 3.0,  # Aumentamos duración para movimientos más suaves
-            'interpolation_rate': 50.0   # 50 Hz para interpolación
+            'move_duration_s': move_duration_s
         }],
         condition=IfCondition(commander)
     ))
 
-    # Puente serial hacia Arduino
+
+    # 7️⃣ Nodo serial hacia Arduino (opcional)
     nodes.append(Node(
         package='robot',
         executable='serial_node',
@@ -104,16 +97,20 @@ def generate_launch_description():
         parameters=[{
             'port': port,
             'baud': baud
+            #'use_smooth_motion': smooth_motion
         }],
         condition=IfCondition(serial)
     ))
 
+    # 📦 Retornar LaunchDescription con argumentos y nodos
     return LaunchDescription([
         DeclareLaunchArgument('use_sim_time', default_value='false'),
         DeclareLaunchArgument('rviz', default_value='true'),
         DeclareLaunchArgument('gui', default_value='true'),
         DeclareLaunchArgument('commander', default_value='true'),
         DeclareLaunchArgument('serial', default_value='true'),
+        DeclareLaunchArgument('move_duration_s', default_value='1.0'),
+        #DeclareLaunchArgument('smooth_motion', default_value='true'),
         DeclareLaunchArgument('port', default_value='/dev/ttyUSB0'),
         DeclareLaunchArgument('baud', default_value='115200'),
         *nodes

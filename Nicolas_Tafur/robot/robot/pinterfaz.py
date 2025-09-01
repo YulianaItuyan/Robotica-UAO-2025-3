@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+#codigo1
 #pinterfaz.py
 
 import rclpy
@@ -135,26 +135,30 @@ class VentanaPrincipal(ctk.CTk):
                                    hover_color="#838181")
         self.boton1.grid(row=0, column=0, pady=10)
 
+        # LOWER BODY - DESHABILITADO
         self.boton2 = ctk.CTkButton(self,
                                    text="LOWER BODY",
-                                   command=self.cambio_lower_body,
-                                   fg_color="#737373",
-                                   text_color="white",
+                                   command=self.boton_deshabilitado,  # Función que no hace nada
+                                   fg_color="#404040",  # Color más oscuro para indicar deshabilitado
+                                   text_color="#808080",  # Texto gris
                                    corner_radius=10,
                                    font=("Arial", 20),
                                    width=225, height=75,
-                                   hover_color="#838181")
+                                   hover_color="#404040",  # Sin cambio en hover
+                                   state="disabled")  # Estado deshabilitado
         self.boton2.grid(row=2, column=0, pady=10)
 
+        # GEARS - DESHABILITADO
         self.boton3 = ctk.CTkButton(self,
                                    text="GEARS",
-                                   command=self.cambio_gears,
-                                   fg_color="#737373",
-                                   text_color="white",
+                                   command=self.boton_deshabilitado,  # Función que no hace nada
+                                   fg_color="#404040",  # Color más oscuro para indicar deshabilitado
+                                   text_color="#808080",  # Texto gris
                                    corner_radius=10,
                                    font=("Arial", 20),
                                    width=225, height=75,
-                                   hover_color="#838181")
+                                   hover_color="#404040",  # Sin cambio en hover
+                                   state="disabled")  # Estado deshabilitado
         self.boton3.grid(row=4, column=0, pady=10)
 
         self.linea = ctk.CTkFrame(self, height=2, corner_radius=0, fg_color="#3B3B3B")
@@ -171,17 +175,10 @@ class VentanaPrincipal(ctk.CTk):
         segunda = UpperBody(self.ros)
         segunda.mainloop()
 
-    def cambio_lower_body(self):
-        self.destroy()
-        tercera = UpperBody(self.ros)  # placeholder (puedes crear clase distinta si quieres)
-        tercera.title("LOWER BODY")
-        tercera.mainloop()
-
-    def cambio_gears(self):
-        self.destroy()
-        cuarta = UpperBody(self.ros)  # placeholder
-        cuarta.title("GEARS")
-        cuarta.mainloop()
+    def boton_deshabilitado(self):
+        """Función placeholder para botones deshabilitados - no hace nada"""
+        print("Esta opción no está disponible aún")
+        pass
 
     def on_close(self):
         try:
@@ -202,7 +199,7 @@ class UpperBody(ctk.CTk):
         self.ros = ros
 
         self.title("UPPER BODY")
-        self.geometry("650x700")
+        self.geometry("650x800")
         self.resizable(False, False)
 
         # === Frame superior ========================
@@ -234,17 +231,19 @@ class UpperBody(ctk.CTk):
         self.divisoria = ctk.CTkFrame(self, height=2, corner_radius=0, fg_color="#3B3B3B")
         self.divisoria.pack(fill="x", padx=10, pady=20)
 
-        # === Sliders ===============================
-                # === Sliders ===============================
+        # === Sliders con botones +/- ===============================
         sliders_frame = ctk.CTkFrame(self, fg_color="transparent")
         sliders_frame.pack(fill="x", padx=10, pady=10)
 
+        # Ajusta columnas: deja un espacio de expansión al final
         sliders_frame.grid_columnconfigure(0, weight=1)
-        sliders_frame.grid_columnconfigure(1, weight=0)
-        sliders_frame.grid_columnconfigure(2, weight=0)
-        sliders_frame.grid_columnconfigure(3, weight=0)
-        sliders_frame.grid_columnconfigure(4, weight=0)
-        sliders_frame.grid_columnconfigure(5, weight=1)
+        sliders_frame.grid_columnconfigure(1, weight=0)  # etiqueta J#
+        sliders_frame.grid_columnconfigure(2, weight=0)  # valor actual
+        sliders_frame.grid_columnconfigure(3, weight=1)  # slider
+        sliders_frame.grid_columnconfigure(4, weight=0)  # rango
+        sliders_frame.grid_columnconfigure(5, weight=0)  # botón -
+        sliders_frame.grid_columnconfigure(6, weight=0)  # botón +
+        sliders_frame.grid_columnconfigure(7, weight=1)  # espacio
 
         self.slider_vars = []
 
@@ -284,7 +283,25 @@ class UpperBody(ctk.CTk):
                                      text_color="#737373", font=("Arial", 10))
             range_lbl.grid(row=i, column=4, padx=5, pady=5, sticky="e")
 
+            # Botón "−" (decrementa 1)
+            btn_minus = ctk.CTkButton(
+                sliders_frame, text="−",
+                width=28, height=28,
+                fg_color="#5e5e5e", hover_color="#6b6b6b",
+                text_color="white",
+                command=lambda idx=i, c=cfg: self._nudge_slider(idx, -1, c["min"], c["max"])
+            )
+            btn_minus.grid(row=i, column=5, padx=(8,4), pady=5)
 
+            # Botón "+" (incrementa 1)
+            btn_plus = ctk.CTkButton(
+                sliders_frame, text="+",
+                width=28, height=28,
+                fg_color="#5e5e5e", hover_color="#6b6b6b",
+                text_color="white",
+                command=lambda idx=i, c=cfg: self._nudge_slider(idx, +1, c["min"], c["max"])
+            )
+            btn_plus.grid(row=i, column=6, padx=(4,8), pady=5)
 
         # === Botones Confirmar / Gripper ===========
         debajosliders_frame = ctk.CTkFrame(self, fg_color="transparent")
@@ -334,30 +351,34 @@ class UpperBody(ctk.CTk):
         self.divisoria2 = ctk.CTkFrame(self, height=2, corner_radius=0, fg_color="#3B3B3B")
         self.divisoria2.pack(fill="x", padx=10, pady=20)
 
-        # ------------------ AQUI CREAMOS LA PARTE GRÁFICA DE COORDENADAS X,Y,Z ------------------
-        coord_frame = ctk.CTkFrame(self, fg_color="transparent")
-        coord_frame.pack(fill="both", padx=10, pady=5)
-        coord_frame.grid_columnconfigure(0, weight=1)
-        coord_frame.grid_columnconfigure(1, weight=0)
-        coord_frame.grid_columnconfigure(2, weight=0)
-        coord_frame.grid_columnconfigure(3, weight=0)
-        coord_frame.grid_columnconfigure(4, weight=1)
+        # ------------------ MATRIZ DE TRANSFORMACIÓN HOMOGÉNEA 4x4 ------------------
+        matrix_frame = ctk.CTkFrame(self, fg_color="transparent")
+        matrix_frame.pack(fill="both", padx=10, pady=2)
 
-        # Store references to update the information later
-        self.info_labels = []
-        coord = ["X", "Y", "Z"]
+        matrix_frame.grid_columnconfigure(0, weight=1)
+        matrix_frame.grid_columnconfigure(5, weight=1)
 
-        for i in range(3):
-            # Label de la coordenada
-            lbl = ctk.CTkLabel(coord_frame, text=f"{coord[i]}", text_color="#737373", font=("Arial", 15))
-            lbl.grid(row=0, column=i+1, padx=5, pady=5)
+        # cabeceras de columnas
+        header = ["", "", "", "", ""]
+        for j, h in enumerate(header):
+            c = ctk.CTkLabel(matrix_frame, text=h, text_color="#737373", font=("Arial", 14))
+            c.grid(row=1, column=j, padx=6, pady=2)
 
-            # Etiqueta que mostrará el valor (se actualiza con update_coords)
-            info_label = ctk.CTkLabel(coord_frame, text="0.0", text_color="white",
-                                     font=("Arial", 14), fg_color="#2B2B2B", corner_radius=5,
-                                     width=90, height=30)
-            info_label.grid(row=1, column=i+1, padx=5, pady=5)
-            self.info_labels.append(info_label)
+        # etiquetas 4x4 para los valores de T
+        self.T_labels = []
+        for i in range(4):
+            row_labels = []
+            # cabecera de fila
+            r = ctk.CTkLabel(matrix_frame, text=f"", text_color="#737373", font=("Arial", 14))
+            r.grid(row=2+i, column=0, padx=6, pady=2, sticky="e")
+            for j in range(4):
+                val = ctk.CTkLabel(matrix_frame, text="0.000",
+                                   text_color="white", font=("Arial", 14),
+                                   fg_color="#2B2B2B", corner_radius=6,
+                                   width=90, height=28)
+                val.grid(row=2+i, column=1+j, padx=4, pady=4)
+                row_labels.append(val)
+            self.T_labels.append(row_labels)
         # -----------------------------------------------------------------------------------------
 
         self.divisoria3 = ctk.CTkFrame(self, height=2, corner_radius=0, fg_color="#3B3B3B")
@@ -414,10 +435,19 @@ class UpperBody(ctk.CTk):
 
         # Compute DH FK using the sliders as [joint1, joint3, joint4]
         # Mapping: slider1 -> joint1, slider2 -> joint3, slider3 -> joint4
-        T_total, p = fk_from_dh(sliders, DH_PARAMS)  # uses the GUI angles directly
-        # Update coordinate display (p is in meters per DH_PARAMS)
-        self.update_coords(p[0], p[1], p[2])
-        # ---------------------------------------------------------------------
+        # Aplicar correcciones específicas similar al código 2
+        corrected_angles = [
+            sliders[0] - 90,    # theta1 correction
+            sliders[1] - 180,   # theta3 correction  
+            sliders[2] - 90     # theta4 correction
+        ]
+        
+        try:
+            T_total, p = fk_from_dh(corrected_angles, DH_PARAMS)  # usa ángulos corregidos
+            # Update transformation matrix display
+            self.update_T(T_total)
+        except Exception as e:
+            print(f"[FK-DH] Error calculando FK: {e}")
 
     def stop(self):
         # Definir posición neutra
@@ -435,11 +465,20 @@ class UpperBody(ctk.CTk):
         for i in range(3):
             self.slider_vars[i].set(self.all_joints[start + i])
 
-        # --- Calcular y mostrar coordenadas ---
+        # --- Calcular y mostrar matriz de transformación ---
         sliders = self.read_sliders()  # lee los 3 sliders ya actualizados
-        T_total, p = fk_from_dh(sliders, DH_PARAMS)
-        self.update_coords(p[0], p[1], p[2])
-
+        # Aplicar las mismas correcciones específicas
+        corrected_angles = [
+            sliders[0] - 90,    # theta1 correction
+            sliders[1] - 180,   # theta3 correction  
+            sliders[2] - 90     # theta4 correction
+        ]
+        
+        try:
+            T_total, p = fk_from_dh(corrected_angles, DH_PARAMS)
+            self.update_T(T_total)
+        except Exception as e:
+            print(f"[FK-DH] Error calculando FK en STOP: {e}")
 
     def start_gripper(self, direction):
         self.gripper_running = True
@@ -482,24 +521,34 @@ class UpperBody(ctk.CTk):
         finally:
             self.destroy()
 
-    # ------------------ Método para actualizar coordenadas ------------------
-    def update_coords(self, x, y, z):
+    def _nudge_slider(self, idx, delta, minv, maxv):
+        """Incrementa/decrementa el slider idx en 'delta', respetando su rango."""
+        val = float(self.slider_vars[idx].get())
+        new_val = max(minv, min(maxv, val + delta))
+        self.slider_vars[idx].set(int(round(new_val)))
+
+    def update_T(self, T):
         """
-        Actualiza las etiquetas X,Y,Z en la interfaz.
+        Actualiza las 16 celdas con la matriz de transformación 4x4.
         Se usa self.after(0,...) para ser thread-safe si se llama desde otro hilo.
         """
+        try:
+            T = np.array(T, dtype=float).reshape(4, 4)
+        except Exception as e:
+            print(f"[UI] Matriz T inválida: {e}")
+            return
+
         def _apply():
-            vals = [x, y, z]
-            for lbl, v in zip(self.info_labels, vals):
-                try:
-                    lbl.configure(text=f"{float(v):.3f}")  # 3 decimales
-                except Exception:
-                    lbl.configure(text=str(v))
+            for i in range(4):
+                for j in range(4):
+                    try:
+                        self.T_labels[i][j].configure(text=f"{T[i, j]:.3f}")
+                    except Exception:
+                        self.T_labels[i][j].configure(text=str(T[i, j]))
         try:
             self.after(0, _apply)
         except Exception:
             _apply()
-    # -------------------------------------------------------------------------
 
 def main():
     rclpy.init()
