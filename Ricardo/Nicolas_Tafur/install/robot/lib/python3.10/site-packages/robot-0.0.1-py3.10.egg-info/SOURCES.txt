@@ -19,6 +19,7 @@ meshes/link_6.STL
 meshes/link_7.STL
 resource/robot
 robot/__init__.py
+robot/clicks.py
 robot/fk_3dof_zyy.py
 robot/fk_marker.py
 robot/joint_commander_deg.py

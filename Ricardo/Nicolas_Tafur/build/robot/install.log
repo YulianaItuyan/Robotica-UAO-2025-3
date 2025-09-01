@@ -1,10 +1,12 @@
 /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/fk_marker.py
+/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/clicks.py
 /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/fk_3dof_zyy.py
 /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/pinterfaz.py
 /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/serial_node.py
 /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/joint_commander_deg.py
 /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/__init__.py
 /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/__pycache__/fk_marker.cpython-310.pyc
+/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/__pycache__/clicks.cpython-310.pyc
 /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/__pycache__/fk_3dof_zyy.cpython-310.pyc
 /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/__pycache__/pinterfaz.cpython-310.pyc
 /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/__pycache__/serial_node.cpython-310.pyc
