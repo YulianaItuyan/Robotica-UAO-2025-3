@@ -30,6 +30,7 @@ robot/joint_states_to_trajectory.py
 robot/joint_trajectory_smoother.py
 robot/pinterfaz.py
 robot/serial_node.py
+rviz/robot.rviz
 test/test_copyright.py
 test/test_flake8.py
 test/test_pep257.py

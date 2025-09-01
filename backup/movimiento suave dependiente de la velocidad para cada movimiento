@@ -1,0 +1,144 @@
+#!/usr/bin/env python3
+import rclpy
+from rclpy.node import Node
+from sensor_msgs.msg import JointState
+from std_msgs.msg import Float32MultiArray, String
+import numpy as np
+import time
+
+class JointCommanderDeg(Node):
+    def __init__(self):
+        super().__init__('joint_commander_deg')
+     
+        # Ahora 6 joints (ajusta nombres exactamente como en URDF)
+        self.joint_names = [
+            'joint1', 'joint2', 'joint3',
+            'joint5', 'joint6', 'joint7'
+        ]
+        
+        # Estado actual y objetivo
+        self.q_deg_current = np.array([90.0] * len(self.joint_names), dtype=float)  # Posición actual
+        self.q_deg_target = np.array([90.0] * len(self.joint_names), dtype=float)   # Posición objetivo
+        
+        # Configuración de smooth trajectories
+        self.max_velocity_deg_s = 45.0  # Velocidad máxima en grados/segundo (ajustable)
+        self.dt = 0.02  # Período del timer (50 Hz)
+        self.trajectory_active = False
+
+        # Brazo seleccionado actualmente ('A' = Izquierdo, 'B' = Derecho)
+        self.selected_arm = 'A'
+        
+        # Publishers y subscribers
+        self.pub = self.create_publisher(JointState, 'joint_states', 10)
+        self.sub_cmd = self.create_subscription(Float32MultiArray, '/cmd_deg', self.on_cmd, 10)
+        self.sub_arm_select = self.create_subscription(String, '/cmd_arm_select', self.on_arm_select, 10)
+        self.timer = self.create_timer(self.dt, self.on_timer)
+        
+        self.get_logger().info(
+            f'Joint Commander iniciado con smooth trajectories. '
+            f'Velocidad máxima: {self.max_velocity_deg_s}°/s'
+        )
+        self.get_logger().info(f'Brazo seleccionado: {self.selected_arm}')
+
+    def on_arm_select(self, msg: String):
+        """Callback para cambio de brazo seleccionado"""
+        if msg.data in ['A', 'B']:
+            self.selected_arm = msg.data
+            arm_name = "Izquierdo" if msg.data == 'A' else "Derecho"
+            self.get_logger().info(f'🔄 Brazo seleccionado: {msg.data} ({arm_name})')
+        else:
+            self.get_logger().warn(f'⚠️ Selección de brazo inválida: {msg.data}')
+
+    def on_cmd(self, msg: Float32MultiArray):
+        """Recibe nuevo comando y activa la trayectoria suave SOLO para el brazo activo."""
+        n = len(msg.data)
+
+        if n == 3:
+            # Mensaje con solo los 3 joints del brazo activo
+            received_angles = np.array(msg.data, dtype=float)
+
+        elif n == 6:
+            # Mensaje con los 6 joints, extraer solo los del brazo activo
+            if self.selected_arm == 'A':
+                received_angles = np.array(msg.data[0:3], dtype=float)
+            else:
+                received_angles = np.array(msg.data[3:6], dtype=float)
+        else:
+            self.get_logger().warn(
+                f'⚠️ Longitud inesperada en /cmd_deg: {n}. Se esperaban 3 o 6 valores.'
+            )
+            return
+
+        # Actualizar solo el brazo seleccionado
+        if self.selected_arm == 'A':
+            self.q_deg_target[0:3] = received_angles
+            arm_name = "Izquierdo"
+        elif self.selected_arm == 'B':
+            self.q_deg_target[3:6] = received_angles
+            arm_name = "Derecho"
+
+        # Verificar si hay movimiento necesario
+        diff = np.abs(self.q_deg_target - self.q_deg_current)
+        if np.max(diff) > 0.5:
+            self.trajectory_active = True
+            self.get_logger().info(
+                f'✅ Comando para brazo {self.selected_arm} ({arm_name}): {received_angles.tolist()}°'
+            )
+            self.get_logger().info(
+                f'Nueva trayectoria iniciada. Máx. diff: {np.max(diff):.1f}°'
+            )
+
+    def update_smooth_trajectory(self):
+        """Actualiza la posición actual hacia el objetivo de forma suave."""
+        if not self.trajectory_active:
+            return
+        
+        diff = self.q_deg_target - self.q_deg_current
+        max_step = self.max_velocity_deg_s * self.dt
+        step = np.clip(diff, -max_step, max_step)
+        self.q_deg_current += step
+        
+        remaining_error = np.abs(self.q_deg_target - self.q_deg_current)
+        if np.max(remaining_error) < 0.1:
+            self.q_deg_current = self.q_deg_target.copy()
+            self.trajectory_active = False
+            self.get_logger().info('Trayectoria completada')
+    
+    def on_timer(self):
+        """Timer principal - actualiza trayectoria y publica joint states."""
+        self.update_smooth_trajectory()
+        
+        msg = JointState()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.name = self.joint_names
+        
+        offsets = np.array([90.0, 90.0, 0.0,   90.0, 90.0, 0.0])
+        deg_shifted = self.q_deg_current - offsets
+        q_rad = np.deg2rad(deg_shifted)
+        msg.position = q_rad.tolist()
+        
+        if self.trajectory_active:
+            diff = self.q_deg_target - self.q_deg_current
+            max_step = self.max_velocity_deg_s * self.dt
+            step = np.clip(diff, -max_step, max_step)
+            velocity_deg_s = step / self.dt
+            msg.velocity = np.deg2rad(velocity_deg_s).tolist()
+        else:
+            msg.velocity = [0.0] * len(self.joint_names)
+        
+        self.pub.publish(msg)
+    
+    def set_max_velocity(self, vel_deg_s):
+        self.max_velocity_deg_s = max(1.0, vel_deg_s)
+        self.get_logger().info(f'Velocidad máxima actualizada: {self.max_velocity_deg_s}°/s')
+
+def main():
+    rclpy.init()
+    node = JointCommanderDeg()
+    rclpy.spin(node)
+    node.destroy_node()
+    rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+

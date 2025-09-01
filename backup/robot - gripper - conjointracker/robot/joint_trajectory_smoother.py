@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-# robot/robot/joint_trajectory_smoother.py
+# joint_trajectory_smoother.py
 
 import rclpy
 from rclpy.node import Node

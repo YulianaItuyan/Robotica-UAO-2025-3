@@ -1,0 +1,26 @@
+[0.804s] Invoking command in '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot': PYTHONPATH=/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base build/robot build --build-base /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build install --record /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/install.log --single-version-externally-managed install_data
+[1.104s] running egg_info
+[1.105s] writing build/robot/robot.egg-info/PKG-INFO
+[1.105s] writing dependency_links to build/robot/robot.egg-info/dependency_links.txt
+[1.106s] writing entry points to build/robot/robot.egg-info/entry_points.txt
+[1.106s] writing requirements to build/robot/robot.egg-info/requires.txt
+[1.106s] writing top-level names to build/robot/robot.egg-info/top_level.txt
+[1.109s] reading manifest file 'build/robot/robot.egg-info/SOURCES.txt'
+[1.110s] writing manifest file 'build/robot/robot.egg-info/SOURCES.txt'
+[1.110s] running build
+[1.110s] running build_py
+[1.111s] running install
+[1.112s] running install_lib
+[1.114s] running install_data
+[1.114s] copying urdf/URDF_LINKS.urdf -> /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/share/robot/urdf
+[1.115s] running install_egg_info
+[1.118s] removing '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot-0.0.0-py3.10.egg-info' (and everything under it)
+[1.119s] Copying build/robot/robot.egg-info to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages/robot-0.0.0-py3.10.egg-info
+[1.120s] running install_scripts
+[1.146s] Installing fk_marker script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+[1.146s] Installing joint_commander_deg script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+[1.146s] Installing joint_trajectory_smoother script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+[1.146s] Installing pinterfaz script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+[1.147s] Installing serial_node script to /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/robot
+[1.147s] writing list of installed files to '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/install.log'
+[1.180s] Invoked command in '/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot' returned '0': PYTHONPATH=/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base build/robot build --build-base /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/build install --record /home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot/build/robot/install.log --single-version-externally-managed install_data
