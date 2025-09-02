@@ -1,0 +1,30 @@
+[1.753s] Invoking command in '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/centauro': PYTHONPATH=/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/centauro build --build-base /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/build install --record /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/install.log --single-version-externally-managed install_data
+[2.233s] running egg_info
+[2.234s] writing ../build/centauro/mi_br.egg-info/PKG-INFO
+[2.235s] writing dependency_links to ../build/centauro/mi_br.egg-info/dependency_links.txt
+[2.235s] writing entry points to ../build/centauro/mi_br.egg-info/entry_points.txt
+[2.235s] writing requirements to ../build/centauro/mi_br.egg-info/requires.txt
+[2.236s] writing top-level names to ../build/centauro/mi_br.egg-info/top_level.txt
+[2.240s] reading manifest file '../build/centauro/mi_br.egg-info/SOURCES.txt'
+[2.244s] writing manifest file '../build/centauro/mi_br.egg-info/SOURCES.txt'
+[2.244s] running build
+[2.244s] running build_py
+[2.246s] running install
+[2.247s] running install_lib
+[2.250s] running install_data
+[2.252s] running install_egg_info
+[2.256s] removing '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info' (and everything under it)
+[2.256s] Copying ../build/centauro/mi_br.egg-info to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info
+[2.258s] running install_scripts
+[2.295s] Installing ArmTeleop script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[2.295s] Installing fk_marker script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[2.296s] Installing joint_commander_deg script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[2.297s] Installing joint_state_publisher script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[2.297s] Installing mlol script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[2.297s] Installing mover_robot script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[2.297s] Installing pinterfaz script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[2.298s] Installing serial_node script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[2.298s] Installing spawn_urdf script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[2.298s] Installing test_arm_movement script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[2.298s] writing list of installed files to '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/install.log'
+[2.343s] Invoked command in '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/centauro' returned '0': PYTHONPATH=/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/centauro build --build-base /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/build install --record /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/install.log --single-version-externally-managed install_data

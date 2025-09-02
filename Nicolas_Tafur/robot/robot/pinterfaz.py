@@ -22,50 +22,77 @@ GRIPPER_TOPIC = '/cmd_gripper'  # tópico para el gripper
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
-# Longitudes de eslabón (ajusta a tus medidas reales)
-DH_PARAMS = [
-    # [theta_offset (rad), d (m), a (m), alpha (rad)]  for links 1..4 (link2 has theta always 0)
-    [ -np.pi/2,   -0.03,  -0.01,     0.0    ],   # link 1
-    [   0.0,    0.00,   0.00,   -np.pi/2],   # link 2 (θ always 0)
-    [ -np.pi,  0.03, -0.105,    0.0    ],   # link 3
-    [ 0.0,    0.025, -0.16,     0.0    ],   # link 4
-]
-# ====================
+
 
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
-# ------------------ DH FUNCTIONS (denavit) ------------------
-def denavit(theta, d, a, alpha):
-    cth, sth = np.cos(theta), np.sin(theta)
-    cal, sal = np.cos(alpha), np.sin(alpha)
-    return np.array([
-        [ cth,    -sth * cal,   sth * sal,   a * cth ],
-        [ sth,     cth * cal,  -cth * sal,   a * sth ],
-        [ 0.0,        sal,         cal,        d   ],
-        [ 0.0,        0.0,         0.0,      1.0  ]
+def dh_standard(theta, d, a, alpha):
+    """
+    Matriz de transformación homogénea 4x4 usando parámetros DH estándar.
+    """
+    
+    alpha = np.deg2rad(alpha)
+    theta = np.deg2rad(theta)
+
+    ca, sa = np.cos(alpha), np.sin(alpha)
+    ct, st = np.cos(theta), np.sin(theta)
+
+    T = np.array([
+        [ ct, -ca*st,  st*sa, a*ct ],
+        [ st,  ct*ca, -sa*ct, a*st ],
+        [  0,     sa,     ca,    d ],
+        [  0,      0,      0,    1 ]
     ], dtype=float)
 
-def fk_from_dh(q_deg_triplet, dh_params=DH_PARAMS):
-    """
-    q_deg_triplet: list/tuple of 3 angles in degrees that correspond to joints:
-        - slider1 -> joint1
-        - slider2 -> joint3
-        - slider3 -> joint4
-    That reconstructs complete q_deg = [q1, 0.0, q3, q4] (link2 theta=0).
-    Returns: T_total (4x4), translation p (3,)
-    IMPORTANT: this function uses the **angles as provided by the GUI** (no shift applied).
-    """
-    # Build q_deg list for DH order: [joint1, joint2(always 0), joint3, joint4]
-    q_deg = [float(q_deg_triplet[0]), 0.0, float(q_deg_triplet[1]), float(q_deg_triplet[2])]
+    return T
+    
 
-    T_total = np.eye(4)
-    for i, (theta_off, d, a, alpha) in enumerate(dh_params, start=1):
-        theta = np.deg2rad(q_deg[i-1]) + theta_off
-        T_i = denavit(theta, d, a, alpha)
-        T_total = T_total @ T_i
-    p = T_total[:3, 3]
-    return T_total, p
+# ------------------ DH FUNCTIONS (denavit) ------------------
+
+def fk_from_dh(q,arm):
+    """
+
+    Calcula la cinemática directa con d y a fijos.
+    q: lista de ángulos variables [theta1, theta3, theta4] en grados.
+    """
+    if arm == 2:
+        # Brazo izquierdo
+        dh_table = [
+        (q[0],   -0.03,  -0.01, 0 ),   # link 1 -> θ1 variable
+        (90,     0.0, 0.0,  90),   # link 2 -> θ2 fijo = 90°
+        (q[1],   0.03, 0.105, 0),  # link 3 -> θ3 variable
+        (q[2],  -0.025, 0.16,  0)  # link 4 -> θ4 variable ]
+         ]
+    else: 
+        # Brazo derecho
+        dh_table = [
+        (q[0],  -3, -1, 0 ),   # link 1 -> θ1 variable
+        (90,     0.0, 0.0,  90),   # link 2 -> θ2 fijo = 90°
+        (q[1],   3, 10, 0),  # link 3 -> θ3 variable
+        (q[2],  -2.0, 160, 0)  # link 4 -> θ4 variabl
+        ]
+    
+    # --- Producto de transformaciones ---
+    T = np.eye(4)
+    for (theta, d, a, alpha) in dh_table:
+        T = T @ dh_standard(theta, d, a, alpha, )
+
+    return T
+
+   
+
+    # --- Parámetros fijos (a, alpha, d) ---
+    # Estructura: (a, alpha, d, theta)
+    
+
+    # --- Producto de transformaciones ---
+    T = np.eye(4)
+    for (theta, d, a, alpha) in dh_table:
+        T = T @ dh_standard(theta, d, a, alpha, degrees=degrees)
+
+    return T
+
 # -----------------------------------------------------------
 
 
@@ -436,49 +463,21 @@ class UpperBody(ctk.CTk):
         # Compute DH FK using the sliders as [joint1, joint3, joint4]
         # Mapping: slider1 -> joint1, slider2 -> joint3, slider3 -> joint4
         # Aplicar correcciones específicas similar al código 2
-        corrected_angles = [
-            sliders[0] - 90,    # theta1 correction
-            sliders[1] - 180,   # theta3 correction  
-            sliders[2] - 90     # theta4 correction
-        ]
+        theta1 = sliders[0] -90
+        theta3 = sliders[1] -180
+        theta4 = sliders[2]     # theta4 correction
+        
         
         try:
-            T_total, p = fk_from_dh(corrected_angles, DH_PARAMS)  # usa ángulos corregidos
+            T = fk_from_dh([theta1, theta3, theta4],arm) # usa ángulos corregidos
             # Update transformation matrix display
-            self.update_T(T_total)
+            self.update_T(T)
         except Exception as e:
             print(f"[FK-DH] Error calculando FK: {e}")
 
     def stop(self):
-        # Definir posición neutra
-        neutral = [90, 90, 0,   90, 90, 0]
-
-        # Actualizar estado interno
-        self.all_joints = neutral.copy()
-
-        # Publicar al tópico
-        self.ros.publish_degrees(self.all_joints)
-
-        # --- Actualizar sliders del brazo activo ---
-        arm = int(self.arm_choice.get())
-        start = 0 if arm == 1 else 3
-        for i in range(3):
-            self.slider_vars[i].set(self.all_joints[start + i])
-
-        # --- Calcular y mostrar matriz de transformación ---
-        sliders = self.read_sliders()  # lee los 3 sliders ya actualizados
-        # Aplicar las mismas correcciones específicas
-        corrected_angles = [
-            sliders[0] - 90,    # theta1 correction
-            sliders[1] - 180,   # theta3 correction  
-            sliders[2] - 90     # theta4 correction
-        ]
         
-        try:
-            T_total, p = fk_from_dh(corrected_angles, DH_PARAMS)
-            self.update_T(T_total)
-        except Exception as e:
-            print(f"[FK-DH] Error calculando FK en STOP: {e}")
+        pass
 
     def start_gripper(self, direction):
         self.gripper_running = True
@@ -502,8 +501,35 @@ class UpperBody(ctk.CTk):
             self.ros.publish_arm_selection('B')
 
     def home(self):
-        # Placeholder para orden de "home"
-        pass
+        neutral = [90, 90, 20,   90, 90, 20]
+
+        # Actualizar estado interno
+        self.all_joints = neutral.copy()
+
+        # Publicar al tópico
+        self.ros.publish_degrees(self.all_joints)
+
+        # --- Actualizar sliders del brazo activo ---
+        arm = int(self.arm_choice.get())
+        start = 0 if arm == 1 else 3
+        for i in range(3):
+            self.slider_vars[i].set(self.all_joints[start + i])
+
+        # --- Calcular y mostrar matriz de transformación ---
+        sliders = self.read_sliders()  # lee los 3 sliders ya actualizados
+
+        theta1 = sliders[0] -90
+        theta3 = sliders[1] -180
+        theta4 = sliders[2]     # theta4 correction
+        
+        
+        try:
+            T = fk_from_dh([theta1, theta3, theta4],arm) # usa ángulos corregidos
+            # Update transformation matrix display
+            self.update_T(T)
+        except Exception as e:
+            print(f"[FK-DH] Error calculando FK: {e}")
+        
 
     def volver_menu(self):
         self.destroy()

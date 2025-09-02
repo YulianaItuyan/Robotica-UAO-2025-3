@@ -1,0 +1,37 @@
+running egg_info
+writing ../build/centauro/mi_br.egg-info/PKG-INFO
+writing dependency_links to ../build/centauro/mi_br.egg-info/dependency_links.txt
+writing entry points to ../build/centauro/mi_br.egg-info/entry_points.txt
+writing requirements to ../build/centauro/mi_br.egg-info/requires.txt
+writing top-level names to ../build/centauro/mi_br.egg-info/top_level.txt
+reading manifest file '../build/centauro/mi_br.egg-info/SOURCES.txt'
+writing manifest file '../build/centauro/mi_br.egg-info/SOURCES.txt'
+running build
+running build_py
+copying mi_br/fk_dh_test.py -> /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/build/lib/mi_br
+copying mi_br/serial_node.py -> /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/build/lib/mi_br
+copying mi_br/pinterfaz.py -> /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/build/lib/mi_br
+running install
+running install_lib
+copying /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/build/lib/mi_br/fk_dh_test.py -> /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages/mi_br
+copying /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/build/lib/mi_br/serial_node.py -> /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages/mi_br
+copying /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/build/lib/mi_br/pinterfaz.py -> /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages/mi_br
+byte-compiling /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages/mi_br/fk_dh_test.py to fk_dh_test.cpython-310.pyc
+byte-compiling /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages/mi_br/serial_node.py to serial_node.cpython-310.pyc
+byte-compiling /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages/mi_br/pinterfaz.py to pinterfaz.cpython-310.pyc
+running install_data
+running install_egg_info
+removing '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info' (and everything under it)
+Copying ../build/centauro/mi_br.egg-info to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info
+running install_scripts
+Installing ArmTeleop script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+Installing fk_marker script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+Installing joint_commander_deg script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+Installing joint_state_publisher script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+Installing mlol script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+Installing mover_robot script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+Installing pinterfaz script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+Installing serial_node script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+Installing spawn_urdf script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+Installing test_arm_movement script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+writing list of installed files to '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/install.log'

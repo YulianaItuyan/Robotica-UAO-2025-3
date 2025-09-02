@@ -1,0 +1,168 @@
+[0.321s] DEBUG:colcon:Command line arguments: ['/usr/bin/colcon', 'build']
+[0.321s] DEBUG:colcon:Parsed command line arguments: Namespace(log_base=None, log_level=None, verb_name='build', build_base='build', install_base='install', merge_install=False, symlink_install=False, test_result_base=None, continue_on_error=False, executor='parallel', parallel_workers=6, event_handlers=None, ignore_user_meta=False, metas=['./colcon.meta'], base_paths=['.'], packages_ignore=None, packages_ignore_regex=None, paths=None, packages_up_to=None, packages_up_to_regex=None, packages_above=None, packages_above_and_dependencies=None, packages_above_depth=None, packages_select_by_dep=None, packages_skip_by_dep=None, packages_skip_up_to=None, packages_select_build_failed=False, packages_skip_build_finished=False, packages_select_test_failures=False, packages_skip_test_passed=False, packages_select=None, packages_skip=None, packages_select_regex=None, packages_skip_regex=None, packages_start=None, packages_end=None, allow_overriding=[], cmake_args=None, cmake_target=None, cmake_target_skip_unavailable=False, cmake_clean_cache=False, cmake_clean_first=False, cmake_force_configure=False, ament_cmake_args=None, catkin_cmake_args=None, catkin_skip_building_tests=False, verb_parser=<colcon_defaults.argument_parser.defaults.DefaultArgumentsDecorator object at 0x7f6420d564d0>, verb_extension=<colcon_core.verb.build.BuildVerb object at 0x7f6420edbd90>, main=<bound method BuildVerb.main of <colcon_core.verb.build.BuildVerb object at 0x7f6420edbd90>>)
+[0.827s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) check parameters
+[0.827s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) check parameters
+[0.827s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) check parameters
+[0.827s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) check parameters
+[0.827s] Level 1:colcon.colcon_core.package_discovery:discover_packages(colcon_meta) discover
+[0.828s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) discover
+[0.828s] INFO:colcon.colcon_core.package_discovery:Crawling recursively for packages in '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur'
+[0.828s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ignore', 'ignore_ament_install']
+[0.828s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore'
+[0.828s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ignore_ament_install'
+[0.828s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_pkg']
+[0.828s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_pkg'
+[0.829s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['colcon_meta']
+[0.829s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'colcon_meta'
+[0.829s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['ros']
+[0.829s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'ros'
+[0.858s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['cmake', 'python']
+[0.858s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'cmake'
+[0.858s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python'
+[0.858s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extensions ['python_setup_py']
+[0.859s] Level 1:colcon.colcon_core.package_identification:_identify(.) by extension 'python_setup_py'
+[0.859s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extensions ['ignore', 'ignore_ament_install']
+[0.859s] Level 1:colcon.colcon_core.package_identification:_identify(build) by extension 'ignore'
+[0.859s] Level 1:colcon.colcon_core.package_identification:_identify(build) ignored
+[0.860s] Level 1:colcon.colcon_core.package_identification:_identify(centauro) by extensions ['ignore', 'ignore_ament_install']
+[0.860s] Level 1:colcon.colcon_core.package_identification:_identify(centauro) by extension 'ignore'
+[0.860s] Level 1:colcon.colcon_core.package_identification:_identify(centauro) by extension 'ignore_ament_install'
+[0.860s] Level 1:colcon.colcon_core.package_identification:_identify(centauro) by extensions ['colcon_pkg']
+[0.860s] Level 1:colcon.colcon_core.package_identification:_identify(centauro) by extension 'colcon_pkg'
+[0.860s] Level 1:colcon.colcon_core.package_identification:_identify(centauro) by extensions ['colcon_meta']
+[0.860s] Level 1:colcon.colcon_core.package_identification:_identify(centauro) by extension 'colcon_meta'
+[0.861s] Level 1:colcon.colcon_core.package_identification:_identify(centauro) by extensions ['ros']
+[0.861s] Level 1:colcon.colcon_core.package_identification:_identify(centauro) by extension 'ros'
+[0.869s] DEBUG:colcon.colcon_core.package_identification:Package 'centauro' with type 'ros.ament_python' and name 'centauro'
+[0.869s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extensions ['ignore', 'ignore_ament_install']
+[0.869s] Level 1:colcon.colcon_core.package_identification:_identify(install) by extension 'ignore'
+[0.869s] Level 1:colcon.colcon_core.package_identification:_identify(install) ignored
+[0.870s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extensions ['ignore', 'ignore_ament_install']
+[0.871s] Level 1:colcon.colcon_core.package_identification:_identify(log) by extension 'ignore'
+[0.871s] Level 1:colcon.colcon_core.package_identification:_identify(log) ignored
+[0.871s] Level 1:colcon.colcon_core.package_identification:_identify(robot) by extensions ['ignore', 'ignore_ament_install']
+[0.871s] Level 1:colcon.colcon_core.package_identification:_identify(robot) by extension 'ignore'
+[0.871s] Level 1:colcon.colcon_core.package_identification:_identify(robot) by extension 'ignore_ament_install'
+[0.871s] Level 1:colcon.colcon_core.package_identification:_identify(robot) by extensions ['colcon_pkg']
+[0.871s] Level 1:colcon.colcon_core.package_identification:_identify(robot) by extension 'colcon_pkg'
+[0.872s] Level 1:colcon.colcon_core.package_identification:_identify(robot) by extensions ['colcon_meta']
+[0.872s] Level 1:colcon.colcon_core.package_identification:_identify(robot) by extension 'colcon_meta'
+[0.872s] Level 1:colcon.colcon_core.package_identification:_identify(robot) by extensions ['ros']
+[0.872s] Level 1:colcon.colcon_core.package_identification:_identify(robot) by extension 'ros'
+[0.874s] DEBUG:colcon.colcon_core.package_identification:Package 'robot' with type 'ros.ament_python' and name 'robot'
+[0.875s] Level 1:colcon.colcon_core.package_discovery:discover_packages(recursive) using defaults
+[0.875s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) discover
+[0.875s] Level 1:colcon.colcon_core.package_discovery:discover_packages(ignore) using defaults
+[0.875s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) discover
+[0.875s] Level 1:colcon.colcon_core.package_discovery:discover_packages(path) using defaults
+[0.957s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) check parameters
+[0.958s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) discover
+[0.963s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 1 installed packages in /home/everd/universidad/robotica/turtle_ws/install
+[0.964s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 3 installed packages in /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install
+[0.965s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 2 installed packages in /home/everd/ros2_ws/install
+[0.967s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 4 installed packages in /home/everd/ws_test/install
+[0.971s] DEBUG:colcon.colcon_installed_package_information.package_discovery:Found 300 installed packages in /opt/ros/humble
+[0.976s] Level 1:colcon.colcon_core.package_discovery:discover_packages(prefix_path) using defaults
+[1.138s] Level 5:colcon.colcon_core.verb:set package 'centauro' build argument 'cmake_args' from command line to 'None'
+[1.138s] Level 5:colcon.colcon_core.verb:set package 'centauro' build argument 'cmake_target' from command line to 'None'
+[1.138s] Level 5:colcon.colcon_core.verb:set package 'centauro' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.138s] Level 5:colcon.colcon_core.verb:set package 'centauro' build argument 'cmake_clean_cache' from command line to 'False'
+[1.138s] Level 5:colcon.colcon_core.verb:set package 'centauro' build argument 'cmake_clean_first' from command line to 'False'
+[1.138s] Level 5:colcon.colcon_core.verb:set package 'centauro' build argument 'cmake_force_configure' from command line to 'False'
+[1.138s] Level 5:colcon.colcon_core.verb:set package 'centauro' build argument 'ament_cmake_args' from command line to 'None'
+[1.138s] Level 5:colcon.colcon_core.verb:set package 'centauro' build argument 'catkin_cmake_args' from command line to 'None'
+[1.139s] Level 5:colcon.colcon_core.verb:set package 'centauro' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.139s] DEBUG:colcon.colcon_core.verb:Building package 'centauro' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro', 'merge_install': False, 'path': '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/centauro', 'symlink_install': False, 'test_result_base': None}
+[1.140s] Level 5:colcon.colcon_core.verb:set package 'robot' build argument 'cmake_args' from command line to 'None'
+[1.140s] Level 5:colcon.colcon_core.verb:set package 'robot' build argument 'cmake_target' from command line to 'None'
+[1.140s] Level 5:colcon.colcon_core.verb:set package 'robot' build argument 'cmake_target_skip_unavailable' from command line to 'False'
+[1.140s] Level 5:colcon.colcon_core.verb:set package 'robot' build argument 'cmake_clean_cache' from command line to 'False'
+[1.140s] Level 5:colcon.colcon_core.verb:set package 'robot' build argument 'cmake_clean_first' from command line to 'False'
+[1.140s] Level 5:colcon.colcon_core.verb:set package 'robot' build argument 'cmake_force_configure' from command line to 'False'
+[1.140s] Level 5:colcon.colcon_core.verb:set package 'robot' build argument 'ament_cmake_args' from command line to 'None'
+[1.140s] Level 5:colcon.colcon_core.verb:set package 'robot' build argument 'catkin_cmake_args' from command line to 'None'
+[1.140s] Level 5:colcon.colcon_core.verb:set package 'robot' build argument 'catkin_skip_building_tests' from command line to 'False'
+[1.140s] DEBUG:colcon.colcon_core.verb:Building package 'robot' with the following arguments: {'ament_cmake_args': None, 'build_base': '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot', 'catkin_cmake_args': None, 'catkin_skip_building_tests': False, 'cmake_args': None, 'cmake_clean_cache': False, 'cmake_clean_first': False, 'cmake_force_configure': False, 'cmake_target': None, 'cmake_target_skip_unavailable': False, 'install_base': '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot', 'merge_install': False, 'path': '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot', 'symlink_install': False, 'test_result_base': None}
+[1.141s] INFO:colcon.colcon_core.executor:Executing jobs using 'parallel' executor
+[1.144s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete
+[1.144s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/centauro' with build type 'ament_python'
+[1.145s] Level 1:colcon.colcon_core.shell:create_environment_hook('centauro', 'ament_prefix_path')
+[1.152s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_core.shell.bat': Not used on non-Windows systems
+[1.153s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/share/centauro/hook/ament_prefix_path.ps1'
+[1.154s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/share/centauro/hook/ament_prefix_path.dsv'
+[1.156s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/share/centauro/hook/ament_prefix_path.sh'
+[1.158s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.158s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[1.177s] INFO:colcon.colcon_ros.task.ament_python.build:Building ROS package in '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot' with build type 'ament_python'
+[1.177s] Level 1:colcon.colcon_core.shell:create_environment_hook('robot', 'ament_prefix_path')
+[1.178s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/hook/ament_prefix_path.ps1'
+[1.181s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/hook/ament_prefix_path.dsv'
+[1.183s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/hook/ament_prefix_path.sh'
+[1.185s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[1.185s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.028s] WARNING:colcon.colcon_ros.task.ament_python.build:Package 'centauro' doesn't explicitly install a marker in the package index (colcon-ros currently does it implicitly but that fallback will be removed in the future)
+[2.028s] WARNING:colcon.colcon_ros.task.ament_python.build:Package 'centauro' doesn't explicitly install the 'package.xml' file (colcon-ros currently does it implicitly but that fallback will be removed in the future)
+[2.030s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/centauro'
+[2.030s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.030s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[2.830s] INFO:colcon.colcon_core.task.python.build:Building Python package in '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot'
+[2.831s] INFO:colcon.colcon_core.shell:Skip shell extension 'powershell' for command environment: Not usable outside of PowerShell
+[2.831s] DEBUG:colcon.colcon_core.shell:Skip shell extension 'dsv' for command environment
+[3.894s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/centauro': PYTHONPATH=/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/centauro build --build-base /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/build install --record /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/install.log --single-version-externally-managed install_data
+[3.961s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoking command in '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot': PYTHONPATH=/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot build --build-base /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build install --record /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log --single-version-externally-managed install_data
+[4.843s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/centauro' returned '0': PYTHONPATH=/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/centauro build --build-base /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/build install --record /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/install.log --single-version-externally-managed install_data
+[4.851s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro' for CMake module files
+[4.852s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro' for CMake config files
+[4.854s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib'
+[4.855s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/bin'
+[4.855s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/pkgconfig/centauro.pc'
+[4.856s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages'
+[4.856s] Level 1:colcon.colcon_core.shell:create_environment_hook('centauro', 'pythonpath')
+[4.856s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/share/centauro/hook/pythonpath.ps1'
+[4.858s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/share/centauro/hook/pythonpath.dsv'
+[4.859s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/share/centauro/hook/pythonpath.sh'
+[4.860s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/bin'
+[4.860s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(centauro)
+[4.862s] INFO:colcon.colcon_core.shell:Creating package script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/share/centauro/package.ps1'
+[4.864s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/share/centauro/package.dsv'
+[4.865s] INFO:colcon.colcon_core.shell:Creating package script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/share/centauro/package.sh'
+[4.868s] INFO:colcon.colcon_core.shell:Creating package script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/share/centauro/package.bash'
+[4.870s] INFO:colcon.colcon_core.shell:Creating package script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/share/centauro/package.zsh'
+[4.872s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/share/colcon-core/packages/centauro)
+[4.944s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot' for CMake module files
+[4.946s] DEBUG:colcon.colcon_core.event_handler.log_command:Invoked command in '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot' returned '0': PYTHONPATH=/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot build --build-base /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build install --record /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log --single-version-externally-managed install_data
+[4.948s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot' for CMake config files
+[4.951s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib'
+[4.952s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/bin'
+[4.952s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/pkgconfig/robot.pc'
+[4.953s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages'
+[4.953s] Level 1:colcon.colcon_core.shell:create_environment_hook('robot', 'pythonpath')
+[4.954s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/hook/pythonpath.ps1'
+[4.955s] INFO:colcon.colcon_core.shell:Creating environment descriptor '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/hook/pythonpath.dsv'
+[4.956s] INFO:colcon.colcon_core.shell:Creating environment hook '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/hook/pythonpath.sh'
+[4.958s] Level 1:colcon.colcon_core.environment:checking '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/bin'
+[4.958s] Level 1:colcon.colcon_core.environment:create_environment_scripts_only(robot)
+[4.959s] INFO:colcon.colcon_core.shell:Creating package script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/package.ps1'
+[4.961s] INFO:colcon.colcon_core.shell:Creating package descriptor '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/package.dsv'
+[4.962s] INFO:colcon.colcon_core.shell:Creating package script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/package.sh'
+[4.964s] INFO:colcon.colcon_core.shell:Creating package script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/package.bash'
+[4.965s] INFO:colcon.colcon_core.shell:Creating package script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/package.zsh'
+[4.966s] Level 1:colcon.colcon_core.environment:create_file_with_runtime_dependencies(/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/colcon-core/packages/robot)
+[4.967s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:closing loop
+[4.967s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:loop closed
+[4.967s] DEBUG:colcon.colcon_parallel_executor.executor.parallel:run_until_complete finished with '0'
+[4.967s] DEBUG:colcon.colcon_core.event_reactor:joining thread
+[4.983s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.terminal_notifier': Not used on non-Darwin systems
+[4.983s] INFO:colcon.colcon_core.plugin_system:Skipping extension 'colcon_notification.desktop_notification.win32': Not used on non-Windows systems
+[4.983s] INFO:colcon.colcon_notification.desktop_notification:Sending desktop notification using 'notify2'
+[5.019s] DEBUG:colcon.colcon_core.event_reactor:joined thread
+[5.020s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/local_setup.ps1'
+[5.023s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/_local_setup_util_ps1.py'
+[5.029s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/setup.ps1'
+[5.034s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/local_setup.sh'
+[5.036s] INFO:colcon.colcon_core.shell:Creating prefix util module '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/_local_setup_util_sh.py'
+[5.037s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/setup.sh'
+[5.041s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/local_setup.bash'
+[5.043s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/setup.bash'
+[5.048s] INFO:colcon.colcon_core.shell:Creating prefix script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/local_setup.zsh'
+[5.049s] INFO:colcon.colcon_core.shell:Creating prefix chain script '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/setup.zsh'
