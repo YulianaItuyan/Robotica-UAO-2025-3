@@ -276,7 +276,7 @@ class UpperBody(ctk.CTk):
 
         # Configuración de rangos específicos
         slider_configs = [
-            {"min": 75,   "max": 180},   # J1
+            {"min": 75,   "max": 220},   # J1
             {"min": 90,  "max": 180},   # J2
             {"min": 0,  "max": 90}    # J3
         ]

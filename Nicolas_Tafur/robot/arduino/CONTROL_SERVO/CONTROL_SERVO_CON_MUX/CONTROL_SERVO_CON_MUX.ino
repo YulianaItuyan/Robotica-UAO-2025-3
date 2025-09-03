@@ -21,7 +21,7 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
 
 // Brazo 2 (izquierdo)
 #define SERVO1_BRAZO2  3  // Canal 3
-#define SERVO2_BRAZO2  4  // Canal 4
+#define SERVO2_BRAZO2  6  // Canal 4
 #define SERVO3_BRAZO2  5  // Canal 5
 
 // Variable para saber qué brazo está activo
@@ -158,26 +158,41 @@ void parseAndApply(const String& s) {
   v2 = constrain(v2, 0, 180);
   v3 = constrain(v3, 0, 180);
 
+  int a = 0;
+  int b = 0;
   // Enviar comandos al brazo activo
   if (brazoActivo == 1) {
     // Brazo 1 (derecho) - Canales 0, 1, 2
-    if (v1 <= 180){
+    if (v1 <= 220){
       servoWrite(SERVO1_BRAZO1, v1);
-    }else servoWrite(SERVO1_BRAZO1, 180);
-    if (v2 >= 90){
+    }else servoWrite(SERVO1_BRAZO1, 220);
+
+    if (v2 <= 90){
       servoWrite(SERVO2_BRAZO1, v2);
     } else servoWrite(SERVO2_BRAZO1, 90);
     if (v3 <= 90){
-      servoWrite(SERVO3_BRAZO1, v3);
+      b = (v3*0.989) + 5.15;
+      servoWrite(SERVO3_BRAZO1, b);
+      Serial.print(b);
     } else servoWrite(SERVO3_BRAZO1, 90);
   
   Serial.print("🤖 Brazo 1 (canales 0,1,2) - Recibido: ");
   } else {
     // Brazo 2 (izquierdo) - Canales 3, 4, 5
-
-    servoWrite(SERVO1_BRAZO2, v1); // Invertir movimiento para brazo izquierdo
-    servoWrite(SERVO2_BRAZO2, 180 - v2); // Invertir movimiento para brazo izquierdo
-    servoWrite(SERVO3_BRAZO2, 180 - v3); // Invertir movimiento para brazo izquierdo
+    if (v1 <= 105){
+        servoWrite(SERVO1_BRAZO2, v1);
+    } else servoWrite(SERVO1_BRAZO2,105);
+    // Invertir movimiento para brazo izquierdo
+    if (v2 <= 90){
+        servoWrite(SERVO2_BRAZO2, 180- v2);
+    }else servoWrite(SERVO2_BRAZO2, 90);
+    if (v3 <= 90){
+        a = (180 - v3)*0.97+12.7;
+        servoWrite(SERVO3_BRAZO2, a);
+        Serial.print(a); 
+    }else servoWrite(SERVO3_BRAZO2, (90*0.97)+12.7);
+     // Invertir movimiento para brazo izquierdo
+    // Invertir movimiento para brazo izquierdo
     Serial.print("🤖 Brazo 2 (canales 3,4,5) - Recibido: ");
   }
   
