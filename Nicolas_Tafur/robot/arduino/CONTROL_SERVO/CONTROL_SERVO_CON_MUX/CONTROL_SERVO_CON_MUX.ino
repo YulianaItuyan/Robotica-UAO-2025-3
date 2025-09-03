@@ -1,12 +1,10 @@
-// ====== CONFIGURACIÓN GRIPPER DC ======
-#define RPWM_PIN 5       // Pin PWM para cerrar
-#define LPWM_PIN 6       // Pin PWM para abrir
-#define GRIPPER_SPEED 150 // Velocidad PWM (0-255)
-#define finalCarrera 4 // Pin del final de carrera del gripper
-
-// ====== SERVOS CON PCA9685 ======
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
+// ====== CONFIGURACIÓN GRIPPER DC ======
+#define RPWM_PIN 5        // Pin PWM para cerrar
+#define LPWM_PIN 6        // Pin PWM para abrir
+#define GRIPPER_SPEED 150 // Velocidad PWM (0-255)
+#define finalCarrera 4    // Pin del final de carrera del gripper
 
 // Crear objeto PCA9685
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
@@ -48,13 +46,12 @@ void setup() {
   // Brazo 1 (derecho)
   servoWrite(SERVO1_BRAZO1, 90);
   servoWrite(SERVO2_BRAZO1, 90);
-  servoWrite(SERVO3_BRAZO1, 90);
-  
-  // Brazo 2 (izquierdo)
+  servoWrite(SERVO3_BRAZO1, 0);
+
   servoWrite(SERVO1_BRAZO2, 90);
   servoWrite(SERVO2_BRAZO2, 90);
-  servoWrite(SERVO3_BRAZO2, 90);
-
+  servoWrite(SERVO3_BRAZO2, 180);
+  
   // Motor DC del gripper
   pinMode(RPWM_PIN, OUTPUT);
   pinMode(LPWM_PIN, OUTPUT);
@@ -65,8 +62,8 @@ void setup() {
   Serial.println("📡 Arduino con PCA9685 listo, esperando comandos...");
   Serial.println("🤖 Brazo activo: Brazo 1 (derecho)");
   Serial.println("📍 Canales PCA9685:");
-  Serial.println("   Brazo 1: canales 0, 1, 2");
-  Serial.println("   Brazo 2: canales 3, 4, 5");
+  Serial.println("   Brazo 1: canales 3, 4, 5");
+  Serial.println("   Brazo 2: canales 0, 1, 2");
 }
 
 void loop() {
@@ -172,9 +169,9 @@ void parseAndApply(const String& s) {
     } else servoWrite(SERVO2_BRAZO1, 55);
     if (v3 >= 20){
       servoWrite(SERVO3_BRAZO1, v3);
-    } else servoWrite(SERVO3_BRAZO1, 20);
-    
-    Serial.print("🤖 Brazo 1 (canales 0,1,2) - Recibido: ");
+    } else servoWrite(SERVO3_BRAZO1, 0);
+  
+  Serial.print("🤖 Brazo 1 (canales 0,1,2) - Recibido: ");
   } else {
     // Brazo 2 (izquierdo) - Canales 3, 4, 5
 
@@ -186,3 +183,4 @@ void parseAndApply(const String& s) {
   
   Serial.println(payload);
 }
+    

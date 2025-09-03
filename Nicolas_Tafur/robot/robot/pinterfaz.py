@@ -276,9 +276,9 @@ class UpperBody(ctk.CTk):
 
         # Configuración de rangos específicos
         slider_configs = [
-            {"min": 0,   "max": 125},   # J1
-            {"min": 55,  "max": 180},   # J2
-            {"min": 20,  "max": 180}    # J3
+            {"min": 75,   "max": 180},   # J1
+            {"min": 90,  "max": 180},   # J2
+            {"min": 0,  "max": 90}    # J3
         ]
 
         for i, cfg in enumerate(slider_configs):
@@ -449,12 +449,17 @@ class UpperBody(ctk.CTk):
         return [float(v.get()) for v in self.slider_vars]
     
     def confirmar(self):
-        sliders = self.read_sliders()  # three values from GUI (these are the angles DH expects)
+        sliders = self.read_sliders() 
+        val = self.on_arm_selection
         arm = int(self.arm_choice.get())
+        if arm == 2:
+            sliders_send = [ 180-sliders[0], 180-sliders[1],sliders[2]]# three values from GUI (these are the angles DH expects)
+        else :
+            sliders_send = [ sliders[0], 180-sliders[1],sliders[2]]
         start = 0 if arm == 1 else 3
 
         # Update internal all_joints state
-        for i, val in enumerate(sliders):
+        for i, val in enumerate(sliders_send):
             self.all_joints[start + i] = val
 
         # Publish 6 values (L1..L3, R1..R3)
@@ -501,7 +506,7 @@ class UpperBody(ctk.CTk):
             self.ros.publish_arm_selection('B')
 
     def home(self):
-        neutral = [90, 90, 20,   90, 90, 20]
+        neutral = [90, 90, 0,  90, 90, 0]
 
         # Actualizar estado interno
         self.all_joints = neutral.copy()

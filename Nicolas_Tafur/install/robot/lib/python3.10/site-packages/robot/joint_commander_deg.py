@@ -103,8 +103,8 @@ class JointCommanderDeg(Node):
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.name = self.joint_names
         
-        offsets = np.array([90.0, 90.0, 0.0,   90.0, 90.0, 0.0])
-        deg_shifted = self.q_deg_current - offsets
+        offsets = np.array([90, 90, 0.0,   90, 90, 0.0])
+        deg_shifted = self.q_deg_current + offsets
         q_rad = np.deg2rad(deg_shifted)
 
         msg.position = q_rad.tolist()

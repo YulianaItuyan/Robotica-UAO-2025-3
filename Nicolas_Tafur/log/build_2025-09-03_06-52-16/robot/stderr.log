@@ -1,0 +1,5 @@
+  File "/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/pinterfaz.py", line 513
+    neutral = [111, 115, 20  122, 64, 148]
+                         ^^^^^^^
+SyntaxError: invalid syntax. Perhaps you forgot a comma?
+

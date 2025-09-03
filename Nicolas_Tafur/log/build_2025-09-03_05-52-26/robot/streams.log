@@ -1,0 +1,32 @@
+[0.584s] Invoking command in '/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/robot': PYTHONPATH=/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot build --build-base /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build install --record /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log --single-version-externally-managed install_data
+[0.721s] running egg_info
+[0.723s] writing ../build/robot/robot.egg-info/PKG-INFO
+[0.723s] writing dependency_links to ../build/robot/robot.egg-info/dependency_links.txt
+[0.723s] writing entry points to ../build/robot/robot.egg-info/entry_points.txt
+[0.723s] writing requirements to ../build/robot/robot.egg-info/requires.txt
+[0.723s] writing top-level names to ../build/robot/robot.egg-info/top_level.txt
+[0.723s] reading manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+[0.726s] writing manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+[0.727s] running build
+[0.727s] running build_py
+[0.727s] copying robot/pinterfaz.py -> /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+[0.727s] running install
+[0.727s] running install_lib
+[0.727s] copying /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/pinterfaz.py -> /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+[0.727s] byte-compiling /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/pinterfaz.py to pinterfaz.cpython-310.pyc
+[0.732s] running install_data
+[0.732s] running install_egg_info
+[0.732s] removing '/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.1-py3.10.egg-info' (and everything under it)
+[0.732s]   File "/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/pinterfaz.py", line 484
+[0.732s]     self._send_gripper_loop(dire90)ction)
+[0.732s]                                         ^
+[0.732s] SyntaxError: unmatched ')'
+[0.736s] 
+[0.736s] Copying ../build/robot/robot.egg-info to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.1-py3.10.egg-info
+[0.736s] running install_scripts
+[0.750s] Installing fk_marker script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.750s] Installing joint_commander_deg script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.751s] Installing pinterfaz script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.751s] Installing serial_node script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[0.751s] writing list of installed files to '/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log'
+[0.780s] Invoked command in '/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/robot' returned '0': PYTHONPATH=/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot build --build-base /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build install --record /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log --single-version-externally-managed install_data

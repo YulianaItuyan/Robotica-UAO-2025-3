@@ -1,0 +1,5 @@
+  File "/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/pinterfaz.py", line 484
+    self._send_gripper_loop(dire90)ction)
+                                        ^
+SyntaxError: unmatched ')'
+
