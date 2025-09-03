@@ -31,7 +31,6 @@ setup(
             'pinterfaz = robot.pinterfaz:main',
             'joint_commander_deg = robot.joint_commander_deg:main',
             'serial_node = robot.serial_node:main',
-            'fk_marker = robot.fk_marker:main',  # si existe
             #'joint_control_smoother = robot.joint_control_smoother:main',
         ],
     },

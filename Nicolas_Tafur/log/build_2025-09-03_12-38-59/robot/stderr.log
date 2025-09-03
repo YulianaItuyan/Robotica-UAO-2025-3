@@ -1,0 +1,5 @@
+  File "/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/joint_commander_deg.py", line 128
+    main()colcon build --packages-select robot && source install/setup.bash && ros2 launch robot centauro.launch.py
+          ^^^^^^
+SyntaxError: invalid syntax
+

@@ -1,0 +1,30 @@
+[0.615s] Invoking command in '/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/centauro': PYTHONPATH=/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/centauro build --build-base /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/build install --record /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/install.log --single-version-externally-managed install_data
+[0.765s] running egg_info
+[0.765s] writing ../build/centauro/mi_br.egg-info/PKG-INFO
+[0.765s] writing dependency_links to ../build/centauro/mi_br.egg-info/dependency_links.txt
+[0.765s] writing entry points to ../build/centauro/mi_br.egg-info/entry_points.txt
+[0.765s] writing requirements to ../build/centauro/mi_br.egg-info/requires.txt
+[0.765s] writing top-level names to ../build/centauro/mi_br.egg-info/top_level.txt
+[0.769s] reading manifest file '../build/centauro/mi_br.egg-info/SOURCES.txt'
+[0.770s] writing manifest file '../build/centauro/mi_br.egg-info/SOURCES.txt'
+[0.770s] running build
+[0.770s] running build_py
+[0.770s] running install
+[0.770s] running install_lib
+[0.771s] running install_data
+[0.772s] running install_egg_info
+[0.775s] removing '/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info' (and everything under it)
+[0.775s] Copying ../build/centauro/mi_br.egg-info to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info
+[0.775s] running install_scripts
+[0.789s] Installing ArmTeleop script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[0.789s] Installing fk_marker script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[0.790s] Installing joint_commander_deg script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[0.790s] Installing joint_state_publisher script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[0.790s] Installing mlol script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[0.790s] Installing mover_robot script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[0.790s] Installing pinterfaz script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[0.790s] Installing serial_node script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[0.790s] Installing spawn_urdf script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[0.790s] Installing test_arm_movement script to /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/mi_br
+[0.790s] writing list of installed files to '/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/install.log'
+[0.811s] Invoked command in '/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/centauro' returned '0': PYTHONPATH=/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/centauro/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/centauro build --build-base /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/build install --record /home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/build/centauro/install.log --single-version-externally-managed install_data

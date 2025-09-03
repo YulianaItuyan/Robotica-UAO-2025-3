@@ -1,0 +1,5 @@
+  File "/home/tombe/Robotica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/joint_commander_deg.py", line 124
+    node.destroy_node()ffsets = 
+                       ^^^^^^
+SyntaxError: invalid syntax
+

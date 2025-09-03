@@ -1,5 +1,4 @@
 [console_scripts]
-fk_marker = robot.fk_marker:main
 joint_commander_deg = robot.joint_commander_deg:main
 pinterfaz = robot.pinterfaz:main
 serial_node = robot.serial_node:main

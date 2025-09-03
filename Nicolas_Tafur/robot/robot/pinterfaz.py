@@ -59,18 +59,18 @@ def fk_from_dh(q,arm):
     if arm == 2:
         # Brazo izquierdo
         dh_table = [
-        (q[0],   -0.03,  -0.01, 0 ),   # link 1 -> θ1 variable
+        (q[0],   -0.01672,  -0.03294, 0 ),   # link 1 -> θ1 variable
         (90,     0.0, 0.0,  90),   # link 2 -> θ2 fijo = 90°
-        (q[1],   0.03, 0.105, 0),  # link 3 -> θ3 variable
-        (q[2],  -0.025, 0.16,  0)  # link 4 -> θ4 variable ]
+        (q[1],   0.0417, 0.107, 0),  # link 3 -> θ3 variable
+        (q[2],  -0.027, 0.145,  0)  # link 4 -> θ4 variable ]
          ]
     else: 
         # Brazo derecho
         dh_table = [
-        (q[0],  -3, -1, 0 ),   # link 1 -> θ1 variable
+        (q[0],  -0.02687, 0.02537, 0 ),   # link 1 -> θ1 variable
         (90,     0.0, 0.0,  90),   # link 2 -> θ2 fijo = 90°
-        (q[1],   3, 10, 0),  # link 3 -> θ3 variable
-        (q[2],  -2.0, 160, 0)  # link 4 -> θ4 variabl
+        (q[1],   -0.04270, -0.10754, 0),  # link 3 -> θ3 variable
+        (q[2],  0.03, 0.155, 0)  # link 4 -> θ4 variabl
         ]
     
     # --- Producto de transformaciones ---
@@ -468,10 +468,14 @@ class UpperBody(ctk.CTk):
         # Compute DH FK using the sliders as [joint1, joint3, joint4]
         # Mapping: slider1 -> joint1, slider2 -> joint3, slider3 -> joint4
         # Aplicar correcciones específicas similar al código 2
-        theta1 = sliders[0] -90
-        theta3 = sliders[1] -180
-        theta4 = sliders[2]     # theta4 correction
-        
+        if arm == 2:
+            theta1 = sliders[0] -90
+            theta3 = sliders[1] -180
+            theta4 = sliders[2]     # theta4 correction
+        else:
+            theta1 = sliders[0] -90
+            theta3 = sliders[1]
+            theta4 = sliders[2] +180     # theta4 correction       
         
         try:
             T = fk_from_dh([theta1, theta3, theta4],arm) # usa ángulos corregidos
@@ -506,6 +510,8 @@ class UpperBody(ctk.CTk):
             self.ros.publish_arm_selection('B')
 
     def home(self):
+        
+        # Primeros 3 valores determinan brazo derecho, los otros tres son el brazo izquierdo
         neutral = [90, 90, 0,  90, 90, 0]
 
         # Actualizar estado interno

@@ -161,15 +161,15 @@ void parseAndApply(const String& s) {
   // Enviar comandos al brazo activo
   if (brazoActivo == 1) {
     // Brazo 1 (derecho) - Canales 0, 1, 2
-    if (v1 <= 125){
+    if (v1 <= 180){
       servoWrite(SERVO1_BRAZO1, v1);
-    }else servoWrite(SERVO1_BRAZO1, 125);
-    if (v2 >= 55){
+    }else servoWrite(SERVO1_BRAZO1, 180);
+    if (v2 >= 90){
       servoWrite(SERVO2_BRAZO1, v2);
-    } else servoWrite(SERVO2_BRAZO1, 55);
-    if (v3 >= 20){
+    } else servoWrite(SERVO2_BRAZO1, 90);
+    if (v3 <= 90){
       servoWrite(SERVO3_BRAZO1, v3);
-    } else servoWrite(SERVO3_BRAZO1, 0);
+    } else servoWrite(SERVO3_BRAZO1, 90);
   
   Serial.print("🤖 Brazo 1 (canales 0,1,2) - Recibido: ");
   } else {
