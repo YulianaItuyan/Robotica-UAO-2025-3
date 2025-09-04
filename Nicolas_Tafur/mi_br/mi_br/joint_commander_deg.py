@@ -10,11 +10,20 @@ class JointCommanderDeg(Node):
     def __init__(self):
         super().__init__('joint_commander_deg')
      
-        # Ahora 6 joints (ajusta nombres exactamente como en URDF)
+        # Ahora 6 joints AQUÍ DEBEN IR LOS NOMBRES IGUALES A LOS DEL URDF
         self.joint_names = [
             'joint1', 'joint2', 'joint3',
             'joint5', 'joint6', 'joint7'
         ]
+        
+        self.HOME_POSITIONS1 = [90.0, 180.0, 90.0, 90.0, 180.0, 90.0]  # 
+        self.q_deg_current = self.HOME_POSITIONS1.copy() # ESTÁ EN EL APARTADO DEL BOTÓN DE STOP
+        
+        
+        self.HOME_POSITIONS2 = self.HOME_POSITIONS1.copy()
+        self.q_deg_target = self.HOME_POSITIONS2.copy() # ESTÁ EN EL APARTADO DEL BOTÓN DE STOP
+        
+        
         
         # Estado actual y objetivo
         self.q_deg_current = np.array([90.0] * len(self.joint_names), dtype=float)  # Posición actual

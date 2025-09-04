@@ -13,7 +13,7 @@ GRIPPER_TOPIC = '/cmd_gripper'     # tópico para el gripper
 # Default link geometry (used by DH FK). Ajusta si cada brazo tiene distinta geometría.
 DH_PARAMS = [
     # [theta_offset (rad), d (m), a (m), alpha (rad)]  for links 1..4 (link2 has theta always 0)
-    [ -np.pi/2,   -0.03,  -0.01,     0.0    ],   # link 1
+    [ -np.pi/2,   -0.01672,  -0.03294,     0.0    ],   # link 1
     [   0.0,    0.00,   0.00,   -np.pi/2],   # link 2 (θ always 0)
     [ -np.pi,  0.03, -0.105,    0.0    ],   # link 3
     [ 0.0,    0.025, -0.16,     0.0    ],   # link 4
@@ -156,9 +156,9 @@ class UpperBody(ctk.CTk):
         # State: all 6 joints (L1..L3, R1..R3) initialized to 90° (neutral)
         # self.all_joints = [90.0] * JOINT_COUNT
         
-        
-        self.HOME_POSITIONS = [90.0, 90.0, 90.0, 90.0, 90.0, 90.0]  # Tus valores reales
-        self.all_joints = self.HOME_POSITIONS.copy()
+        ####################################################################IMPORTANTEEEEEEEEEEEEEEEEEEEEE####################
+        self.HOME_POSITIONS = [90.0, 180.0, 90.0, 90.0, 180.0, 90.0]  # Tus valores reales...este es un HOME INICIAL, COMO INICIA, NO ES PARA SIEMPRE, EL OTRO HOME
+        self.all_joints = self.HOME_POSITIONS.copy() # ESTÁ EN EL APARTADO DEL BOTÓN DE STOP
         
         
 
@@ -188,7 +188,9 @@ class UpperBody(ctk.CTk):
         # ---------- SLIDERS FRAME ----------
         sliders_frame = ctk.CTkFrame(self, fg_color="transparent")
         sliders_frame.pack(fill="x", padx=10, pady=10)
-
+###########################################################################==============================IMPORTANTEEEEEEEEEEEEEEEEEEEEEE==============================
+# AQUÍ SE CAMBIAN LOS LÍMITES DEPENDIENDO DEL BRAZO SE UTILIZA DE LA SIGUIENTE MANERA ( "EL LIMITE INFERIOR", "EL LIMITE SUPERIOR", 
+######################################################################################(SI QUEREMEOS UNA RESOLUCION DE 1 ES LIMSUP-LIMINF, SIEMPRE FALSE)
         # ---- HERE: Configure slider limits and inversion per joint ----
         # Format per slider: (min_val, max_val, steps, invert_flag)
         self.LEFT_SLIDER_CONFIGS = [
@@ -346,14 +348,14 @@ class UpperBody(ctk.CTk):
                                  hover_color="#838181")
         back_btn.grid(row=0, column=1, padx=10, pady=20)
 
-        stop_btn = ctk.CTkButton(bottom_frame, text="STOP", command=self.stop,
+        stop_btn = ctk.CTkButton(bottom_frame, text="HOME", command=self.stop,
                                  fg_color="#737373", text_color="white",
                                  corner_radius=90, font=("Arial", 20),
                                  width=80, height=100,
                                  hover_color="#838181")
         stop_btn.grid(row=0, column=2, padx=10, pady=20)
 
-        home_btn = ctk.CTkButton(bottom_frame, text="HOME", command=self.home,
+        home_btn = ctk.CTkButton(bottom_frame, text="GRAB", command=self.home,
                                  fg_color="#737373", text_color="white",
                                  corner_radius=20, font=("Arial", 20), width=80, height=70,
                                  hover_color="#838181")
@@ -425,10 +427,12 @@ class UpperBody(ctk.CTk):
         
         # NUEVO: Update homogeneous transformation matrix display
         self.update_T_matrix(T_total)
-
+	#######################################AQUÍ ES EL HOMEEEEEEEEE###############################################
     def stop(self):
-        neutral = [90.0] * JOINT_COUNT
-        self.all_joints = neutral.copy()
+        self.HOME_POSITIONS = [20.0, 180.0, 0.0, 20.0, 180.0, 0.0]  # HOME CADA VEZ QUE SE HUNDE EL STOP
+        ############################################################### RECUERDEN QUE ESTE HOME ES SOLO EL DE LA VIDA REAL, EL DE RVIZ HAY QUE CAMBIARLO DESDE 
+        ############################################################### EL ARCHIVO PY DEL JOINT_COMMANDER
+        self.all_joints = self.HOME_POSITIONS.copy()
         self.ros.publish_degrees(self.all_joints)
         # update sliders and coords for current arm
         self.sync_sliders_with_selected_arm()

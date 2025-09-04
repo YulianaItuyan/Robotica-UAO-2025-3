@@ -59,13 +59,13 @@ def generate_launch_description():
         arguments=['-d', rviz_cfg],
         condition=IfCondition(rviz)
     ))
-
+    
+    ###################ESTE NODO SOLO ES PARA VERIFICAR LA VERACIDAD DEL D-H DADO A QUE UTILIZA LAS MEDIDAS DE COORDENADA A COORDENADA DEL SOLIDWORKS##########
     # Visualizador de FK 
     #nodes.append(Node(
     #    package='mi_br',
     #    executable='fk_marker',
     #    name='fk_marker',
-
     #))
 
     # GUI
