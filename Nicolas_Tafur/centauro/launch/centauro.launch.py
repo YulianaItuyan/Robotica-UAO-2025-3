@@ -61,12 +61,12 @@ def generate_launch_description():
     ))
 
     # Visualizador de FK 
-    nodes.append(Node(
-        package='mi_br',
-        executable='fk_marker',
-        name='fk_marker',
+    #nodes.append(Node(
+    #    package='mi_br',
+    #    executable='fk_marker',
+    #    name='fk_marker',
 
-    ))
+    #))
 
     # GUI
     nodes.append(Node(
@@ -105,7 +105,7 @@ def generate_launch_description():
         DeclareLaunchArgument('gui', default_value='true'),
         DeclareLaunchArgument('commander', default_value='true'),
         DeclareLaunchArgument('serial', default_value='true'),
-        DeclareLaunchArgument('port', default_value='/dev/ttyACM0'),
+        DeclareLaunchArgument('port', default_value='/dev/ttyUSB0'),
         DeclareLaunchArgument('baud', default_value='115200'),
         *nodes
     ])

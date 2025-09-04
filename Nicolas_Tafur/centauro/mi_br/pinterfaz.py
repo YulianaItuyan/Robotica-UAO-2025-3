@@ -154,7 +154,13 @@ class UpperBody(ctk.CTk):
         self.resizable(False, False)
 
         # State: all 6 joints (L1..L3, R1..R3) initialized to 90° (neutral)
-        self.all_joints = [90.0] * JOINT_COUNT
+        # self.all_joints = [90.0] * JOINT_COUNT
+        
+        
+        self.HOME_POSITIONS = [90.0, 90.0, 90.0, 90.0, 90.0, 90.0]  # Tus valores reales
+        self.all_joints = self.HOME_POSITIONS.copy()
+        
+        
 
         # AGREGADO: Variables de control del gripper
         self.gripper_running = False
@@ -166,9 +172,9 @@ class UpperBody(ctk.CTk):
 
         # Radio buttons to choose arm: 1=Left, 2=Right
         self.arm_choice = ctk.IntVar(value=1)
-        rb1 = ctk.CTkRadioButton(top_frame, text="Brazo Izquierdo", variable=self.arm_choice, value=1,
+        rb1 = ctk.CTkRadioButton(top_frame, text="Brazo Derecho", variable=self.arm_choice, value=1,
                                  text_color="white", font=("Arial", 18), command=self.on_arm_change)
-        rb2 = ctk.CTkRadioButton(top_frame, text="Brazo Derecho",  variable=self.arm_choice, value=2,
+        rb2 = ctk.CTkRadioButton(top_frame, text="Brazo Izquierdo",  variable=self.arm_choice, value=2,
                                  text_color="white", font=("Arial", 18), command=self.on_arm_change)
         rb1.grid(row=0, column=0, sticky="w", pady=2)
         rb2.grid(row=1, column=0, sticky="w", pady=2)
@@ -186,13 +192,13 @@ class UpperBody(ctk.CTk):
         # ---- HERE: Configure slider limits and inversion per joint ----
         # Format per slider: (min_val, max_val, steps, invert_flag)
         self.LEFT_SLIDER_CONFIGS = [
-            (0.0, 96.0, 96, False),  # Left slider J1 -> joint1
+            (20.0, 96.0, 76, False),  # Left slider J1 -> joint1
             (65.0, 180.0, 115, False),  # Left slider J2 -> joint3
             (0.0, 110.0, 110, False),  # Left slider J3 -> joint4
         ]
         # If right arm has different limits, set them here:
         self.RIGHT_SLIDER_CONFIGS = [
-            (0.0, 96.0, 96, False),  # Right slider J1 -> joint1 (right)
+            (20.0, 96.0, 76, False),  # Right slider J1 -> joint1 (right)
             (65.0, 180.0, 115, False),  # Right slider J2 -> joint3 (right)
             (0.0, 110.0, 110, False),  # Right slider J3 -> joint4 (right)
         ]

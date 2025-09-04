@@ -118,7 +118,7 @@ class SerialBridgeArduino(Node):
         """Envía solo el estado del gripper manteniendo los últimos valores de joints."""
         # Si no tenemos valores previos de joints, usar neutros
         if self.last_frame is None:
-            joint_vals = [90, 90, 0, 90, 90, 0]  # Valores neutros
+            joint_vals = [90, 90, 90, 90, 90, 90]  # Valores neutros
         else:
             # Extraer valores de joints del último frame
             try:
