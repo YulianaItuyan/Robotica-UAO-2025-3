@@ -14,7 +14,7 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
 
     # Ruta a la carpeta share del paquete
-    pkg_share = FindPackageShare('centauro').find('mi_br')
+    pkg_share = FindPackageShare('mi_br').find('mi_br')
 
     # Ruta completa al URDF estático
     urdf_path = os.path.join(pkg_share, 'urdf', 'URDF_LINKS.urdf')
@@ -70,7 +70,7 @@ def generate_launch_description():
 
     # GUI
     nodes.append(Node(
-        package='centauro',
+        package='mi_br',
         executable='pinterfaz',
         name='pinterfaz',
         output='screen',
@@ -79,7 +79,7 @@ def generate_launch_description():
 
     # Commander que traduce /cmd_deg -> /joint_states
     nodes.append(Node(
-        package='centauro',
+        package='mi_br',
         executable='joint_commander_deg',
         name='joint_commander_deg',
         output='screen',
@@ -88,7 +88,7 @@ def generate_launch_description():
 
     # Puente serial hacia Arduino
     nodes.append(Node(
-        package='centauro',
+        package='mi_br',
         executable='serial_node',
         name='serial_node',
         output='screen',
