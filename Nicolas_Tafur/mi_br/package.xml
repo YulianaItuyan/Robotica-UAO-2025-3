@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="3">
-  <name>centauro</name>
+  <name>mi_br</name>
   <version>0.0.1</version>
   <description>Simulación y control de brazo robótico 3DOF</description>
   <maintainer email="tronz_@todo.todo">tronz_</maintainer>
