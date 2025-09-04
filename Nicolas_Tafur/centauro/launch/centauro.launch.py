@@ -14,7 +14,7 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
 
     # Ruta a la carpeta share del paquete
-    pkg_share = FindPackageShare('mi_br').find('mi_br')
+    pkg_share = FindPackageShare('centauro').find('mi_br')
 
     # Ruta completa al URDF estático
     urdf_path = os.path.join(pkg_share, 'urdf', 'URDF_LINKS.urdf')
