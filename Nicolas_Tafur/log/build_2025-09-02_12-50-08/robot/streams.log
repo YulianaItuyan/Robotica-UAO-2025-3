@@ -1,0 +1,27 @@
+[1.568s] Invoking command in '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot': PYTHONPATH=/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot build --build-base /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build install --record /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log --single-version-externally-managed install_data
+[1.974s] running egg_info
+[1.974s] writing ../build/robot/robot.egg-info/PKG-INFO
+[1.974s] writing dependency_links to ../build/robot/robot.egg-info/dependency_links.txt
+[1.974s] writing entry points to ../build/robot/robot.egg-info/entry_points.txt
+[1.974s] writing requirements to ../build/robot/robot.egg-info/requires.txt
+[1.974s] writing top-level names to ../build/robot/robot.egg-info/top_level.txt
+[1.977s] reading manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+[1.980s] writing manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+[1.980s] running build
+[1.980s] running build_py
+[1.981s] copying robot/pinterfaz.py -> /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+[1.982s] running install
+[1.983s] running install_lib
+[1.987s] copying /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/pinterfaz.py -> /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+[1.987s] byte-compiling /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/pinterfaz.py to pinterfaz.cpython-310.pyc
+[1.992s] running install_data
+[1.993s] running install_egg_info
+[1.996s] removing '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.1-py3.10.egg-info' (and everything under it)
+[1.996s] Copying ../build/robot/robot.egg-info to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.1-py3.10.egg-info
+[1.998s] running install_scripts
+[2.035s] Installing fk_marker script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[2.035s] Installing joint_commander_deg script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[2.035s] Installing pinterfaz script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[2.037s] Installing serial_node script to /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[2.037s] writing list of installed files to '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log'
+[2.105s] Invoked command in '/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/robot' returned '0': PYTHONPATH=/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot build --build-base /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build install --record /home/everd/universidad/git/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log --single-version-externally-managed install_data
