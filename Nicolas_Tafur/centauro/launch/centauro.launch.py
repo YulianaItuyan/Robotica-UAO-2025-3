@@ -70,7 +70,7 @@ def generate_launch_description():
 
     # GUI
     nodes.append(Node(
-        package='mi_br',
+        package='centauro',
         executable='pinterfaz',
         name='pinterfaz',
         output='screen',
@@ -79,7 +79,7 @@ def generate_launch_description():
 
     # Commander que traduce /cmd_deg -> /joint_states
     nodes.append(Node(
-        package='mi_br',
+        package='centauro',
         executable='joint_commander_deg',
         name='joint_commander_deg',
         output='screen',
@@ -88,7 +88,7 @@ def generate_launch_description():
 
     # Puente serial hacia Arduino
     nodes.append(Node(
-        package='mi_br',
+        package='centauro',
         executable='serial_node',
         name='serial_node',
         output='screen',
