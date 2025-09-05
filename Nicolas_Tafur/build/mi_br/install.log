@@ -1,38 +1,49 @@
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/fk_marker.py
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/joint_state_publisher.py
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/fk_3dof_zyy.py
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/pinterfaz.py
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/serial_node.py
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/joint_commander_deg.py
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/ArmTeleop.py
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__init__.py
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__pycache__/fk_marker.cpython-310.pyc
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__pycache__/joint_state_publisher.cpython-310.pyc
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__pycache__/fk_3dof_zyy.cpython-310.pyc
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__pycache__/pinterfaz.cpython-310.pyc
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__pycache__/serial_node.cpython-310.pyc
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__pycache__/joint_commander_deg.cpython-310.pyc
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__pycache__/ArmTeleop.cpython-310.pyc
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__pycache__/__init__.cpython-310.pyc
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/ament_index/resource_index/packages/mi_br
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/package.xml
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/launch/display.launch.py
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/launch/centauro.launch.py
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/urdf/mi_br.urdf.xacro
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/config
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/share/mi_br/rviz/mi_br.rviz
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/zip-safe
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/entry_points.txt
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/requires.txt
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/SOURCES.txt
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/dependency_links.txt
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/PKG-INFO
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/top_level.txt
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br/ArmTeleop
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br/fk_marker
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br/joint_commander_deg
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br/joint_state_publisher
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br/mover_robot
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br/pinterfaz
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br/serial_node
-/home/richilzz/ros2_ws/src/git/Robotica-UAO-2025-3/Nicolas Tafur/install/mi_br/lib/mi_br/test_arm_movement
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/serial_node.py
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__init__.py
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/joint_commander_deg.py
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/pinterfaz.py
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__pycache__/serial_node.cpython-310.pyc
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__pycache__/__init__.cpython-310.pyc
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__pycache__/joint_commander_deg.cpython-310.pyc
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br/__pycache__/pinterfaz.cpython-310.pyc
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/ament_index/resource_index/packages/mi_br
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/package.xml
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/launch/centauro.launch.py
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/launch/gazebo.launch.py
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/launch/control.launch.py
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/launch/centauro_urdf.launch.py
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/launch/display.launch.py
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/launch/simulacion.launch.py
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/urdf/simple_arm.urdf
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/urdf/URDF_LINKS.urdf
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/urdf/simple_arm_description.urdf
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/urdf/mi_br_2.urdf
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/urdf/mi_br.urdf
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/config/ros2_control.yaml
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/config/joint_names_URDF_LINKS.yaml
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/config/mi_br_controllers.yaml
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/rviz/mi_br.rviz
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes/link_3.STL
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes/link_6.STL
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes/link_2.STL
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes/link_1.STL
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes/link_7.STL
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes/base_link.STL
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes/link_5.STL
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/entry_points.txt
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/requires.txt
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/dependency_links.txt
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/PKG-INFO
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/top_level.txt
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/SOURCES.txt
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info/zip-safe
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br/ArmTeleop
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br/fk_marker
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br/joint_commander_deg
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br/joint_state_publisher
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br/mlol
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br/mover_robot
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br/pinterfaz
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br/serial_node
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br/spawn_urdf
+/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br/test_arm_movement

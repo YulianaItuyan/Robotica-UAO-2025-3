@@ -1,0 +1,52 @@
+running egg_info
+writing ../build/robot/robot.egg-info/PKG-INFO
+writing dependency_links to ../build/robot/robot.egg-info/dependency_links.txt
+writing entry points to ../build/robot/robot.egg-info/entry_points.txt
+writing requirements to ../build/robot/robot.egg-info/requires.txt
+writing top-level names to ../build/robot/robot.egg-info/top_level.txt
+reading manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+writing manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+running build
+running build_py
+copying robot/serial_node.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+copying robot/fk_marker.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+copying robot/__init__.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+copying robot/clicks.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+copying robot/joint_commander_deg.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+copying robot/pinterfaz.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+copying robot/fk_3dof_zyy.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+running install
+running install_lib
+copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/serial_node.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/fk_marker.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/__init__.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/clicks.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/joint_commander_deg.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/pinterfaz.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/fk_3dof_zyy.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+byte-compiling /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/fk_marker.py to fk_marker.cpython-310.pyc
+byte-compiling /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/clicks.py to clicks.cpython-310.pyc
+byte-compiling /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/pinterfaz.py to pinterfaz.cpython-310.pyc
+byte-compiling /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/fk_3dof_zyy.py to fk_3dof_zyy.cpython-310.pyc
+running install_data
+copying resource/robot -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/ament_index/resource_index/packages
+copying package.xml -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot
+copying launch/centauro.launch.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/launch
+copying urdf/SOLID.urdf -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/urdf
+copying urdf/mi_br.urdf -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/urdf
+copying meshes/link_3.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+copying meshes/link_6.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+copying meshes/link_2.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+copying meshes/link_1.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+copying meshes/link_7.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+copying meshes/base_link.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+copying meshes/link_5.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+copying rviz/robot.rviz -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/rviz
+running install_egg_info
+removing '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.1-py3.10.egg-info' (and everything under it)
+Copying ../build/robot/robot.egg-info to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.1-py3.10.egg-info
+running install_scripts
+Installing joint_commander_deg script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+Installing pinterfaz script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+Installing serial_node script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+writing list of installed files to '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log'

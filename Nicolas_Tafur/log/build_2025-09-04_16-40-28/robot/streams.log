@@ -1,0 +1,55 @@
+[0.811s] Invoking command in '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/robot': PYTHONPATH=/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot build --build-base /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build install --record /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log --single-version-externally-managed install_data
+[1.038s] running egg_info
+[1.039s] writing ../build/robot/robot.egg-info/PKG-INFO
+[1.039s] writing dependency_links to ../build/robot/robot.egg-info/dependency_links.txt
+[1.040s] writing entry points to ../build/robot/robot.egg-info/entry_points.txt
+[1.040s] writing requirements to ../build/robot/robot.egg-info/requires.txt
+[1.040s] writing top-level names to ../build/robot/robot.egg-info/top_level.txt
+[1.042s] reading manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+[1.045s] writing manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+[1.045s] running build
+[1.045s] running build_py
+[1.046s] copying robot/serial_node.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+[1.046s] copying robot/fk_marker.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+[1.046s] copying robot/__init__.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+[1.046s] copying robot/clicks.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+[1.046s] copying robot/joint_commander_deg.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+[1.047s] copying robot/pinterfaz.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+[1.047s] copying robot/fk_3dof_zyy.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+[1.047s] running install
+[1.047s] running install_lib
+[1.048s] copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/serial_node.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+[1.048s] copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/fk_marker.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+[1.048s] copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/__init__.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+[1.048s] copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/clicks.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+[1.048s] copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/joint_commander_deg.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+[1.048s] copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/pinterfaz.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+[1.049s] copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/fk_3dof_zyy.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+[1.049s] byte-compiling /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/fk_marker.py to fk_marker.cpython-310.pyc
+[1.050s] byte-compiling /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/clicks.py to clicks.cpython-310.pyc
+[1.050s] byte-compiling /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/pinterfaz.py to pinterfaz.cpython-310.pyc
+[1.055s] Sorry: IndentationError: expected an indented block after function definition on line 451 (pinterfaz.py, line 452)
+[1.055s] byte-compiling /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/fk_3dof_zyy.py to fk_3dof_zyy.cpython-310.pyc
+[1.056s] running install_data
+[1.056s] copying resource/robot -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/ament_index/resource_index/packages
+[1.056s] copying package.xml -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot
+[1.057s] copying launch/centauro.launch.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/launch
+[1.057s] copying urdf/SOLID.urdf -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/urdf
+[1.057s] copying urdf/mi_br.urdf -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/urdf
+[1.057s] copying meshes/link_3.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+[1.060s] copying meshes/link_6.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+[1.060s] copying meshes/link_2.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+[1.061s] copying meshes/link_1.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+[1.065s] copying meshes/link_7.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+[1.068s] copying meshes/base_link.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+[1.069s] copying meshes/link_5.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/meshes
+[1.073s] copying rviz/robot.rviz -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/rviz
+[1.074s] running install_egg_info
+[1.076s] removing '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.1-py3.10.egg-info' (and everything under it)
+[1.076s] Copying ../build/robot/robot.egg-info to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.1-py3.10.egg-info
+[1.077s] running install_scripts
+[1.095s] Installing joint_commander_deg script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[1.095s] Installing pinterfaz script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[1.095s] Installing serial_node script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[1.096s] writing list of installed files to '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log'
+[1.120s] Invoked command in '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/robot' returned '0': PYTHONPATH=/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot build --build-base /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build install --record /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log --single-version-externally-managed install_data

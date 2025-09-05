@@ -1,0 +1,5 @@
+  File "/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/pinterfaz.py", line 563
+    if self.mode_select = 1:
+       ^^^^^^^^^^^^^^^^
+SyntaxError: cannot assign to attribute here. Maybe you meant '==' instead of '='?
+

@@ -1,0 +1,51 @@
+[0.813s] Invoking command in '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/mi_br': PYTHONPATH=/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/mi_br build --build-base /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/build install --record /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/install.log --single-version-externally-managed install_data
+[1.045s] running egg_info
+[1.046s] writing ../build/mi_br/mi_br.egg-info/PKG-INFO
+[1.046s] writing dependency_links to ../build/mi_br/mi_br.egg-info/dependency_links.txt
+[1.047s] writing entry points to ../build/mi_br/mi_br.egg-info/entry_points.txt
+[1.047s] writing requirements to ../build/mi_br/mi_br.egg-info/requires.txt
+[1.047s] writing top-level names to ../build/mi_br/mi_br.egg-info/top_level.txt
+[1.049s] reading manifest file '../build/mi_br/mi_br.egg-info/SOURCES.txt'
+[1.050s] writing manifest file '../build/mi_br/mi_br.egg-info/SOURCES.txt'
+[1.050s] running build
+[1.050s] running build_py
+[1.050s] running install
+[1.051s] running install_lib
+[1.052s] running install_data
+[1.052s] copying launch/gazebo.launch.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/launch
+[1.052s] copying launch/control.launch.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/launch
+[1.052s] copying launch/centauro_urdf.launch.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/launch
+[1.053s] copying launch/simulacion.launch.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/launch
+[1.053s] copying urdf/simple_arm.urdf -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/urdf
+[1.053s] copying urdf/URDF_LINKS.urdf -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/urdf
+[1.053s] copying urdf/simple_arm_description.urdf -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/urdf
+[1.053s] copying urdf/mi_br_2.urdf -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/urdf
+[1.053s] copying urdf/mi_br.urdf -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/urdf
+[1.054s] creating /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/config
+[1.054s] copying config/ros2_control.yaml -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/config
+[1.054s] copying config/joint_names_URDF_LINKS.yaml -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/config
+[1.055s] copying config/mi_br_controllers.yaml -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/config
+[1.055s] creating /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes
+[1.055s] copying meshes/link_3.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes
+[1.056s] copying meshes/link_6.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes
+[1.056s] copying meshes/link_2.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes
+[1.056s] copying meshes/link_1.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes
+[1.059s] copying meshes/link_7.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes
+[1.062s] copying meshes/base_link.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes
+[1.063s] copying meshes/link_5.STL -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/share/mi_br/meshes
+[1.066s] running install_egg_info
+[1.068s] removing '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info' (and everything under it)
+[1.068s] Copying ../build/mi_br/mi_br.egg-info to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info
+[1.068s] running install_scripts
+[1.088s] Installing ArmTeleop script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.088s] Installing fk_marker script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.088s] Installing joint_commander_deg script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.088s] Installing joint_state_publisher script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.088s] Installing mlol script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.089s] Installing mover_robot script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.089s] Installing pinterfaz script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.089s] Installing serial_node script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.089s] Installing spawn_urdf script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.089s] Installing test_arm_movement script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.089s] writing list of installed files to '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/install.log'
+[1.111s] Invoked command in '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/mi_br' returned '0': PYTHONPATH=/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/mi_br build --build-base /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/build install --record /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/install.log --single-version-externally-managed install_data

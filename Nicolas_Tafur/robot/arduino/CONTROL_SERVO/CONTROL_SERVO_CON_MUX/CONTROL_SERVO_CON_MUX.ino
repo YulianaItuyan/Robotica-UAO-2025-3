@@ -10,8 +10,8 @@
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
 
 // Configuración de servos
-#define SERVOMIN  150 // Valor mínimo de pulso (aproximadamente 1ms) 172
-#define SERVOMAX  600 // Valor máximo de pulso (aproximadamente 2ms) 565
+#define SERVOMIN  30 // Valor mínimo de pulso (aproximadamente 1ms) 172
+#define SERVOMAX  30 // Valor máximo de pulso (aproximadamente 2ms) 565
 
 // Canales PCA9685 para cada brazo
 // Brazo 1 (derecho)
@@ -21,7 +21,7 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
 
 // Brazo 2 (izquierdo)
 #define SERVO1_BRAZO2  3  // Canal 3
-#define SERVO2_BRAZO2  6  // Canal 4
+#define SERVO2_BRAZO2  4  // Canal 4
 #define SERVO3_BRAZO2  5  // Canal 5
 
 // Variable para saber qué brazo está activo

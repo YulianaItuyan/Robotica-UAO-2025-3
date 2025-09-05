@@ -1,0 +1,27 @@
+[0.778s] Invoking command in '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/robot': PYTHONPATH=/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot build --build-base /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build install --record /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log --single-version-externally-managed install_data
+[0.997s] running egg_info
+[0.998s] writing ../build/robot/robot.egg-info/PKG-INFO
+[0.998s] writing dependency_links to ../build/robot/robot.egg-info/dependency_links.txt
+[0.998s] writing entry points to ../build/robot/robot.egg-info/entry_points.txt
+[0.998s] writing requirements to ../build/robot/robot.egg-info/requires.txt
+[0.998s] writing top-level names to ../build/robot/robot.egg-info/top_level.txt
+[1.000s] reading manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+[1.001s] writing manifest file '../build/robot/robot.egg-info/SOURCES.txt'
+[1.001s] running build
+[1.002s] running build_py
+[1.002s] copying robot/serial_node.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot
+[1.002s] running install
+[1.002s] running install_lib
+[1.003s] copying /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build/lib/robot/serial_node.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot
+[1.004s] byte-compiling /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot/serial_node.py to serial_node.cpython-310.pyc
+[1.004s] running install_data
+[1.004s] copying launch/centauro.launch.py -> /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/share/robot/launch
+[1.005s] running install_egg_info
+[1.007s] removing '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.1-py3.10.egg-info' (and everything under it)
+[1.007s] Copying ../build/robot/robot.egg-info to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages/robot-0.0.1-py3.10.egg-info
+[1.008s] running install_scripts
+[1.027s] Installing joint_commander_deg script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[1.027s] Installing pinterfaz script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[1.027s] Installing serial_node script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/robot
+[1.027s] writing list of installed files to '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log'
+[1.060s] Invoked command in '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/robot' returned '0': PYTHONPATH=/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/robot/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/robot build --build-base /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/build install --record /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/robot/install.log --single-version-externally-managed install_data

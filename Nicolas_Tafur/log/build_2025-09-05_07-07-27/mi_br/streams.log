@@ -1,0 +1,30 @@
+[0.770s] Invoking command in '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/mi_br': PYTHONPATH=/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/mi_br build --build-base /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/build install --record /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/install.log --single-version-externally-managed install_data
+[0.994s] running egg_info
+[0.995s] writing ../build/mi_br/mi_br.egg-info/PKG-INFO
+[0.995s] writing dependency_links to ../build/mi_br/mi_br.egg-info/dependency_links.txt
+[0.995s] writing entry points to ../build/mi_br/mi_br.egg-info/entry_points.txt
+[0.995s] writing requirements to ../build/mi_br/mi_br.egg-info/requires.txt
+[0.995s] writing top-level names to ../build/mi_br/mi_br.egg-info/top_level.txt
+[0.997s] reading manifest file '../build/mi_br/mi_br.egg-info/SOURCES.txt'
+[0.998s] writing manifest file '../build/mi_br/mi_br.egg-info/SOURCES.txt'
+[0.998s] running build
+[0.998s] running build_py
+[0.998s] running install
+[0.999s] running install_lib
+[1.000s] running install_data
+[1.000s] running install_egg_info
+[1.002s] removing '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info' (and everything under it)
+[1.002s] Copying ../build/mi_br/mi_br.egg-info to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages/mi_br-0.0.1-py3.10.egg-info
+[1.003s] running install_scripts
+[1.021s] Installing ArmTeleop script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.022s] Installing fk_marker script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.022s] Installing joint_commander_deg script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.022s] Installing joint_state_publisher script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.022s] Installing mlol script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.022s] Installing mover_robot script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.022s] Installing pinterfaz script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.022s] Installing serial_node script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.022s] Installing spawn_urdf script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.022s] Installing test_arm_movement script to /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/mi_br
+[1.022s] writing list of installed files to '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/install.log'
+[1.055s] Invoked command in '/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/mi_br' returned '0': PYTHONPATH=/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/install/mi_br/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py egg_info --egg-base ../build/mi_br build --build-base /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/build install --record /home/felipe/robótica/Robotica-UAO-2025-3/Nicolas_Tafur/build/mi_br/install.log --single-version-externally-managed install_data
