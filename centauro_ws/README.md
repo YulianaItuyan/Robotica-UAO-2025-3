@@ -1,10 +1,7 @@
-# nicolas_tafur_ws
-
-Workspace limpio generado automáticamente (2025-09-25T20:15:47).
 
 ## Estructura
 ```
-nicolas_tafur_ws/
+centauro_ws/
   src/        # paquetes ROS2
   build/      # (autogenerado por colcon)
   install/    # (autogenerado por colcon)
@@ -13,16 +10,15 @@ nicolas_tafur_ws/
 
 ## Cómo compilar
 ```bash
-cd nicolas_tafur_ws
-colcon build --symlink-install
-source install/setup.bash
-```
+cd ~/"Ruta hasta donde tengan el repositorio"/centauro_ws
+rm -rf build/ install/ log/(Esto se hace para borrar lo relacionado al anterior workspace y evitar problemas)
+colcon build --packages-select robot --symlink-install
 
-## Paquetes incluidos
-- robot
-- robot
-- centauro
-- mi_br
-- mi_br
-- mi_br
-- robot
+Recuerden en la terminal:
+sudo nano ~/.bashrc
+Dentro van al final y escriben
+
+source ~/"Ruta hasta donde tengan el repositorio"/centauro_ws/install/setup.bash
+
+
+
