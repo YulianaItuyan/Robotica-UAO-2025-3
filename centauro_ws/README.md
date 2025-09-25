@@ -11,9 +11,10 @@ centauro_ws/
 ## Cómo compilar
 ```bash
 cd ~/"Ruta hasta donde tengan el repositorio"/centauro_ws
-rm -rf build/ install/ log/(Esto se hace para borrar lo relacionado al anterior workspace y evitar problemas)
+rm -rf build/ install/ log/#(Esto se hace para borrar lo relacionado al anterior workspace y evitar problemas)
 colcon build --packages-select robot --symlink-install
 
+## Despues de compilar
 Recuerden en la terminal:
 sudo nano ~/.bashrc
 Dentro van al final y escriben
