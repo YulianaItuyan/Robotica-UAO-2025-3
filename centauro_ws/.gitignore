@@ -1,0 +1,10 @@
+# ROS 2 workspace ignores
+build/
+install/
+log/
+.colcon/
+*.pyc
+__pycache__/
+.vscode/
+.idea/
+.DS_Store
