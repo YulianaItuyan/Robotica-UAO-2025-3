@@ -14,8 +14,15 @@ from ament_index_python.packages import get_package_share_directory
 def generate_launch_description():
     # Rutas de recursos
     pkg_share = get_package_share_directory('robot')
-    urdf = os.path.join(pkg_share, 'urdf', 'URDF_LINKS.urdf')
-    rviz_cfg = PathJoinSubstitution([pkg_share, 'rviz', 'robot.rviz'])
+    urdf = os.path.join(pkg_share, 'urdf', 'new_urdf.urdf')
+    
+     # Cargar URDF como string
+    with open(urdf, 'r') as urdf_file:
+        urdf_content = urdf_file.read()
+    robot_description = ParameterValue(urdf_content, value_type=str)
+    
+    
+    rviz_cfg = PathJoinSubstitution([pkg_share, 'rviz', 'new_robot.rviz'])
 
     # LaunchConfigurations (argumentos que se pueden pasar por terminal)
     use_sim_time = LaunchConfiguration('use_sim_time')
@@ -25,15 +32,14 @@ def generate_launch_description():
     serial = LaunchConfiguration('serial')
     port = LaunchConfiguration('port')
     baud = LaunchConfiguration('baud')
-    move_duration_s = LaunchConfiguration('move_duration_s')
-    #smooth_motion = LaunchConfiguration('smooth_motion')
-
-    # Cargar URDF como string
-    with open(urdf, 'r') as urdf_file:
-        urdf_content = urdf_file.read()
+    
     robot_description = ParameterValue(urdf_content, value_type=str)
 
+
     nodes = []
+
+
+ 
 
     # 1️⃣ Robot State Publisher
     nodes.append(Node(
@@ -67,6 +73,26 @@ def generate_launch_description():
         condition=IfCondition(gui)
     ))
 
+    # 5️⃣ ik_node
+    nodes.append(Node(
+        package='robot',
+        executable='ik_node',
+        name='ik_node',
+        output='screen',
+        condition=IfCondition(gui)
+    ))
+
+    # 5️⃣ fk_node
+    nodes.append(Node(
+        package='robot',
+        executable='fk_node',
+        name='fk_node',
+        output='screen',
+        condition=IfCondition(gui)
+    ))
+
+    
+
     # 6️⃣ Joint Commander con interpolación suave (solo si commander y smooth_motion son true)
     # Joint Commander con interpolación suave
     nodes.append(Node(
@@ -74,10 +100,7 @@ def generate_launch_description():
         executable='joint_commander_deg',
         name='joint_commander_deg',
         output='screen',
-        parameters=[{
-            'move_duration_s': move_duration_s
-        }],
-        condition=IfCondition(commander)
+        
     ))
 
 

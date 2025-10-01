@@ -3,30 +3,19 @@
 #pinterfaz.py
 
 import rclpy
+import customtkinter as ctk
+import numpy as np
 from rclpy.node import Node
 from std_msgs.msg import Float32MultiArray
-import customtkinter as ctk
-from PIL import Image  # lo dejamos por si más adelante cargas imágenes
-import numpy as np
 from control_msgs.action import FollowJointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
 from rclpy.action import ActionClient
-from std_msgs.msg import String 
-
-# ====== CONFIG ======
-TOPIC_NAME = '/cmd_deg'            # tópico donde publicamos los grados
-JOINT_COUNT = 6
-GRIPPER_TOPIC = '/cmd_gripper'  # tópico para el gripper
-
-# Estilo global UI
-ctk.set_appearance_mode("dark")
-ctk.set_default_color_theme("blue")
+from std_msgs.msg import String , Empty
+from geometry_msgs.msg import PoseStamped 
+from PIL import Image  # Por si vamos a usar imágenes
 
 
-
-ctk.set_appearance_mode("dark")
-ctk.set_default_color_theme("blue")
-
+#========DH=============
 def dh_standard(theta, d, a, alpha):
     """
     Matriz de transformación homogénea 4x4 usando parámetros DH estándar.
@@ -46,9 +35,10 @@ def dh_standard(theta, d, a, alpha):
     ], dtype=float)
 
     return T
+#-----------------------------------------------------------
     
 
-# ------------------ DH FUNCTIONS (denavit) ------------------
+#=========Forward Kinematics=========
 
 def fk_from_dh(q,arm):
     """
@@ -80,56 +70,34 @@ def fk_from_dh(q,arm):
 
     return T
 
-   
-
-    # --- Parámetros fijos (a, alpha, d) ---
-    # Estructura: (a, alpha, d, theta)
-    
-
-    # --- Producto de transformaciones ---
-    T = np.eye(4)
-    for (theta, d, a, alpha) in dh_table:
-        T = T @ dh_standard(theta, d, a, alpha, degrees=degrees)
-
-    return T
 
 # -----------------------------------------------------------
 
 
+#================ Creación del nodo(Pub y Subs) ===================
+
 class Ros2Bridge(Node):
-    """Nodo mínimo para publicar Float32MultiArray en /cmd_deg."""
-    def __init__(self, topic_name=TOPIC_NAME, gripper_topic=GRIPPER_TOPIC, select_topic='/cmd_arm_select'):
-        super().__init__('robot_gui_node')
+    def __init__(self):
+        super().__init__('pinterfaz')# Nombre del nodo
 
-        print("🚀 Versión ACTUALIZADA de pinterfaz cargada correctamente")
+        print("Nodo pinterfaz cargado correctamente")
         
-        self.publisher_ = self.create_publisher(Float32MultiArray, topic_name, 10)
-        self.gripper_publisher_ = self.create_publisher(Float32MultiArray, gripper_topic, 10)
-        self.arm_select_publisher_ = self.create_publisher(String, select_topic, 10)  # CORREGIDO: String, no Float32MultiArray
-        #self.smooth_publisher_ = self.create_publisher(Float32MultiArray, '/cmd_deg_smooth', 10)  # Para movimientos suaves
+        self.arm_select_publisher_ = self.create_publisher(String, '/cmd_arm_select', 10) 
+        self.goal_pub = self.create_publisher(PoseStamped, '/ik_goal', 10)  
+        self.fk_pub = self.create_publisher(Float32MultiArray, '/fk_goal', 10)  
+        self.run_mode_pub = self.create_publisher(String, '/run_mode', 10) 
 
-        # parametros
-        self.declare_parameter('use_smooth_motion', False)
-        self.use_smooth_motion = self.get_parameter('use_smooth_motion').value
-        
-        self.get_logger().info(f'Ros2Bridge listo para publicar en {topic_name} y {gripper_topic} y {select_topic} y {"/cmd_deg_smooth"}')
-        self.get_logger().info(f'Movimientos suaves: {"habilitados" if self.use_smooth_motion else "deshabilitados"}')
+        self.get_logger().info(f'Ros2Bridge listo para publicar en  /cmd_arm_select, /ik_goal, /fk_goal y /run_mode')
 
-    def publish_degrees(self, angles_deg):
-        if len(angles_deg) != JOINT_COUNT:
-            self.get_logger().warn(f'publish_degrees: se esperaban {JOINT_COUNT} valores, llegaron {len(angles_deg)}')
+    #Funciones para publicar en los topicos
+    def publish_fk_goal(self, angles_deg):
+        if len(angles_deg) != 6:
+            self.get_logger().warn(f'publish_degrees: se esperaban 6 valores, llegaron {len(angles_deg)}')
             return
         msg = Float32MultiArray()
         msg.data = [float(a) for a in angles_deg]
-        self.publisher_.publish(msg)
-        self.get_logger().info(f'Publicado en {TOPIC_NAME}: {msg.data}')
-
-    def publish_gripper(self, value):
-        """Publica un valor float en /cmd_gripper."""
-        msg = Float32MultiArray()
-        msg.data = [float(value)]
-        self.gripper_publisher_.publish(msg)
-        self.get_logger().info(f'Publicado en {GRIPPER_TOPIC}: {msg.data}')
+        self.fk_pub.publish(msg)
+        self.get_logger().info(f'Publicado en /fk_goal: {msg.data}')
 
     def publish_arm_selection(self, arm_code):
         """Publica 'A' o 'B' en /cmd_arm_select."""
@@ -138,6 +106,40 @@ class Ros2Bridge(Node):
         self.arm_select_publisher_.publish(msg)
         self.get_logger().info(f'Publicado en /cmd_arm_select: {msg.data}')
 
+    def publish_ik_goal(self, x=0.20, y=0.10, z=0.15, frame='base_link'):
+        """Publica un PoseStamped dummy a /ik_goal para probar el ik_node."""
+        msg = PoseStamped()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = frame
+        msg.pose.position.x = float(x)
+        msg.pose.position.y = float(y)
+        msg.pose.position.z = float(z)
+        msg.pose.orientation.w = 1.0  # orientación identidad
+        self.goal_pub.publish(msg)
+        self.get_logger().info(f'Publicado /ik_goal -> frame={frame} pos=({x:.3f},{y:.3f},{z:.3f})')
+
+    def publish_run_mode(self, mode_code):
+        """Publica 'C' o 'D' en /cmd_arm_select."""
+        msg = String()
+        msg.data = mode_code
+        self.run_mode_pub.publish(msg)
+        self.get_logger().info(f'Publicado en /run_mode: {msg.data}')
+
+
+#-----------------------------------------------------------
+
+#================ Interfaz Gráfica ===================
+
+# Estilo global UI
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
+
+
+
+ctk.set_appearance_mode("dark")
+ctk.set_default_color_theme("blue")
+
+#Venarna principal    
 
 class VentanaPrincipal(ctk.CTk):
     def __init__(self, ros: Ros2Bridge):
@@ -152,7 +154,7 @@ class VentanaPrincipal(ctk.CTk):
         self.grid_columnconfigure(0, weight=1)
 
         self.boton1 = ctk.CTkButton(self,
-                                   text="UPPER BODY",
+                                   text="Forward Kinematics",
                                    command=self.cambio_upper_body,
                                    fg_color="#737373",
                                    text_color="white",
@@ -162,17 +164,16 @@ class VentanaPrincipal(ctk.CTk):
                                    hover_color="#838181")
         self.boton1.grid(row=0, column=0, pady=10)
 
-        # LOWER BODY - DESHABILITADO
+       
         self.boton2 = ctk.CTkButton(self,
-                                   text="LOWER BODY",
-                                   command=self.boton_deshabilitado,  # Función que no hace nada
-                                   fg_color="#404040",  # Color más oscuro para indicar deshabilitado
-                                   text_color="#808080",  # Texto gris
+                                   text="Inverse Kinematics",
+                                   command=self.cambio_lower_body,  
+                                   fg_color="#737373",  
+                                   text_color="white",  
                                    corner_radius=10,
                                    font=("Arial", 20),
                                    width=225, height=75,
-                                   hover_color="#404040",  # Sin cambio en hover
-                                   state="disabled")  # Estado deshabilitado
+                                   hover_color="#838181") 
         self.boton2.grid(row=2, column=0, pady=10)
 
         # GEARS - DESHABILITADO
@@ -202,6 +203,11 @@ class VentanaPrincipal(ctk.CTk):
         segunda = UpperBody(self.ros)
         segunda.mainloop()
 
+    def cambio_lower_body(self):
+        self.destroy()
+        segunda = LowerBody(self.ros)
+        segunda.mainloop()
+
     def boton_deshabilitado(self):
         """Función placeholder para botones deshabilitados - no hace nada"""
         print("Esta opción no está disponible aún")
@@ -220,6 +226,9 @@ class VentanaPrincipal(ctk.CTk):
             self.destroy()
 
 
+#UPPERBODY(Forward Kinematics)
+
+
 class UpperBody(ctk.CTk):
     def __init__(self, ros: Ros2Bridge):
         super().__init__()
@@ -233,7 +242,7 @@ class UpperBody(ctk.CTk):
         top_frame = ctk.CTkFrame(self, fg_color="transparent", height=50)
         top_frame.pack(fill="x", padx=10, pady=10)
 
-        self.all_joints = [90.0] * JOINT_COUNT
+        self.all_joints = [90.0] * 6
 
         # CORREGIDO: Variable de instancia definida correctamente
         self.arm_choice = ctk.IntVar(value=1)  # CORREGIDO: era arm_choise
@@ -330,7 +339,7 @@ class UpperBody(ctk.CTk):
             )
             btn_plus.grid(row=i, column=6, padx=(4,8), pady=5)
 
-        # === Botones Confirmar / Gripper ===========
+               # === Botones Confirmar + Selectores ===========
         debajosliders_frame = ctk.CTkFrame(self, fg_color="transparent")
         debajosliders_frame.pack(fill="x", padx=10, pady=10)
 
@@ -338,42 +347,40 @@ class UpperBody(ctk.CTk):
         debajosliders_frame.grid_columnconfigure(1, weight=0)
         debajosliders_frame.grid_columnconfigure(2, weight=0)
         debajosliders_frame.grid_columnconfigure(3, weight=0)
-        debajosliders_frame.grid_columnconfigure(4, weight=0)
-        debajosliders_frame.grid_columnconfigure(5, weight=1)
+        debajosliders_frame.grid_columnconfigure(4, weight=1)
 
-        Confirmar_btn = ctk.CTkButton(debajosliders_frame, text="CONFIRMAR",
-                                      command=self.confirmar,
-                                      fg_color="#737373", text_color="white",
-                                      corner_radius=10, font=("Arial", 20),
-                                      width=50, height=75, hover_color="#838181")
-        Confirmar_btn.grid(row=0, column=1, padx=10)
+        Confirmar_btn = ctk.CTkButton(
+            debajosliders_frame, text="CONFIRMAR",
+            command=self.confirmar,
+            fg_color="#737373", text_color="white",
+            corner_radius=10, font=("Arial", 20),
+            width=50, height=75, hover_color="#838181"
+        )
+        Confirmar_btn.grid(row=0, column=2, padx=10, pady=(5, 2))
 
-        gripper_btn = ctk.CTkButton(debajosliders_frame, text="GRIPPER",
-                                    #command=self.gripper,
-                                    fg_color="#737373", text_color="white",
-                                    corner_radius=10, font=("Arial", 20),
-                                    width=50, height=75, hover_color="#838181")
-        gripper_btn.grid(row=0, column=3, padx=10)
+        # --- Selectores debajo de CONFIRMAR --
 
-        # Vincular eventos de presionar y soltar
-        gripper_btn.bind("<ButtonPress-1>", lambda e: self.start_gripper(1))
-        gripper_btn.bind("<ButtonRelease-1>", lambda e: self.stop_gripper())
+        self.mode_choice = ctk.IntVar(value=1)  # 1: Simulación, 2: Vida real
 
-        # Variables de control
-        self.gripper_running = False
-        self._after_id = None  # ID del after para poder cancelarlo
 
-        abrir_btn = ctk.CTkButton(debajosliders_frame, text="ABRIR GR",
-                                    #command=self.gripper,
-                                    fg_color="#737373", text_color="white",
-                                    corner_radius=10, font=("Arial", 20),
-                                    width=50, height=75, hover_color="#838181")
-        abrir_btn.grid(row=0, column=4, padx=10)
+        rb_sim = ctk.CTkRadioButton(
+            debajosliders_frame, text="Simulación",
+            variable=self.mode_choice, value= 1,
+            command=self.run_mode_selection,
+            text_color="white", font=("Arial", 16)
+        )
+        rb_real = ctk.CTkRadioButton(
+            debajosliders_frame, text="Vida real",
+            variable=self.mode_choice, value= 2,
+            command=self.run_mode_selection,
+            text_color="white", font=("Arial", 16)
+        )
 
-        # Vincular eventos de presionar y soltar
-        abrir_btn.bind("<ButtonPress-1>", lambda e: self.start_gripper(-1))
-        abrir_btn.bind("<ButtonRelease-1>", lambda e: self.stop_gripper())
+        rb_sim.grid(row=1, column=2, pady=(5,2), sticky="n")
+        rb_real.grid(row=2, column=2, pady=(2,5), sticky="n")
 
+
+     
         # Divisor
         self.divisoria2 = ctk.CTkFrame(self, height=2, corner_radius=0, fg_color="#3B3B3B")
         self.divisoria2.pack(fill="x", padx=10, pady=20)
@@ -427,10 +434,12 @@ class UpperBody(ctk.CTk):
                                  width=80, height=70, hover_color="#838181")
         back_btn.grid(row=0, column=1, padx=10, pady=20)
 
-        stop_btn = ctk.CTkButton(bottom_frame, text="STOP", command=self.stop,
-                                 fg_color="#737373", text_color="white",
+        stop_btn = ctk.CTkButton(bottom_frame, text="STOP",
+                                 fg_color="#737373",
+                                 command=self.stop,
+                                 text_color="white",
                                  corner_radius=90, font=("Arial", 20),
-                                 width=80, height=100, hover_color="#838181")
+                                 width=80, height=100, hover_color="#5C5C5C")
         stop_btn.grid(row=0, column=2, padx=10, pady=20)
 
         home_btn = ctk.CTkButton(bottom_frame, text="HOME", command=self.home,
@@ -442,7 +451,12 @@ class UpperBody(ctk.CTk):
         # No cerramos todo ROS al cerrar solo esta ventana (volver al menú)
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
-    # ======= Callbacks UI =======
+
+        self.on_arm_selection()
+        self.run_mode_selection()
+
+
+    #Callbacks UI
 
     def read_sliders(self):
         """Return list of 3 slider values (float) in the order [s1,s2,s3]."""
@@ -463,7 +477,7 @@ class UpperBody(ctk.CTk):
             self.all_joints[start + i] = val
 
         # Publish 6 values (L1..L3, R1..R3)
-        self.ros.publish_degrees(self.all_joints)
+        self.ros.publish_fk_goal(self.all_joints)
 
         # Compute DH FK using the sliders as [joint1, joint3, joint4]
         # Mapping: slider1 -> joint1, slider2 -> joint3, slider3 -> joint4
@@ -484,23 +498,12 @@ class UpperBody(ctk.CTk):
         except Exception as e:
             print(f"[FK-DH] Error calculando FK: {e}")
 
-    def stop(self):
-        
-        pass
-
-    def start_gripper(self, direction):
-        self.gripper_running = True
-        self._send_gripper_loop(direction)
-
-    def stop_gripper(self):
-        self.gripper_running = False
-        if self._after_id:
-            self.after_cancel(self._after_id)
-
-    def _send_gripper_loop(self, direction):
-        if self.gripper_running:
-            self.ros.publish_gripper(direction)  # 1 = cerrar, -1 = abrir
-            self._after_id = self.after(100, lambda: self._send_gripper_loop(direction))
+    def run_mode_selection(self):
+        val = self.mode_choice.get()
+        if val == 1:
+            self.ros.publish_run_mode('C') # Simulación
+        elif val == 2:
+            self.ros.publish_run_mode('D')  # Vida real
 
     def on_arm_selection(self):
         val = self.arm_choice.get()
@@ -509,6 +512,15 @@ class UpperBody(ctk.CTk):
         elif val == 2:
             self.ros.publish_arm_selection('B')
 
+
+
+    
+
+    def stop(self):
+        
+        pass
+
+    
     def home(self):
         
         # Primeros 3 valores determinan brazo derecho, los otros tres son el brazo izquierdo
@@ -518,7 +530,7 @@ class UpperBody(ctk.CTk):
         self.all_joints = neutral.copy()
 
         # Publicar al tópico
-        self.ros.publish_degrees(self.all_joints)
+       
 
         # --- Actualizar sliders del brazo activo ---
         arm = int(self.arm_choice.get())
@@ -526,13 +538,19 @@ class UpperBody(ctk.CTk):
         for i in range(3):
             self.slider_vars[i].set(self.all_joints[start + i])
 
+        self.ros.publish_fk_goal(self.all_joints)
+
         # --- Calcular y mostrar matriz de transformación ---
         sliders = self.read_sliders()  # lee los 3 sliders ya actualizados
 
-        theta1 = sliders[0] -90
-        theta3 = sliders[1] -180
-        theta4 = sliders[2]     # theta4 correction
-        
+        if arm == 2:
+            theta1 = sliders[0] -90
+            theta3 = sliders[1] -180
+            theta4 = sliders[2]     # theta4 correction
+        else:
+            theta1 = sliders[0] -90
+            theta3 = sliders[1]
+            theta4 = sliders[2] +180     # theta4 correction       
         
         try:
             T = fk_from_dh([theta1, theta3, theta4],arm) # usa ángulos corregidos
@@ -546,6 +564,7 @@ class UpperBody(ctk.CTk):
         self.destroy()
         v = VentanaPrincipal(self.ros)
         v.mainloop()
+        
 
     def on_close(self):
         # Cerramos solo la ventana; el nodo ROS sigue vivo si retornas al menú
@@ -587,9 +606,177 @@ class UpperBody(ctk.CTk):
         except Exception:
             _apply()
 
+
+#LOWERBODY(Inverse Kinematics)
+
+class LowerBody(ctk.CTk):
+    def __init__(self, ros: Ros2Bridge):
+        super().__init__()
+        self.ros = ros
+
+        self.title("LOWER BODY")
+        self.geometry("420x400")
+        self.resizable(False, False)
+
+        # ===== Top bar: selección de brazo =====
+        top_frame = ctk.CTkFrame(self, fg_color="transparent", height=50)
+        top_frame.pack(fill="x", padx=16, pady=(12, 0))
+
+        self.arm_choice = ctk.IntVar(value=1)  # 1: Derecho (A), 2: Izquierdo (B)
+
+        rb_left = ctk.CTkRadioButton(
+            top_frame, text="Brazo Izquierdo",
+            variable=self.arm_choice, value=2,
+            command=self.on_arm_selection,
+            text_color="white", font=("Arial", 20)
+        )
+        rb_right = ctk.CTkRadioButton(
+            top_frame, text="Brazo Derecho",
+            variable=self.arm_choice, value=1,
+            command=self.on_arm_selection,
+            text_color="white", font=("Arial", 20)
+        )
+        rb_left.grid(row=0, column=0, sticky="w", padx=6)
+        rb_right.grid(row=1, column=0, sticky="w", padx=6)
+
+        # ===== Contenido principal =====
+        container = ctk.CTkFrame(self, fg_color="transparent")
+        container.pack(fill="both", expand=True, padx=16, pady=12)
+        container.grid_columnconfigure((0, 1, 2), weight=1)
+
+        lbl_title = ctk.CTkLabel(container, text="Meta cartesiana → ik_goal",
+                                 text_color="white", font=("Arial", 20))
+        lbl_title.grid(row=0, column=0, columnspan=3, pady=(0, 12))
+
+        # Labels
+        ctk.CTkLabel(container, text="X (m):", text_color="#cfcfcf").grid(row=1, column=0, sticky="w", padx=6)
+        ctk.CTkLabel(container, text="Y (m):", text_color="#cfcfcf").grid(row=1, column=1, sticky="w", padx=6)
+        ctk.CTkLabel(container, text="Z (m):", text_color="#cfcfcf").grid(row=1, column=2, sticky="w", padx=6)
+
+        # Entradas
+        self.entry_x = ctk.CTkEntry(container, width=110)
+        self.entry_y = ctk.CTkEntry(container, width=110)
+        self.entry_z = ctk.CTkEntry(container, width=110)
+        self.entry_x.grid(row=2, column=0, padx=6, pady=(0, 10))
+        self.entry_y.grid(row=2, column=1, padx=6, pady=(0, 10))
+        self.entry_z.grid(row=2, column=2, padx=6, pady=(0, 10))
+        self.entry_x.insert(0, "0.20")
+        self.entry_y.insert(0, "0.10")
+        self.entry_z.insert(0, "0.15")
+
+        ctk.CTkLabel(container, text="frame: base_link", text_color="#8a8a8a").grid(
+            row=3, column=0, columnspan=3, pady=(0, 10)
+        )
+
+        # Botones
+        btn_row = ctk.CTkFrame(container, fg_color="transparent")
+        btn_row.grid(row=4, column=0, columnspan=3, pady=6)
+        btn_row.grid_columnconfigure((0, 1), weight=1)
+
+        self.btn_send = ctk.CTkButton(
+            btn_row, text="ENVIAR",
+            fg_color="#737373", hover_color="#838181",
+            text_color="white", font=("Arial", 18),
+            width=120, height=48,
+            command=self._send_goal_from_entries
+        )
+        self.btn_send.grid(row=0, column=0, padx=8)
+
+        self.btn_back = ctk.CTkButton(
+            btn_row, text="BACK",
+            fg_color="#737373", hover_color="#838181",
+            text_color="white", font=("Arial", 18),
+            width=120, height=48,
+            command=self.volver_menu
+        )
+        self.btn_back.grid(row=0, column=1, padx=8)
+
+        # ===== NUEVOS: Selectores Simulación / Vida real =====
+        mode_frame = ctk.CTkFrame(container, fg_color="transparent")
+        mode_frame.grid(row=5, column=0, columnspan=3, pady=(12, 0))
+
+        self.mode_choice = ctk.IntVar(value=1)  # 1: Simulación, 2: Vida real
+
+        rb_sim = ctk.CTkRadioButton(
+            mode_frame, text="Simulación",
+            command=self.run_mode_selection,
+            variable=self.mode_choice, value=1,
+            text_color="white", font=("Arial", 18)
+        )
+        rb_real = ctk.CTkRadioButton(
+            mode_frame, text="Vida real",
+            command=self.run_mode_selection,
+            variable=self.mode_choice, value=2,
+            text_color="white", font=("Arial", 18)
+        )
+        rb_sim.grid(row=0, column=0, padx=10)
+        rb_real.grid(row=0, column=1, padx=10)
+
+        # ===== NUEVO: Botón HOME =====
+        btn_home = ctk.CTkButton(
+            container, text="HOME",
+            fg_color="#737373", hover_color="#838181",
+            text_color="white", font=("Arial", 18),
+            command=self.home,
+            width=120, height=48
+        )
+        btn_home.grid(row=6, column=0, columnspan=3, pady=(16, 0))
+
+        
+
+
+        # Publica el brazo inicial al abrir (opcional)
+        self.on_arm_selection()
+        self.run_mode_selection()
+
+    def on_arm_selection(self):
+        val = self.arm_choice.get()
+        if val == 1:
+            self.ros.publish_arm_selection('A')  
+        elif val == 2:
+            self.ros.publish_arm_selection('B')  
+
+    def _send_goal_from_entries(self):
+        """Lee X/Y/Z de la UI, valida y publica PoseStamped a ik_goal."""
+        try:
+            x = float(self.entry_x.get().strip())
+            y = float(self.entry_y.get().strip())
+            z = float(self.entry_z.get().strip())
+        except ValueError:
+            print("[LowerBody] Valores inválidos: usa números (ej. 0.20, 0.10, 0.15)")
+            return
+
+        try:
+            self.ros.publish_ik_goal(x=x, y=y, z=z, frame='base_link')
+        except Exception as e:
+            print(f"[LowerBody] Error publicando IK goal: {e}")
+
+    
+    def volver_menu(self):
+        self.destroy()
+        v = VentanaPrincipal(self.ros)
+        v.mainloop()
+
+       
+    
+    def run_mode_selection(self):
+        val = self.mode_choice.get()
+        if val == 1:
+            self.ros.publish_run_mode('C') # Simulación
+        elif val == 2:
+            self.ros.publish_run_mode('D')  # Vida real
+
+    def home(self):
+        self.ros.publish_ik_goal(x=3.0, y=3.0, z=3.0)
+        
+        
+#-----------------------------------------------------------
+
+#================ Main ===================
+
 def main():
     rclpy.init()
-    ros = Ros2Bridge(topic_name=TOPIC_NAME)
+    ros = Ros2Bridge()
     app = VentanaPrincipal(ros)
     app.mainloop()
     # Al cerrar la ventana principal:
