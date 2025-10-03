@@ -30,7 +30,7 @@ class FKManager(Node):
         # ================== Trayectoria ====================
         self.traj_active = False
         self.i = 0
-        self.step = 50  # pasos de interpolación (ajustable)
+        self.step = 20  # pasos de interpolación (ajustable)
 
         # Estados en espacio q (no servo)
         self.q1 = np.array([90.0, 90.0, 0.0], dtype=float)
@@ -48,6 +48,7 @@ class FKManager(Node):
 
         # Control de feedback (solo real)
         self.waiting_ack = False
+        self.first_step_sent = False  # <<< NUEVO: primer paso se envía sin esperar feedback
 
         # Tolerancia para considerar que alcanzó (deg) — alinea con Arduino
         self.tol = np.array([0.5, 0.5, 0.5], dtype=float)
@@ -96,6 +97,7 @@ class FKManager(Node):
 
         self.traj_active = False
         self.waiting_ack = False
+        self.first_step_sent = False
         self.get_logger().info(f"⏹️ Trayectoria abortada ({reason}). Estado {'SIM' if mode_running=='C' else 'REAL'} del brazo {arm_running} actualizado.")
 
     # ================== Callbacks ==================
@@ -117,7 +119,10 @@ class FKManager(Node):
 
         self.i = 0
         self.traj_active = True
+        # Claves para el primer paso sin esperar feedback:
         self.waiting_ack = False
+        self.first_step_sent = False  # <<< se rearmó para esta nueva trayectoria
+
         self.get_logger().info(
             f"▶️ Interpolación {self.selected_arm} [{'SIM' if self.selected_mode=='C' else 'REAL'}]: "
             f"{self.q1} → {self.q2} ({self.step} pasos)"
@@ -173,13 +178,13 @@ class FKManager(Node):
             if np.all(err <= self.tol):
                 self.traj_active = False
                 self.waiting_ack = False
+                self.first_step_sent = False
                 self.get_logger().info(f"🏁 Llegó a meta (REAL). err={err.round(2)}")
                 # Actualiza all_joints para reflejar lo real medido
                 start = 0 if self.selected_arm == 'A' else 3
                 for k in range(3):
-                    self.all_joints[start + k] = float(meas[k])
-                # Publica una última vez a /sim_deg para reflejo visual si quieres (opcional)
-                # out = Float32MultiArray(); out.data = self.all_joints; self.sim_pub.publish(out)
+                    self.all_joints[start + k] = round(float(meas[k]), 1)
+
                 return
 
             # Si no alcanzó todavía, liberar el ACK para que el timer publique el siguiente punto
@@ -192,13 +197,19 @@ class FKManager(Node):
             return
         if self.i > self.step:
             self.traj_active = False
+            self.waiting_ack = False
+            self.first_step_sent = False
             self.get_logger().info("🏁 Interpolación finalizada (por pasos agotados)")
             return
 
         s = self.i / float(self.step)
         q = (1.0 - s) * self.q1 + s * self.q2
 
-        out3 = [float(q[0]), float(q[1]), float(q[2])]
+        # === aquí limitamos a un decimal ===
+        out3 = [round(float(q[0]), 1),
+                round(float(q[1]), 1),
+                round(float(q[2]), 1)]
+
         start = 0 if self.selected_arm == 'A' else 3
         for k, v in enumerate(out3):
             self.all_joints[start + k] = v
@@ -220,8 +231,18 @@ class FKManager(Node):
 
         else:
             # ======== VIDA REAL ========
+            # Enviar SIEMPRE el primer paso sin esperar feedback
+            if not self.first_step_sent:
+                self.cmd_pub.publish(msg)
+                self.first_step_sent = True
+                self.waiting_ack = True
+                self.i += 1
+                self.get_logger().info(f"🚀 REAL 1/{self.step} (primer paso enviado SIN esperar feedback)")
+                return
+
+            # A partir del segundo paso, sí respetar el feedback
             if self.waiting_ack:
-                return  # Esperando feedback de Arduino
+                return  # esperando feedback de Arduino
 
             # Publica el siguiente punto (se lo enviará el serial_node al Arduino)
             self.cmd_pub.publish(msg)

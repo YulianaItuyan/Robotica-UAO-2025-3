@@ -57,10 +57,10 @@ def fk_from_dh(q,arm):
     else: 
         # Brazo derecho
         dh_table = [
-        (q[0],  -0.02687, 0.02537, 0 ),   # link 1 -> θ1 variable
+        (q[0],  -0.051, 0.025, 0 ),   # link 1 -> θ1 variable
         (90,     0.0, 0.0,  90),   # link 2 -> θ2 fijo = 90°
-        (q[1],   -0.04270, -0.10754, 0),  # link 3 -> θ3 variable
-        (q[2],  0.03, 0.155, 0)  # link 4 -> θ4 variabl
+        (q[1],   -0.017, -0.105, 0),  # link 3 -> θ3 variable
+        (q[2],  -0.0075, 0.215, 0)  # link 4 -> θ4 variabl
         ]
     
     # --- Producto de transformaciones ---
@@ -86,6 +86,7 @@ class Ros2Bridge(Node):
         self.goal_pub = self.create_publisher(PoseStamped, '/ik_goal', 10)  
         self.fk_pub = self.create_publisher(Float32MultiArray, '/fk_goal', 10)  
         self.run_mode_pub = self.create_publisher(String, '/run_mode', 10) 
+        self.ik_mode_pub = self.create_publisher(String, '/ik_mode', 10)
 
         self.get_logger().info(f'Ros2Bridge listo para publicar en  /cmd_arm_select, /ik_goal, /fk_goal y /run_mode')
 
@@ -120,6 +121,13 @@ class Ros2Bridge(Node):
 
     def publish_run_mode(self, mode_code):
         """Publica 'C' o 'D' en /cmd_arm_select."""
+        msg = String()
+        msg.data = mode_code
+        self.run_mode_pub.publish(msg)
+        self.get_logger().info(f'Publicado en /run_mode: {msg.data}')
+
+    def publish_ik_mode(self, mode_code):
+        """Publica 'A','B','C', 'D' o 'E'  en /ik_mode."""
         msg = String()
         msg.data = mode_code
         self.run_mode_pub.publish(msg)
@@ -285,9 +293,9 @@ class UpperBody(ctk.CTk):
 
         # Configuración de rangos específicos
         slider_configs = [
-            {"min": 75,   "max": 220},   # J1
-            {"min": 90,  "max": 180},   # J2
-            {"min": 0,  "max": 90}    # J3
+            {"min": 0,   "max": 180},   # J1
+            {"min": 0,  "max": 180},   # J2
+            {"min": 0,  "max": 180}    # J3
         ]
 
         for i, cfg in enumerate(slider_configs):
@@ -469,7 +477,7 @@ class UpperBody(ctk.CTk):
         if arm == 2:
             sliders_send = [ 180-sliders[0], 180-sliders[1],sliders[2]]# three values from GUI (these are the angles DH expects)
         else :
-            sliders_send = [ sliders[0], 180-sliders[1],sliders[2]]
+            sliders_send = [ sliders[0], sliders[1],sliders[2]]
         start = 0 if arm == 1 else 3
 
         # Update internal all_joints state
@@ -487,7 +495,7 @@ class UpperBody(ctk.CTk):
             theta3 = sliders[1] -180
             theta4 = sliders[2]     # theta4 correction
         else:
-            theta1 = sliders[0] -90
+            theta1 = sliders[0] +90
             theta3 = sliders[1]
             theta4 = sliders[2] +180     # theta4 correction       
         
@@ -769,6 +777,18 @@ class LowerBody(ctk.CTk):
     def home(self):
         self.ros.publish_ik_goal(x=3.0, y=3.0, z=3.0)
         
+    def ik_mode_selection(self):
+        val = self.arm_choice.get()
+        if val == 1:
+            self.ros.publish_ik_mode('A')  
+        elif val == 2:
+            self.ros.publish_ik_mode('B')
+        elif val == 3:
+            self.ros.publish_ik_mode('C')
+        elif val == 4:
+            self.ros.publish_ik_mode('D')   
+        elif val == 5:
+            self.ros.publish_ik_mode('E')
         
 #-----------------------------------------------------------
 

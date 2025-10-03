@@ -1,10 +1,11 @@
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
+#include <math.h>
 
 // ====== PCA9685 ======
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
-#define SERVOMIN 150
-#define SERVOMAX 600
+#define SERVOMIN 205
+#define SERVOMAX 410
 
 // Brazo 1 (derecho) = A
 #define SERVO1_BRAZO1  0
@@ -33,55 +34,31 @@ float startAngle[6] = {0}; // 0..2 brazo1, 3..5 brazo2
 float lastDeg[6]    = {0};
 float lastCorr[6]   = {0};
 
-// ====== Control ======
-volatile float targetA[3] = {90,90,0};    // ref brazo A (articular)
-volatile float targetB[3] = {90,90,180};  // ref brazo B (articular)
-float KpA[3] = { 1.0, 1.0, 1.0 };
-float KpB[3] = { 1.0, 1.0, 1.0 };
+// ====== Referencias ======
+volatile float targetA[3] = {90,90,90};    // ref brazo A (articular)
+volatile float targetB[3] = {90,90,180};    // ref brazo B (articular)
 const float tolDeg[3] = { 0.5, 0.5, 0.5 };
 
 const uint16_t CTRL_DT_MS = 20;
 unsigned long lastCtrl = 0;
 
-// ====== CRC-8 Dallas/Maxim (poly 0x31, init 0x00) ======
-uint8_t crc8_maxim(const String& s) {
-  uint8_t crc = 0x00;
-  for (size_t i = 0; i < s.length(); ++i) {
-    crc ^= (uint8_t)s[i];
-    for (uint8_t b = 0; b < 8; ++b) {
-      if (crc & 0x80) crc = (uint8_t)((crc << 1) ^ 0x31);
-      else            crc <<= 1;
-    }
-  }
-  return crc;
-}
+// =============================
+//   BLOQUE PID-IMC (ACTIVO)
+// =============================
+// Ganancias según tu PID (λ=0.25 s)  // <<<
+const float Kc = 0.473f;              // <<<
+const float Ti = 0.263f;              // <<<
+const float Td = 0.0643f;             // <<<
+const float Tf_imc = 0.112f;          // <<< (filtro derivada)
 
-void sendLine(const String& payload) {
-  uint8_t cs = crc8_maxim(payload);
-  char suff[4];
-  sprintf(suff, "*%02X", cs);
-  Serial.print(payload);
-  Serial.print(suff);
-  Serial.print('\n');
-}
+const float Ts = (float)CTRL_DT_MS / 1000.0f; // 0.02 s
+const float U_MIN = 0.0f, U_MAX = 180.0f;
 
-bool verifyChecksum(const String& line, String& payload_out) {
-  int star = line.lastIndexOf('*');
-  if (star < 0 || (line.length() - star) != 3) return false; // "*XX"
-  payload_out = line.substring(0, star);
-  auto hex2n = [](char c)->int {
-    if (c>='0'&&c<='9') return c-'0';
-    if (c>='A'&&c<='F') return 10 + (c-'A');
-    if (c>='a'&&c<='f') return 10 + (c-'a');
-    return -1;
-  };
-  int h = hex2n(line[star+1]);
-  int l = hex2n(line[star+2]);
-  if (h<0 || l<0) return false;
-  uint8_t rx = (uint8_t)((h<<4)|l);
-  uint8_t calc = crc8_maxim(payload_out);
-  return rx == calc;
-}
+float integA[3] = {0,0,0}, dFiltA[3] = {0,0,0}, prevMeasEffA[3] = {90,90,90};
+float integB[3] = {0,0,0}, dFiltB[3] = {0,0,0}, prevMeasEffB[3] = {90,90,90};
+
+int DIR_A[3] = { +1, +1, +1 };
+int DIR_B[3] = { +1, +1, +1 };
 
 // ---------- I2C / TCA ----------
 void tcaSelect(uint8_t ch) {
@@ -134,6 +111,7 @@ float readCorrectedFor(uint8_t ch, uint8_t encIdx) {
   lastDeg[encIdx] = d;
   float corr = d - startAngle[encIdx];
   if (corr < 0) corr += 360.0f;
+  if (corr >= 360.0f) corr -= 360.0f;
   lastCorr[encIdx] = corr;
   return corr;
 }
@@ -150,48 +128,94 @@ void servoWrite(uint8_t canal, float angulo) {
 float limitServoA(int j, float cmd) {
   if (j == 0) { if (cmd > 180) cmd = 180; }
   if (j == 1) { if (cmd > 90)  cmd = 90;  }
-  if (j == 2) { if (cmd > 90) cmd = 90; }
+  if (j == 2) { if (cmd > 90)  cmd = 90;  }
   if (cmd < 0) cmd = 0;
   return cmd;
 }
 float limitServoB(int j, float cmd) {
   if (j == 0) { if (cmd > 105) cmd = 105; }
-  if (j == 1) { if (cmd > 90) cmd = 90; }
-  if (j == 2) { if (cmd > 90) cmd = 90; }
+  if (j == 1) { if (cmd > 90)  cmd = 90;  }
+  if (j == 2) { if (cmd > 90)  cmd = 90;  }
   if (cmd < 0) cmd = 0;
   return cmd;
 }
 
-// ---------- Medida encoder -> articular ----------
+// ---------- Medida encoder -> articular (PLEGADO) ----------
 float measToJointA(int j, float enc_deg) {
   if (enc_deg < 0) enc_deg += 360;
-  if (enc_deg > 180) enc_deg = fmod(enc_deg, 360.0f);
+  if (enc_deg >= 360) enc_deg -= 360;
   if (enc_deg > 180) enc_deg = 360.0f - enc_deg;
-  return enc_deg;
+  return enc_deg; // 0..180
 }
 float measToJointB(int j, float enc_deg) {
-  if (j == 1) {
+  if (j == 1) { // inversión cinemática del codo izq.
     float t = 180.0f - enc_deg;
     if (t < 0) t += 360.0f;
-    if (t < 0) t = 0;
+    if (t >= 360) t -= 360.0f;
     if (t > 180) t = 180;
+    if (t < 0)   t = 0;
     return t;
   }
   if (enc_deg < 0) enc_deg += 360;
-  if (enc_deg > 180) enc_deg = fmod(enc_deg, 360.0f);
+  if (enc_deg >= 360) enc_deg -= 360;
   if (enc_deg > 180) enc_deg = 360.0f - enc_deg;
-  return enc_deg;
+  return enc_deg; // 0..180
 }
 
 String f1(float v) { return String(v, 1); }
 
-// ---------- Control + OKA/OKB SOLO con medidos ----------
+// =============== PID (IMC-PID) ===============
+float pid_tick_joint(float ref, float meas, float &integ, float &dFilt, float &prevMeasEff, int DIR) {
+  float ref_eff  = (DIR > 0) ? ref  : (180.0f - ref);
+  float meas_eff = (DIR > 0) ? meas : (180.0f - meas);
+
+  float e = ref_eff - meas_eff;
+
+  // Derivada filtrada sobre la MEDICIÓN
+  float dRaw = (meas_eff - prevMeasEff) / Ts;
+  float alpha = Ts / (Tf_imc + Ts);
+  dFilt += alpha * (dRaw - dFilt);
+  prevMeasEff = meas_eff;
+
+  // Anti-windup simple
+  float u_unsat = ref_eff + Kc * ( e + (Ts/Ti)*integ - Td * dFilt );
+  bool sat = (u_unsat > U_MAX) || (u_unsat < U_MIN);
+  if (!sat || (sat && ((u_unsat > U_MAX && e < 0) || (u_unsat < U_MIN && e > 0)))) {
+    integ += e;
+  }
+  float u = ref_eff + Kc * ( e + (Ts/Ti)*integ - Td * dFilt );
+
+  // Saturación + deshacer polaridad
+  if (u > U_MAX) u = U_MAX;
+  if (u < U_MIN) u = U_MIN;
+  float u_phys = (DIR > 0) ? u : (180.0f - u);
+  return u_phys;
+}
+
+// =====================================
+//   (PD previo) — DEJADO COMENTADO
+// =====================================
+// float Kp = 0.335f;
+// float Kd = 0.0216;
+// float Tf = 0.03f;
+// float V_LIM = 215.0f;
+// const float THETA_MIN=0, THETA_MAX=180;
+// float prevMeas = 0, dFilt = 0, prevCmd = 90;
+// unsigned long tPrev = 0;
+// float prevMeasA_PD[3] = {0,0,0}, dFiltA_PD[3] = {0,0,0}, prevCmdA_PD[3] = {90,90,90};
+// unsigned long tPrevA_PD[3] = {0,0,0};
+// float prevMeasB_PD[3] = {0,0,0}, dFiltB_PD[3] = {0,0,0}, prevCmdB_PD[3] = {90,90,90};
+// unsigned long tPrevB_PD[3] = {0,0,0};
+// float PD_tick(float theta_ref, float theta_meas) { /* ... */ }
+// float PD_tick_with_state(float ref, float meas, int j, bool isA, int DIR) { /* ... */ }
+
+// ---------- Control + OKA/OKB ----------
 void controlStep() {
   unsigned long now = millis();
   if (now - lastCtrl < CTRL_DT_MS) return;
   lastCtrl = now;
 
-  const uint8_t REACH_HITS = 3;
+  const uint8_t REACH_HITS_LOCAL = 3;
   static uint8_t hitA[3] = {0,0,0}, hitB[3] = {0,0,0};
   bool allA=false, allB=false;
 
@@ -203,16 +227,22 @@ void controlStep() {
     float measJoint = measToJointA(j, encA_raw[j]); measA[j] = measJoint;
     float ref = targetA[j];
     if (ref < 0) ref = 0; if (ref > 180) ref = 180;
-    float err = ref - measJoint;
-    float cmd = measJoint + KpA[j]*err;
+
+    // ====== PID ACTIVO ======
+    float cmd = pid_tick_joint(ref, measJoint, integA[j], dFiltA[j], prevMeasEffA[j], DIR_A[j]);  // <<<
+    // ========================
+
     cmd = limitServoA(j, cmd);
     uint8_t ch = (j==0)? SERVO1_BRAZO1 : (j==1? SERVO2_BRAZO1 : SERVO3_BRAZO1);
     servoWrite(ch, cmd);
 
-    float aerr = (err < 0)? -err : err;
+    // Llegada (dominio efectivo)
+    float ref_eff  = (DIR_A[j] > 0) ? ref  : (180.0f - ref);
+    float meas_eff = (DIR_A[j] > 0) ? measJoint : (180.0f - measJoint);
+    float aerr = fabs(ref_eff - meas_eff);
     if (aerr <= tolDeg[j]) { if (hitA[j] < 255) hitA[j]++; } else { hitA[j] = 0; }
   }
-  allA = (hitA[0] >= REACH_HITS) && (hitA[1] >= REACH_HITS) && (hitA[2] >= REACH_HITS);
+  allA = (hitA[0] >= REACH_HITS_LOCAL) && (hitA[1] >= REACH_HITS_LOCAL) && (hitA[2] >= REACH_HITS_LOCAL);
 
   // === Brazo B (izquierdo) ===
   float encB_raw[3];
@@ -222,29 +252,34 @@ void controlStep() {
     float measJoint = measToJointB(j, encB_raw[j]); measB[j] = measJoint;
     float ref = targetB[j];
     if (ref < 0) ref = 0; if (ref > 180) ref = 180;
-    float err = ref - measJoint;
-    float cmd = ref + KpB[j]*err;
+
+    // ====== PID ACTIVO ======
+    float cmd = pid_tick_joint(ref, measJoint, integB[j], dFiltB[j], prevMeasEffB[j], DIR_B[j]);  // <<<
+    // ========================
+
     cmd = limitServoB(j, cmd);
     uint8_t ch = (j==0)? SERVO1_BRAZO2 : (j==1? SERVO2_BRAZO2 : SERVO3_BRAZO2);
     servoWrite(ch, cmd);
 
-    float aerr = (err < 0)? -err : err;
+    float ref_eff  = (DIR_B[j] > 0) ? ref  : (180.0f - ref);
+    float meas_eff = (DIR_B[j] > 0) ? measJoint : (180.0f - measJoint);
+    float aerr = fabs(ref_eff - meas_eff);
     if (aerr <= tolDeg[j]) { if (hitB[j] < 255) hitB[j]++; } else { hitB[j] = 0; }
   }
-  allB = (hitB[0] >= REACH_HITS) && (hitB[1] >= REACH_HITS) && (hitB[2] >= REACH_HITS);
+  allB = (hitB[0] >= REACH_HITS_LOCAL) && (hitB[1] >= REACH_HITS_LOCAL) && (hitB[2] >= REACH_HITS_LOCAL);
 
   // --- Enviar SOLO medidos cuando llegó (OKA/OKB) ---
   static bool sentA=false, sentB=false;
   if (allA && !sentA) {
     String p = "OKA<" + f1(measA[0]) + "," + f1(measA[1]) + "," + f1(measA[2]) + ">";
-    sendLine(p);
+    Serial.println(p);
     sentA = true;
   }
   if (!allA) sentA = false;
 
   if (allB && !sentB) {
     String p = "OKB<" + f1(measB[0]) + "," + f1(measB[1]) + "," + f1(measB[2]) + ">";
-    sendLine(p);
+    Serial.println(p);
     sentB = true;
   }
   if (!allB) sentB = false;
@@ -262,6 +297,12 @@ void verifyMagnetAndTare() {
     float currentPos = as5600ReadDeg();
     startAngle[j] = currentPos - desiredA[j];
     if (startAngle[j] < 0) startAngle[j] += 360.0f;
+    if (startAngle[j] >= 360.0f) startAngle[j] -= 360.0f;
+
+    // Reset PID (IMC) para A   // <<<
+    float desAeff = (DIR_A[j]>0)? desiredA[j] : (180.0f - desiredA[j]);
+    integA[j]=0; dFiltA[j]=0; prevMeasEffA[j]=constrain(desAeff, 0.0f, 180.0f);
+
     Serial.print("A"); Serial.print(j+1);
     Serial.print(" startAngle = "); Serial.println(startAngle[j], 2);
   }
@@ -272,6 +313,12 @@ void verifyMagnetAndTare() {
     float currentPos = as5600ReadDeg();
     startAngle[3 + j] = currentPos - desiredB[j];
     if (startAngle[3 + j] < 0) startAngle[3 + j] += 360.0f;
+    if (startAngle[3 + j] >= 360.0f) startAngle[3 + j] -= 360.0f;
+
+    // Reset PID (IMC) para B   // <<<
+    float desBeff = (DIR_B[j]>0)? desiredB[j] : (180.0f - desiredB[j]);
+    integB[j]=0; dFiltB[j]=0; prevMeasEffB[j]=constrain(desBeff, 0.0f, 180.0f);
+
     Serial.print("B"); Serial.print(j+1);
     Serial.print(" startAngle = "); Serial.println(startAngle[3 + j], 2);
   }
@@ -299,16 +346,16 @@ void setup() {
   Serial.println("✓ I2C inicializado a 400kHz");
 
   pwm.begin();
-  pwm.setPWMFreq(60);
+  pwm.setPWMFreq(50);
   Serial.println("✓ PCA9685 inicializado");
 
-  targetA[0]=90; targetA[1]=90; targetA[2]=0;
+  targetA[0]=90; targetA[1]=90; targetA[2]=180;
   targetB[0]=90; targetB[1]=90; targetB[2]=180;
 
   Serial.println("🎯 Moviendo servos a posición inicial...");
-  servoWrite(SERVO1_BRAZO1, 90);
-  servoWrite(SERVO2_BRAZO1, 90);
-  servoWrite(SERVO3_BRAZO1, 0);
+  servoWrite(SERVO1_BRAZO1, 120);
+  servoWrite(SERVO2_BRAZO1, 120);
+  servoWrite(SERVO3_BRAZO1, 100);
   servoWrite(SERVO1_BRAZO2, 90);
   servoWrite(SERVO2_BRAZO2, 90);
   servoWrite(SERVO3_BRAZO2, 180);
@@ -319,13 +366,13 @@ void setup() {
   verifyMagnetAndTare();
 
   Serial.println("🎉 Sistema listo");
-  Serial.println("📋 Comandos (con CRC):");
-  Serial.println("  G<2|3>*CS  → Cambia brazo activo");
-  Serial.println("  <a,b,c>*CS → Actualiza objetivos del brazo activo");
-  Serial.println("📡 Respuestas (con CRC): ACKA/B<applied>, OKA/B<meas1,meas2,meas3>");
+  Serial.println("📋 Comandos (sin CRC):");
+  Serial.println("  G<2|3>  → Cambia brazo activo");
+  Serial.println("  <a,b,c> → Actualiza objetivos del brazo activo");
+  Serial.println("📡 Respuestas: ACKA/B<applied>, OKA/B<meas1,meas2,meas3>");
 }
 
-// ---------- Parser de payload (sin *CS) ----------
+// ---------- Parser de payload (sin CRC) ----------
 void parseAndApply(const String& s) {
   if (s.startsWith("G<")) {
     int l = s.indexOf('<');
@@ -334,7 +381,6 @@ void parseAndApply(const String& s) {
       int val = s.substring(l + 1, r).toInt();  // 2 o 3
       if (val == 2 || val == 3) {
         brazoActivo = (val == 2) ? 1 : 2;
-        // (Ya no enviamos ENC aquí: solo medidos al llegar)
       }
     }
     return;
@@ -360,27 +406,22 @@ void parseAndApply(const String& s) {
 
   if (brazoActivo == 1) {
     targetA[0] = v1; targetA[1] = v2; targetA[2] = v3;
-    sendLine("ACKA<applied>");
+    Serial.println("ACKA<applied>");
   } else {
     targetB[0] = v1; targetB[1] = v2; targetB[2] = v3;
-    sendLine("ACKB<applied>");
+    Serial.println("ACKB<applied>");
   }
 }
 
 // ---------- Loop principal ----------
 void loop() {
-  // Parser de líneas con CRC (no bloqueante)
+  // Parser de líneas (no bloqueante)
   while (Serial.available()) {
     char ch = (char)Serial.read();
     if (ch == '\n') {
       if (buf.length() > 0) {
-        String payload;
-        if (!verifyChecksum(buf, payload)) {
-          sendLine("ERR<CS>");
-          buf = "";
-          continue;
-        }
-        parseAndApply(payload);
+        buf.replace("\r", ""); // tolerar CRLF
+        parseAndApply(buf);
         buf = "";
       }
     } else {
@@ -388,6 +429,6 @@ void loop() {
     }
   }
 
-  // Control y detección de llegada → OKA/OKB con SOLO medidos
+  // Control + OKA/OKB
   controlStep();
 }

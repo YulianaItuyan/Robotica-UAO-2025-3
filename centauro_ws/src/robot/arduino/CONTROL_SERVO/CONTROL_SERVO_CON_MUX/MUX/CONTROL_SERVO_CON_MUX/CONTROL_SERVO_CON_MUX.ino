@@ -16,8 +16,8 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
 // Canales PCA9685 para cada brazo
 // Brazo 1 (derecho)
 #define SERVO1_BRAZO1  0  // Canal 0
-#define SERVO2_BRAZO1  1  // Canal 1  
-#define SERVO3_BRAZO1  2  // Canal 2
+#define SERVO2_BRAZO1  2  // Canal 1  
+#define SERVO3_BRAZO1  4  // Canal 2
 
 // Brazo 2 (izquierdo)
 #define SERVO1_BRAZO2  3  // Canal 3
@@ -44,9 +44,9 @@ void setup() {
 
   // Inicializar servos en posición central (90 grados)
   // Brazo 1 (derecho)
-  servoWrite(SERVO1_BRAZO1, 90);
-  servoWrite(SERVO2_BRAZO1, 90);
-  servoWrite(SERVO3_BRAZO1, 0);
+  servoWrite(SERVO1_BRAZO1, 120);
+  servoWrite(SERVO2_BRAZO1, 50);
+  servoWrite(SERVO3_BRAZO1, 90);
 
   servoWrite(SERVO1_BRAZO2, 90);
   servoWrite(SERVO2_BRAZO2, 90);

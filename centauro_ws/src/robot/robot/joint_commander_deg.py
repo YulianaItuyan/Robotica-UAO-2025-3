@@ -9,7 +9,7 @@ class JointCommanderDeg(Node):
     def __init__(self):
         super().__init__('joint_commander_deg')
 
-        self.joint_names = ['joint1','joint2','joint3','joint5','joint6','joint7']
+        self.joint_names = ['joint1','joint2','joint3','joint4','joint5','joint6']
 
         # Estado actual
         self.q_deg_current = np.array([90.0, 90.0, 0.0, 90.0, 90.0, 0.0], dtype=float)

@@ -6,41 +6,6 @@ import serial
 import time
 import re
 
-# ====== Utilidades de CRC-8 Dallas/Maxim (poly 0x31, init 0x00) ======
-def crc8_maxim(data: bytes) -> int:
-    crc = 0x00
-    for b in data:
-        crc ^= b
-        for _ in range(8):
-            if crc & 0x80:
-                crc = ((crc << 1) ^ 0x31) & 0xFF
-            else:
-                crc = (crc << 1) & 0xFF
-    return crc
-
-def make_line(payload: str) -> bytes:
-    """Construye: b'PAYLOAD*CS\\n' con CS en hex mayúsculas."""
-    cs = crc8_maxim(payload.encode('utf-8'))
-    return f"{payload}*{cs:02X}\n".encode('utf-8')
-
-def parse_and_verify(line: str):
-    """
-    Recibe una línea (con o sin '\n'), verifica '*XX' final y devuelve (ok, payload).
-    ok=False si no tiene CRC válido.
-    """
-    line = line.strip()
-    star = line.rfind('*')
-    if star < 0 or len(line) - star != 3:
-        return False, None
-    payload = line[:star]
-    try:
-        rx = int(line[star+1:], 16)
-    except ValueError:
-        return False, None
-    calc = crc8_maxim(payload.encode('utf-8'))
-    return (rx == calc), payload
-
-
 class ArmSerialBridge(Node):
     def __init__(self):
         super().__init__('serial_node')
@@ -54,7 +19,7 @@ class ArmSerialBridge(Node):
         )
 
         # Publicadores
-        # Ahora /arm_feedback es Float32MultiArray con 3 ángulos medidos
+        # /arm_feedback es Float32MultiArray con 3 ángulos medidos
         self.pub_feedback = self.create_publisher(Float32MultiArray, '/arm_feedback', 10)
 
         self.selected_arm = 'A'
@@ -64,24 +29,24 @@ class ArmSerialBridge(Node):
 
         # Conexión serial
         try:
-            self.ser = serial.Serial('/dev/ttyACM0', 115200, timeout=0.01)
+            self.ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0.01)
             time.sleep(2)  # esperar a que Arduino reinicie
             self.get_logger().info("✅ Conectado al Arduino en /dev/ttyACM0")
         except Exception as e:
             self.get_logger().error(f"❌ Error abriendo serial: {e}")
             self.ser = None
 
-        # Buffer de recepción si decides usar read() en vez de readline()
-        self._rx_buf = bytearray()
+        # Regex para OKA/OKB
+        self._re_ok = re.compile(r'^(OKA|OKB)<([^>]*)>$')
 
-    # ====== Envío con CRC ======
+    # ====== Envío simple (sin CRC) ======
     def _send_payload(self, payload: str):
         if self.ser is None or not self.ser.is_open:
             self.get_logger().warn("⚠️ No hay conexión serial (tx)")
             return
-        pkt = make_line(payload)
-        self.ser.write(pkt)
-        self.get_logger().info(f"📤 TX: {pkt.decode(errors='ignore').strip()}")
+        line = (payload + "\n").encode('utf-8')
+        self.ser.write(line)
+        self.get_logger().info(f"📤 TX: {payload}")
 
     # ====== Callback ROS: /cmd_deg ======
     def listener_callback(self, msg: Float32MultiArray):
@@ -114,35 +79,28 @@ class ArmSerialBridge(Node):
         else:
             self.get_logger().warn(f"Brazo inválido: '{msg.data}' (usa 'A' o 'B')")
 
-    # ====== Recepción con CRC ======
-    _re_ok = re.compile(r'^(OKA|OKB)<([^>]*)>$')
-
+    # ====== Recepción simple (sin CRC) ======
     def read_serial(self):
         if self.ser is None or not self.ser.is_open:
             return
 
         try:
-            # Usamos readline() para simplificar en este caso
             raw = self.ser.readline()
             if not raw:
                 return
             line = raw.decode(errors='ignore').strip()
+            if not line:
+                return
         except Exception as e:
             self.get_logger().warn(f"⚠️ Error leyendo serial: {e}")
             return
 
-        ok, payload = parse_and_verify(line)
-        if not ok:
-            # Comentar si no quieres ruido
-            self.get_logger().warn(f"❌ CRC inválido: {line}")
-            return
-
-        self.get_logger().info(f"📥 RX: {payload}")
+        self.get_logger().info(f"📥 RX: {line}")
 
         # Esperamos OKA<meas1,meas2,meas3> o OKB<...>
-        m = self._re_ok.match(payload)
+        m = self._re_ok.match(line)
         if not m:
-            # Puedes manejar ACKA/ACKB/ERR<CS> aquí si quieres
+            # También podrías loguear ACKA/ACKB/otros
             return
 
         tag = m.group(1)   # OKA / OKB
