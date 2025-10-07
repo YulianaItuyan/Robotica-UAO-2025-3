@@ -12,16 +12,17 @@ class FKManager(Node):
         self.fk_sub = self.create_subscription(Float32MultiArray, 'fk_goal', self.goal_callback, 10)
         self.sub_arm_select = self.create_subscription(String, '/cmd_arm_select', self.on_arm_select, 10)
         self.sub_run_mode = self.create_subscription(String, '/run_mode', self.run_mode, 10)
-
-        # AHORA /arm_feedback ES Float32MultiArray (3 medidos del encoder)
         self.sub_feedback = self.create_subscription(Float32MultiArray, '/arm_feedback', self.on_feedback, 10)
 
         # ================== Publicadores ==================
         self.cmd_pub = self.create_publisher(Float32MultiArray, '/cmd_deg', 10)   # vida real
         self.sim_pub = self.create_publisher(Float32MultiArray, '/sim_deg', 10)
 
-        # ============ Estado general para publicar =========
-        self.all_joints = [90.0, 90.0, 0.0, 90.0, 90.0, 0.0]
+        # ============ Estado general para publicar/mostrar =========
+        # Mantendremos all_joints como ESTADO MEDIDO (lo que de verdad tiene el brazo)
+        self.all_joints = [90.0, 90.0, 90.0, 90.0, 90.0, 0.0]
+        # <<< CAMBIO REAL: buffer de comandos para publicar (no toca estado medido)
+        self.all_cmd = [90.0, 90.0, 90.0, 90.0, 90.0, 0.0]
 
         # ================== Selecciones ====================
         self.selected_arm = 'A'     # 'A' = derecho, 'B' = izquierdo
@@ -30,27 +31,30 @@ class FKManager(Node):
         # ================== Trayectoria ====================
         self.traj_active = False
         self.i = 0
-        self.step = 20  # pasos de interpolación (ajustable)
+        self.step = 5  # pasos de interpolación (ajustable)
 
         # Estados en espacio q (no servo)
-        self.q1 = np.array([90.0, 90.0, 0.0], dtype=float)
+        self.q1 = np.array([90.0, 90.0, 90.0], dtype=float)
         self.q2 = np.array([0.0, 0.0, 0.0], dtype=float)
 
         # ======== ESTADOS SEPARADOS PARA SIM Y REAL =========
-        self.q_curr_sim_A = np.array([90.0, 90.0, 0.0], dtype=float)
+        self.q_curr_sim_A = np.array([90.0, 90.0, 90.0], dtype=float)
         self.q_curr_sim_B = np.array([90.0, 90.0, 0.0], dtype=float)
         self.last_sim_q_cmd_A = None
         self.last_sim_q_cmd_B = None
 
         # Vida real: se actualiza con FEEDBACK (medidos)
-        self.q_curr_real_A = np.array([90.0, 90.0, 0.0], dtype=float)
+        self.q_curr_real_A = np.array([90.0, 90.0, 90.0], dtype=float)
         self.q_curr_real_B = np.array([90.0, 90.0, 0.0], dtype=float)
+        # <<< CAMBIO REAL: guardar últimos comandos enviados en real
+        self.last_real_q_cmd_A = None
+        self.last_real_q_cmd_B = None
 
         # Control de feedback (solo real)
         self.waiting_ack = False
-        self.first_step_sent = False  # <<< NUEVO: primer paso se envía sin esperar feedback
+        self.first_step_sent = False  # primer paso se envía sin esperar feedback
 
-        # Tolerancia para considerar que alcanzó (deg) — alinea con Arduino
+        # Tolerancia para considerar que alcanzó (deg)
         self.tol = np.array([0.5, 0.5, 0.5], dtype=float)
 
         # Timer principal (50 Hz aprox)
@@ -58,9 +62,9 @@ class FKManager(Node):
 
     # ================== Utilidades ==================
     def _get_curr_for_mode(self, arm: str) -> np.ndarray:
-        if self.selected_mode == 'C':  # simulación
+        if self.selected_mode == 'C':
             return (self.q_curr_sim_A if arm == 'A' else self.q_curr_sim_B).copy()
-        else:  # vida real
+        else:
             return (self.q_curr_real_A if arm == 'A' else self.q_curr_real_B).copy()
 
     def _set_sim_curr(self, arm: str, q: np.ndarray) -> None:
@@ -92,7 +96,7 @@ class FKManager(Node):
             else:
                 self.q_curr_sim_B = q_at.copy()
         else:
-            # En real, mantenemos el estado actual (no forzamos a q_at)
+            # En real, al abortar NO modificamos el medido; queda como estaba.
             self._set_real_curr(arm_running, self._get_curr_for_mode(arm_running))
 
         self.traj_active = False
@@ -100,9 +104,16 @@ class FKManager(Node):
         self.first_step_sent = False
         self.get_logger().info(f"⏹️ Trayectoria abortada ({reason}). Estado {'SIM' if mode_running=='C' else 'REAL'} del brazo {arm_running} actualizado.")
 
+    def _build_cmd_payload(self, out3, arm: str):
+        """Construye un arreglo de 6 para /cmd_deg SIN tocar all_joints (estado medido)."""
+        arr = self.all_cmd[:]  # copiar para no pisar
+        start = 0 if arm == 'A' else 3
+        for k, v in enumerate(out3):
+            arr[start + k] = float(v)
+        return arr
+
     # ================== Callbacks ==================
     def goal_callback(self, msg: Float32MultiArray):
-        """Recibe meta en q (3 o 6 valores). Activa interpolación desde q_actual del brazo y modo seleccionados."""
         if len(msg.data) >= 6:
             self.q2 = np.array(msg.data[0:3] if self.selected_arm == 'A' else msg.data[3:6], dtype=float)
         elif len(msg.data) >= 3:
@@ -119,9 +130,8 @@ class FKManager(Node):
 
         self.i = 0
         self.traj_active = True
-        # Claves para el primer paso sin esperar feedback:
         self.waiting_ack = False
-        self.first_step_sent = False  # <<< se rearmó para esta nueva trayectoria
+        self.first_step_sent = False
 
         self.get_logger().info(
             f"▶️ Interpolación {self.selected_arm} [{'SIM' if self.selected_mode=='C' else 'REAL'}]: "
@@ -155,46 +165,42 @@ class FKManager(Node):
         self.get_logger().info("🧪 Modo: C (simulación)" if new_mode=='C' else "🔧 Modo: R (vida real)")
 
     def on_feedback(self, msg: Float32MultiArray):
-        """
-        Recibe MEDIDOS del Arduino (3 floats) vía /arm_feedback.
-        - Aplica a brazo actualmente seleccionado (asunción: un brazo a la vez).
-        - Actualiza estado REAL con esos medidos.
-        - Libera el bloqueo de 'waiting_ack' para avanzar al siguiente paso.
-        - Si está dentro de tolerancia contra q2, finaliza la trayectoria.
-        """
         vals = list(msg.data or [])
         if len(vals) != 3:
             self.get_logger().warn(f"⚠️ /arm_feedback inválido: {vals}")
             return
 
         meas = np.array(vals, dtype=float)
-
-        # Actualiza estado REAL del brazo activo con lo MEDIDO
+        # <<< CAMBIO REAL: estado medido SOLO con feedback
         self._set_real_curr(self.selected_arm, meas)
 
         if self.selected_mode == 'R' and self.traj_active:
-            # ¿Alcanzó meta (q2) dentro de tolerancia?
             err = np.abs(meas - self.q2)
             if np.all(err <= self.tol):
                 self.traj_active = False
                 self.waiting_ack = False
                 self.first_step_sent = False
-                self.get_logger().info(f"🏁 Llegó a meta (REAL). err={err.round(2)}")
-                # Actualiza all_joints para reflejar lo real medido
+                self.get_logger().info(f"🏁 Llegó a meta (REAL). err={np.round(err,1)}")
+
+                # Actualizar estado medido en all_joints (1 decimal)
                 start = 0 if self.selected_arm == 'A' else 3
                 for k in range(3):
                     self.all_joints[start + k] = round(float(meas[k]), 1)
-
                 return
 
-            # Si no alcanzó todavía, liberar el ACK para que el timer publique el siguiente punto
+            # Aún en trayecto: liberamos para siguiente paso
             self.waiting_ack = False
-            self.get_logger().info(f"✅ Feedback REAL ({self.selected_arm}) = {meas.round(1)} → continúa interp.")
+            # Actualizamos visualización del estado medido también aquí
+            start = 0 if self.selected_arm == 'A' else 3
+            for k in range(3):
+                self.all_joints[start + k] = round(float(meas[k]), 1)
+            self.get_logger().info(f"✅ Feedback REAL ({self.selected_arm}) = {np.round(meas,1)} → continúa interp.")
 
     # ================== Timer principal ==================
     def timer_cb(self):
         if not self.traj_active:
             return
+
         if self.i > self.step:
             self.traj_active = False
             self.waiting_ack = False
@@ -202,55 +208,75 @@ class FKManager(Node):
             self.get_logger().info("🏁 Interpolación finalizada (por pasos agotados)")
             return
 
+        # Interpolación
         s = self.i / float(self.step)
         q = (1.0 - s) * self.q1 + s * self.q2
 
-        # === aquí limitamos a un decimal ===
-        out3 = [round(float(q[0]), 1),
-                round(float(q[1]), 1),
-                round(float(q[2]), 1)]
-
-        start = 0 if self.selected_arm == 'A' else 3
-        for k, v in enumerate(out3):
-            self.all_joints[start + k] = v
-
-        msg = Float32MultiArray()
-        msg.data = self.all_joints
+        # === Redondeo uniforme (1 decimal) ===
+        q_rounded = np.round(q, 1)
+        out3 = [float(q_rounded[0]), float(q_rounded[1]), float(q_rounded[2])]
 
         if self.selected_mode == 'C':
             # ======== SIMULACIÓN ========
+            # En SIM sí reflejamos el "estado actual" con el comando, como antes
+            start = 0 if self.selected_arm == 'A' else 3
+            for k, v in enumerate(out3):
+                self.all_joints[start + k] = v
+
+            # Publicar a /sim_deg
+            msg = Float32MultiArray()
+            msg.data = self.all_joints
             self.sim_pub.publish(msg)
+
             if self.selected_arm == 'A':
-                self.last_sim_q_cmd_A = q.copy()
+                self.last_sim_q_cmd_A = q_rounded.copy()
+                self._set_sim_curr('A', q_rounded)
             else:
-                self.last_sim_q_cmd_B = q.copy()
-            self._set_sim_curr(self.selected_arm, q)
+                self.last_sim_q_cmd_B = q_rounded.copy()
+                self._set_sim_curr('B', q_rounded)
 
             self.i += 1
-            self.get_logger().info(f"📤 SIM {self.i}/{self.step}")
+            self.get_logger().info(f"📤 SIM {self.i}/{self.step} q={q_rounded}")
 
         else:
             # ======== VIDA REAL ========
-            # Enviar SIEMPRE el primer paso sin esperar feedback
+            # <<< CAMBIO REAL: NO tocamos all_joints (estado medido) aquí.
+            # Construimos payload de comandos por separado.
+            cmd6 = self._build_cmd_payload(out3, self.selected_arm)
+            msg = Float32MultiArray()
+            msg.data = cmd6
+
             if not self.first_step_sent:
                 self.cmd_pub.publish(msg)
                 self.first_step_sent = True
                 self.waiting_ack = True
                 self.i += 1
-                self.get_logger().info(f"🚀 REAL 1/{self.step} (primer paso enviado SIN esperar feedback)")
+
+                # Guardar último comando REAL
+                if self.selected_arm == 'A':
+                    self.last_real_q_cmd_A = q_rounded.copy()
+                else:
+                    self.last_real_q_cmd_B = q_rounded.copy()
+
+                self.get_logger().info(f"🚀 REAL 1/{self.step} q={q_rounded} (cmd enviado, esperando feedback)")
                 return
 
-            # A partir del segundo paso, sí respetar el feedback
             if self.waiting_ack:
-                return  # esperando feedback de Arduino
+                # Aún esperando feedback del paso anterior
+                return
 
-            # Publica el siguiente punto (se lo enviará el serial_node al Arduino)
+            # Siguiente paso
             self.cmd_pub.publish(msg)
-
-            # Ahora esperamos feedback con medidos antes de continuar
             self.i += 1
             self.waiting_ack = True
-            self.get_logger().info(f"📤 REAL {self.i}/{self.step} → esperando feedback (medidos)")
+
+            # Guardar último comando REAL
+            if self.selected_arm == 'A':
+                self.last_real_q_cmd_A = q_rounded.copy()
+            else:
+                self.last_real_q_cmd_B = q_rounded.copy()
+
+            self.get_logger().info(f"📤 REAL {self.i}/{self.step} q={q_rounded} → esperando feedback")
 
 def main(args=None):
     rclpy.init(args=args)

@@ -49,10 +49,10 @@ def fk_from_dh(q,arm):
     if arm == 2:
         # Brazo izquierdo
         dh_table = [
-        (q[0],   -0.01672,  -0.03294, 0 ),   # link 1 -> θ1 variable
+        (q[0],   -0.051,  -0.025, 0 ),   # link 1 -> θ1 variable
         (90,     0.0, 0.0,  90),   # link 2 -> θ2 fijo = 90°
-        (q[1],   0.0417, 0.107, 0),  # link 3 -> θ3 variable
-        (q[2],  -0.027, 0.145,  0)  # link 4 -> θ4 variable ]
+        (q[1],   0.017, -0.105, 0),  # link 3 -> θ3 variable
+        (q[2],   0.0075, 0.215,  0)  # link 4 -> θ4 variable ]
          ]
     else: 
         # Brazo derecho
@@ -127,10 +127,10 @@ class Ros2Bridge(Node):
         self.get_logger().info(f'Publicado en /run_mode: {msg.data}')
 
     def publish_ik_mode(self, mode_code):
-        """Publica 'A','B','C', 'D' o 'E'  en /ik_mode."""
+        """Publica 'ALG','MTH','GEOM', 'NEWT' o 'GRAD'  en /ik_mode."""
         msg = String()
         msg.data = mode_code
-        self.run_mode_pub.publish(msg)
+        self.ik_mode_pub.publish(msg)
         self.get_logger().info(f'Publicado en /run_mode: {msg.data}')
 
 
@@ -293,9 +293,9 @@ class UpperBody(ctk.CTk):
 
         # Configuración de rangos específicos
         slider_configs = [
-            {"min": 0,   "max": 180},   # J1
-            {"min": 0,  "max": 180},   # J2
-            {"min": 0,  "max": 180}    # J3
+            {"min": 75,   "max": 140},   # J1
+            {"min": 90,  "max": 140},   # J2
+            {"min": 0,  "max": 30}    # J3
         ]
 
         for i, cfg in enumerate(slider_configs):
@@ -471,14 +471,23 @@ class UpperBody(ctk.CTk):
         return [float(v.get()) for v in self.slider_vars]
     
     def confirmar(self):
+        mode = self.mode_choice.get()
         sliders = self.read_sliders() 
         val = self.on_arm_selection
         arm = int(self.arm_choice.get())
-        if arm == 2:
-            sliders_send = [ 180-sliders[0], 180-sliders[1],sliders[2]]# three values from GUI (these are the angles DH expects)
-        else :
-            sliders_send = [ sliders[0], sliders[1],sliders[2]]
-        start = 0 if arm == 1 else 3
+        if mode == 1:
+            if arm == 2:
+                sliders_send = [ 180-sliders[0], 180-sliders[1],sliders[2]]# three values from GUI (these are the angles DH expects)
+            else :
+                sliders_send = [ sliders[0],180 -sliders[1],sliders[2]]
+            start = 0 if arm == 1 else 3
+        else: 
+            if arm == 2:
+                sliders_send = [ sliders[0], sliders[1],sliders[2]]# three values from GUI (these are the angles DH expects)
+            else :
+                sliders_send = [ sliders[0],180 - sliders[1],(sliders[2]* -1) + 90]
+            start = 0 if arm == 1 else 3
+
 
         # Update internal all_joints state
         for i, val in enumerate(sliders_send):
@@ -491,13 +500,13 @@ class UpperBody(ctk.CTk):
         # Mapping: slider1 -> joint1, slider2 -> joint3, slider3 -> joint4
         # Aplicar correcciones específicas similar al código 2
         if arm == 2:
-            theta1 = sliders[0] -90
-            theta3 = sliders[1] -180
-            theta4 = sliders[2]     # theta4 correction
+            theta1 = sliders[0] - 90
+            theta3 = sliders[1] 
+            theta4 = sliders[2] - 180    # theta4 correction
         else:
-            theta1 = sliders[0] +90
+            theta1 = ((sliders[0]) * -1) + 90
             theta3 = sliders[1]
-            theta4 = sliders[2] +180     # theta4 correction       
+            theta4 = sliders[2] -180      # theta4 correction       
         
         try:
             T = fk_from_dh([theta1, theta3, theta4],arm) # usa ángulos corregidos
@@ -532,10 +541,15 @@ class UpperBody(ctk.CTk):
     def home(self):
         
         # Primeros 3 valores determinan brazo derecho, los otros tres son el brazo izquierdo
-        neutral = [90, 90, 0,  90, 90, 0]
+        mode = self.mode_choice.get()
+        if mode == 1:
+            neutral = [90, 90, 0,  90, 90, 0]
+        else:
+            neutral = [90, 90, 90,  90, 90, 0]            
 
         # Actualizar estado interno
         self.all_joints = neutral.copy()
+        self.all_real = [90,90,0,90,90,0]
 
         # Publicar al tópico
        
@@ -544,7 +558,7 @@ class UpperBody(ctk.CTk):
         arm = int(self.arm_choice.get())
         start = 0 if arm == 1 else 3
         for i in range(3):
-            self.slider_vars[i].set(self.all_joints[start + i])
+            self.slider_vars[i].set(self.all_real[start + i])
 
         self.ros.publish_fk_goal(self.all_joints)
 
@@ -553,12 +567,12 @@ class UpperBody(ctk.CTk):
 
         if arm == 2:
             theta1 = sliders[0] -90
-            theta3 = sliders[1] -180
-            theta4 = sliders[2]     # theta4 correction
+            theta3 = sliders[1] 
+            theta4 = sliders[2] -180  # theta4 correction
         else:
-            theta1 = sliders[0] -90
+            theta1 = ((sliders[0]) * -1) + 90
             theta3 = sliders[1]
-            theta4 = sliders[2] +180     # theta4 correction       
+            theta4 = sliders[2] -180     # theta4 correction       
         
         try:
             T = fk_from_dh([theta1, theta3, theta4],arm) # usa ángulos corregidos
@@ -623,7 +637,7 @@ class LowerBody(ctk.CTk):
         self.ros = ros
 
         self.title("LOWER BODY")
-        self.geometry("420x400")
+        self.geometry("420x480")
         self.resizable(False, False)
 
         # ===== Top bar: selección de brazo =====
@@ -699,7 +713,7 @@ class LowerBody(ctk.CTk):
         )
         self.btn_back.grid(row=0, column=1, padx=8)
 
-        # ===== NUEVOS: Selectores Simulación / Vida real =====
+        # ===== Selectores Simulación / Vida real =====
         mode_frame = ctk.CTkFrame(container, fg_color="transparent")
         mode_frame.grid(row=5, column=0, columnspan=3, pady=(12, 0))
 
@@ -720,7 +734,35 @@ class LowerBody(ctk.CTk):
         rb_sim.grid(row=0, column=0, padx=10)
         rb_real.grid(row=0, column=1, padx=10)
 
-        # ===== NUEVO: Botón HOME =====
+        # ===== NUEVO: Selectores de Modo IK (ALG, GRAD, NEWT, MTH, GEOM) =====
+        ik_frame = ctk.CTkFrame(container, fg_color="transparent")
+        ik_frame.grid(row=6, column=0, columnspan=3, pady=(10, 0))
+        ik_frame.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
+
+        ctk.CTkLabel(ik_frame, text="Modo IK:", text_color="#cfcfcf", font=("Arial", 16)).grid(
+            row=0, column=0, columnspan=5, pady=(0, 6)
+        )
+
+        self.ik_choice = ctk.IntVar(value=1)  # 1..5 → A..E
+
+        rb_alg  = ctk.CTkRadioButton(ik_frame, text="ALG",  variable=self.ik_choice, value=1,
+                                     command=self.ik_mode_selection, text_color="white", font=("Arial", 16))
+        rb_grad = ctk.CTkRadioButton(ik_frame, text="GRAD", variable=self.ik_choice, value=2,
+                                     command=self.ik_mode_selection, text_color="white", font=("Arial", 16))
+        rb_newt = ctk.CTkRadioButton(ik_frame, text="NEWT", variable=self.ik_choice, value=3,
+                                     command=self.ik_mode_selection, text_color="white", font=("Arial", 16))
+        rb_mth  = ctk.CTkRadioButton(ik_frame, text="MTH",  variable=self.ik_choice, value=4,
+                                     command=self.ik_mode_selection, text_color="white", font=("Arial", 16))
+        rb_geom = ctk.CTkRadioButton(ik_frame, text="GEOM", variable=self.ik_choice, value=5,
+                                     command=self.ik_mode_selection, text_color="white", font=("Arial", 16))
+
+        rb_alg.grid(row=1, column=0, padx=6)
+        rb_grad.grid(row=1, column=1, padx=6)
+        rb_newt.grid(row=1, column=2, padx=6)
+        rb_mth.grid(row=1, column=3, padx=6)
+        rb_geom.grid(row=1, column=4, padx=6)
+
+        # ===== Botón HOME =====
         btn_home = ctk.CTkButton(
             container, text="HOME",
             fg_color="#737373", hover_color="#838181",
@@ -728,21 +770,19 @@ class LowerBody(ctk.CTk):
             command=self.home,
             width=120, height=48
         )
-        btn_home.grid(row=6, column=0, columnspan=3, pady=(16, 0))
+        btn_home.grid(row=7, column=0, columnspan=3, pady=(16, 0))
 
-        
-
-
-        # Publica el brazo inicial al abrir (opcional)
+        # Inicializaciones
         self.on_arm_selection()
         self.run_mode_selection()
+        self.ik_mode_selection()  # publica el modo por defecto
 
     def on_arm_selection(self):
         val = self.arm_choice.get()
         if val == 1:
-            self.ros.publish_arm_selection('A')  
+            self.ros.publish_arm_selection('A')
         elif val == 2:
-            self.ros.publish_arm_selection('B')  
+            self.ros.publish_arm_selection('B')
 
     def _send_goal_from_entries(self):
         """Lee X/Y/Z de la UI, valida y publica PoseStamped a ik_goal."""
@@ -759,36 +799,35 @@ class LowerBody(ctk.CTk):
         except Exception as e:
             print(f"[LowerBody] Error publicando IK goal: {e}")
 
-    
     def volver_menu(self):
         self.destroy()
         v = VentanaPrincipal(self.ros)
         v.mainloop()
 
-       
-    
     def run_mode_selection(self):
         val = self.mode_choice.get()
         if val == 1:
-            self.ros.publish_run_mode('C') # Simulación
+            self.ros.publish_run_mode('C')  # Simulación
         elif val == 2:
             self.ros.publish_run_mode('D')  # Vida real
 
     def home(self):
-        self.ros.publish_ik_goal(x=3.0, y=3.0, z=3.0)
-        
+        self.ros.publish_ik_goal(x=0.0, y=0.0, z=-0.371)
+
     def ik_mode_selection(self):
-        val = self.arm_choice.get()
+        # Usa la variable correcta de los selectores de IK
+        val = self.ik_choice.get()
         if val == 1:
-            self.ros.publish_ik_mode('A')  
+            self.ros.publish_ik_mode('ALG')   # ALG
         elif val == 2:
-            self.ros.publish_ik_mode('B')
+            self.ros.publish_ik_mode('GRAD')   # GRAD
         elif val == 3:
-            self.ros.publish_ik_mode('C')
+            self.ros.publish_ik_mode('NEWT')   # NEWT
         elif val == 4:
-            self.ros.publish_ik_mode('D')   
+            self.ros.publish_ik_mode('MTH')   # MTH
         elif val == 5:
-            self.ros.publish_ik_mode('E')
+            self.ros.publish_ik_mode('GEOM')   # GEOM
+
         
 #-----------------------------------------------------------
 
