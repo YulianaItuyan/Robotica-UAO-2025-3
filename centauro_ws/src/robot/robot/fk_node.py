@@ -31,7 +31,7 @@ class FKManager(Node):
         # ================== Trayectoria ====================
         self.traj_active = False
         self.i = 0
-        self.step = 3  # pasos de interpolación (ajustable)
+        self.step = 5  # pasos de interpolación (ajustable)
 
         # Estados en espacio q (no servo)
         self.q1 = np.array([90.0, 90.0, 90.0], dtype=float)

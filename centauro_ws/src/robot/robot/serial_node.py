@@ -29,7 +29,7 @@ class ArmSerialBridge(Node):
 
         # Conexión serial
         try:
-            self.ser = serial.Serial('/dev/ttyUSB0', 115200, timeout=0.01)
+            self.ser = serial.Serial('/dev/ttyACM0', 115200, timeout=0.01)
             time.sleep(2)  # esperar a que Arduino reinicie
             self.get_logger().info("✅ Conectado al Arduino en /dev/ttyACM0")
         except Exception as e:

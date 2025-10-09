@@ -19,7 +19,7 @@
 static const uint8_t SERVO_CH[3] = { 0, 2, 13 };   // J1, J2, J3
 
 // ====== Canales TCA9548A (encoders) ======
-static uint8_t ENCODER_CH[3] = { 0, 1, 3 };
+static uint8_t ENCODER_CH[3] = { 7, 6, 5 };
 
 // ====== Frecuencia del PWM ======
 #define SERVO_FREQ_HZ 50  // 50 Hz

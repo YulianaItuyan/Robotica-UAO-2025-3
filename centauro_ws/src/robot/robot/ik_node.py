@@ -36,7 +36,7 @@ class IKManager(Node):
         # ========= Interpolación cartesiana =========
         self.traj_active = False
         self.i    = 0
-        self.step = 2
+        self.step = 5
         self.dt   = 0.02
         self.P_base = np.array([0.0, 0.0, -0.371], dtype=float)
         self.P_goal = self.P_base.copy()
@@ -74,7 +74,7 @@ class IKManager(Node):
         # ========= Límites por brazo (deg) =========
         self._limits_by_arm = {
             'A': (np.array([-50.0,  90.0, -180.0], dtype=float),
-                  np.array([ 15.0, 175.0,  -125.0], dtype=float)),
+                  np.array([ 15.0, 170.0,  -125.0], dtype=float)),
             'B': (np.array([-15.0,  90.0, -180.0], dtype=float),
                   np.array([ 50.0, 180.0,  -120.0], dtype=float)),
         }
