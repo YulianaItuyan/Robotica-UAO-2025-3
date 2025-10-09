@@ -21,10 +21,13 @@ class IKManager(Node):
         # ========= Publicadores =========
         self.cmd_pub = self.create_publisher(Float32MultiArray, '/cmd_deg', 10)   # vida real
         self.sim_pub = self.create_publisher(Float32MultiArray, '/sim_deg', 10)   # simulación
+        # === NUEVO: publicador único para grados puros y con offset (mismo tópico) ===
+        # data = [q2_puro, q4_puro, q5_puro, q2_offset, q4_offset, q5_offset]
+        self.ik_pub = self.create_publisher(Float32MultiArray, '/ik_deg', 10)
 
         # ========= Estado general (medido vs comando) =========
-        self.all_joints = [90.0, 90.0, 0.0, 90.0, 90.0, 0.0]   # ESTADO MEDIDO (solo feedback o SIM)
-        self.all_cmd    = [90.0, 90.0, 0.0, 90.0, 90.0, 0.0]   # BUFFER COMANDO
+        self.all_joints = [90.0, 90.0, 90.0, 90.0, 90.0, 0.0]   # ESTADO MEDIDO (solo feedback o SIM)
+        self.all_cmd    = [90.0, 90.0, 90.0, 90.0, 90.0, 0.0]   # BUFFER COMANDO
 
         # ========= Selecciones =========
         self.selected_arm  = 'A'  # 'A' o 'B'
@@ -33,7 +36,7 @@ class IKManager(Node):
         # ========= Interpolación cartesiana =========
         self.traj_active = False
         self.i    = 0
-        self.step = 1
+        self.step = 2
         self.dt   = 0.02
         self.P_base = np.array([0.0, 0.0, -0.371], dtype=float)
         self.P_goal = self.P_base.copy()
@@ -71,7 +74,7 @@ class IKManager(Node):
         # ========= Límites por brazo (deg) =========
         self._limits_by_arm = {
             'A': (np.array([-50.0,  90.0, -180.0], dtype=float),
-                  np.array([ 15.0, 165.0,  -130.0], dtype=float)),
+                  np.array([ 15.0, 175.0,  -125.0], dtype=float)),
             'B': (np.array([-15.0,  90.0, -180.0], dtype=float),
                   np.array([ 50.0, 180.0,  -120.0], dtype=float)),
         }
@@ -93,6 +96,8 @@ class IKManager(Node):
 
         # ========= Selector de solver IK =========
         self.ik_mode = 'ALG'   # 'ALG','NUM','GEOM','NEWT','GRAD','MTH'
+
+       
 
     # ------------------- Utilidades de estado -------------------
     def _get_curr_cart_for_mode(self, arm: str) -> np.ndarray:
@@ -148,6 +153,10 @@ class IKManager(Node):
     def _wrap_deg(a: float) -> float:
         return (a + 180.0) % 360.0 - 180.0
 
+    @staticmethod
+    def _wrap_pi(a: float) -> float:
+        return (a + math.pi) % (2.0*math.pi) - math.pi
+
     def _clamp_to_limits(self, q_deg: np.ndarray) -> np.ndarray:
         return np.minimum(self.ik_upper_deg, np.maximum(self.ik_lower_deg, q_deg.astype(float)))
 
@@ -202,7 +211,7 @@ class IKManager(Node):
     def _is_reachable(self, P_xyz_m: np.ndarray) -> bool:
         x, y, z = float(P_xyz_m[0]), float(P_xyz_m[1]), float(P_xyz_m[2])
         L1, L2, L3 = self._get_L123_from_dh()
-        a2, a3 = abs(L2), abs(L3)
+        a2, a3 = abs(L2), abs(L3)  # longitudes positivas
 
         # --- (1) Chequeo geométrico tipo 2R ---
         Rxy = float(np.hypot(x, y))
@@ -210,12 +219,14 @@ class IKManager(Node):
         x2 = float(y*math.cos(th2) - x*math.sin(th2))
         z2 = float(z - L1)
         dist = float(np.hypot(x2, z2))
+
         if not ((abs(a2 - a3) - 1e-9) <= dist <= (a2 + a3 + 1e-9)):
-            return False
+            return False  # fuera del workspace geométrico
 
         # --- (2) Chequeo de existencia de IK dentro de límites ---
         TOL_POS = 5e-4  # 0.5 mm
 
+        # a) Analítico (down)
         try:
             q_alg = self._ik_algebraic_down(P_xyz_m)
             q_proj = self._project_into_limits(q_alg)
@@ -226,6 +237,7 @@ class IKManager(Node):
         except Exception:
             pass
 
+        # b) Numérico LSQ
         try:
             seed = (self.q_seed_A if self.selected_arm == 'A' else self.q_seed_B).copy()
             seed = self._clamp_to_limits(seed)
@@ -289,123 +301,198 @@ class IKManager(Node):
             q_proj = self._clamp_to_limits(q_down)
         return self._clamp_to_limits(q_proj)
 
-    # ------------------- HELPERS NUEVOS (Jacobiano/Coste) -------------------
-    def _jacobian_numeric_deg(self, q_deg: np.ndarray, delta_deg: float = 1e-3) -> np.ndarray:
-        """
-        Jacobiano numérico J = d f(q)/d q  (m/deg), usando FK propia y DH activo.
-        """
-        q0 = q_deg.astype(float).copy()
-        f0 = self._fk_pos_from_q(q0)
-        J = np.zeros((3, 3), dtype=float)
-        for i in range(3):
-            qp = q0.copy()
-            qp[i] = self._wrap_deg(qp[i] + delta_deg)
-            # Mantener dentro de límites durante el muestreo
-            qp = self._clamp_to_limits(qp)
-            fi = self._fk_pos_from_q(qp)
-            J[:, i] = (fi - f0) / delta_deg  # m / deg
-        return J
-
-    def _cost_pos(self, q_deg: np.ndarray, target_xyz: np.ndarray) -> float:
-        return 0.5 * float(np.linalg.norm(self._fk_pos_from_q(q_deg) - target_xyz)**2)
-
-    # ------------------- NEWTON (implementado) -------------------
+    # ------------------- SOLVER NEWTON (integrado) -------------------
     def solve_ik_newt(self, P_xyz_m: np.ndarray, q_seed_deg: np.ndarray) -> np.ndarray:
         """
-        Newton-Raphson en grados, con amortiguación leve y respeto a límites.
+        Integración directa del método de Newton que enviaste.
+        Trabaja en rad internamente; devuelve grados (q2,q4,q5).
+        Sin clamps internos (tu pipeline los aplica después).
         """
-        target = np.array(P_xyz_m, dtype=float)
-        q = self._clamp_to_limits(np.array(q_seed_deg, dtype=float))
-        TOL = 5e-4   # 0.5 mm
-        MAX_IT = 200
-        LAMBDA = 1e-6  # amortiguación (Gauss-Newton)
+        # ===== Parámetros desde tu DH activo =====
+        L1, L2, L3 = self._get_L123_from_dh()  # m (incluye signos)
 
-        for it in range(MAX_IT):
-            f = self._fk_pos_from_q(q)
-            e = target - f  # (m)
-            if float(np.linalg.norm(e)) < TOL:
+        # ===== Utilidades del solver (idénticas a tu código) =====
+        def wrap_to_pi(a):
+            return (a + math.pi) % (2*math.pi) - math.pi
+
+        def dh_transform(theta, d, a, alpha):
+            ct, st = math.cos(theta), math.sin(theta)
+            ca, sa = math.cos(alpha), math.sin(alpha)
+            return np.array([
+                [ ct, -st*ca,  st*sa, a*ct],
+                [ st,  ct*ca, -ct*sa, a*st],
+                [  0,     sa,     ca,    d],
+                [  0,      0,      0,    1],
+            ], dtype=float)
+
+        def forward_kinematics(th1, th2, th3):
+            # DH exacta equivalente a tu script
+            d     = [L1, 0.0, -0.017, -0.007]
+            a     = [0.025,  0.0,  L2, L3]
+            alpha = [0.0, math.pi/2, 0.0, 0.0]
+            theta = [th1, math.pi/2, th2, th3]
+            T1 = dh_transform(theta[0], d[0], a[0], alpha[0])
+            T2 = dh_transform(theta[1], d[1], a[1], alpha[1])
+            T3 = dh_transform(theta[2], d[2], a[2], alpha[2])
+            T4 = dh_transform(theta[3], d[3], a[3], alpha[3])
+            T  = T1 @ T2 @ T3 @ T4
+            return T[0:3, 3]
+
+        def fkine(q_rad):
+            return forward_kinematics(wrap_to_pi(q_rad[0]), wrap_to_pi(q_rad[1]), wrap_to_pi(q_rad[2]))
+
+        def newton_step(J, e):
+            return np.linalg.solve(J, e)
+
+        # ===== Inicialización =====
+        target = np.array(P_xyz_m, dtype=float)
+        q0_deg = np.array(q_seed_deg, dtype=float)          # [q2,q4,q5] en deg
+        q      = np.radians(q0_deg)                         # a rad
+        q[0] = wrap_to_pi(q[0]); q[1] = wrap_to_pi(q[1]); q[2] = wrap_to_pi(q[2])
+
+        FD_TH   = 1e-3
+        EPS     = 1e-6
+        MAX_IT  = 5000
+
+        # ===== Iteración =====
+        for _ in range(MAX_IT):
+            f0 = fkine(q)
+            e  = target - f0
+            if float(np.linalg.norm(e)) < EPS:
                 break
 
-            J = self._jacobian_numeric_deg(q, delta_deg=1e-3)  # (m/deg)
-            # Resolver (J^T J + λI) dq = J^T e   → dq en deg
-            JTJ = J.T @ J
-            rhs = J.T @ e
-            try:
-                dq = np.linalg.solve(JTJ + LAMBDA * np.eye(3), rhs)
-            except np.linalg.LinAlgError:
-                dq, *_ = np.linalg.lstsq(J, e, rcond=None)
+            J = np.empty((3,3), dtype=float)
+            q1p = np.array([wrap_to_pi(q[0] + FD_TH), q[1], q[2]])
+            q2p = np.array([q[0], wrap_to_pi(q[1] + FD_TH), q[2]])
+            q3p = np.array([q[0], q[1], wrap_to_pi(q[2] + FD_TH)])
 
-            # Paso y mantenimiento en límites
-            q = q + dq
-            q = np.array([self._wrap_deg(v) for v in q], dtype=float)
-            q = self._clamp_to_limits(q)
+            f1 = fkine(q1p); f2 = fkine(q2p); f3 = fkine(q3p)
+            J[:,0] = (f1 - f0) / FD_TH
+            J[:,1] = (f2 - f0) / FD_TH
+            J[:,2] = (f3 - f0) / FD_TH
 
-        return self._clamp_to_limits(np.round(q, 6))
+            dq = newton_step(J, e)
+            q += dq
+            q[0] = wrap_to_pi(q[0]); q[1] = wrap_to_pi(q[1]); q[2] = wrap_to_pi(q[2])
 
-    # ------------------- GRADIENTE + ADAM (implementado) -------------------
+        # Devuelve en grados (tu orden q2,q4,q5)
+        q_deg = np.degrees(q).astype(float)
+        q_deg = np.array([self._wrap_deg(v) for v in q_deg], dtype=float)
+        return q_deg
+
+    # ------------------- SOLVER GRADIENTE (integrado) -------------------
     def solve_ik_grad(self, P_xyz_m: np.ndarray, q_seed_deg: np.ndarray) -> np.ndarray:
         """
-        Descenso de gradiente con ADAM en grados. Usa J^T e como gradiente.
-        Mantiene límites y envoltura angular en cada iteración.
+        Integración directa del gradiente + ADAM que enviaste.
+        Trabaja en rad internamente; devuelve grados (q2,q4,q5).
+        Sin clamps internos; respetamos tu pipeline actual.
         """
-        target = np.array(P_xyz_m, dtype=float)
-        q = self._clamp_to_limits(np.array(q_seed_deg, dtype=float))
+        # ===== Parámetros desde tu DH activo =====
+        L1, L2, L3 = self._get_L123_from_dh()
 
-        # Parámetros de optimización
-        TOL = 5e-4
-        MAX_IT = 3000
-        alpha = 0.1  # LR Adam
+        # ===== Utilidades (idénticas a tu script) =====
+        def dh_matrix(theta, d, a, alpha):
+            ct, st = np.cos(theta), np.sin(theta)
+            ca, sa = np.cos(alpha), np.sin(alpha)
+            return np.array([
+                [ct, -st*ca,  st*sa, a*ct],
+                [st,  ct*ca, -ct*sa, a*st],
+                [0,   sa,     ca,    d],
+                [0,   0,      0,     1]
+            ], dtype=float)
+
+        def forward_kinematics_dh(q):
+            theta1, theta2, theta3 = q
+            d     = [L1, 0.0, -0.017, -0.007]
+            a     = [0.025,  0.0,  L2, L3]
+            alpha = [0.0, np.pi/2, 0.0, 0.0]
+            theta = [theta1, np.pi/2, theta2, theta3]
+            T1 = dh_matrix(theta[0], d[0], a[0], alpha[0])
+            T2 = dh_matrix(theta[1], d[1], a[1], alpha[1])
+            T3 = dh_matrix(theta[2], d[2], a[2], alpha[2])
+            T4 = dh_matrix(theta[3], d[3], a[3], alpha[3])
+            T  = T1 @ T2 @ T3 @ T4
+            return T[0:3, 3]
+
+        def numerical_jacobian(q, delta=1e-7):
+            J  = np.zeros((3,3), dtype=float)
+            f0 = forward_kinematics_dh(q)
+            for i in range(3):
+                qp = q.copy()
+                qp[i] += delta
+                fp = forward_kinematics_dh(qp)
+                J[:, i] = (fp - f0) / delta
+            return J
+
+        def cost(q, xd):
+            f = forward_kinematics_dh(q)
+            return 0.5 * float(np.linalg.norm(xd - f)**2)
+
+        def wrap_to_pi_vec(q):
+            return (q + np.pi) % (2*np.pi) - np.pi
+
+        # ===== Inicialización =====
+        xd = np.array(P_xyz_m, dtype=float)
+        q  = np.radians(np.array(q_seed_deg, dtype=float))
+        q  = wrap_to_pi_vec(q)
+
+        # ADAM
         beta1, beta2 = 0.9, 0.999
         eps_adam = 1e-8
         m = np.zeros(3, dtype=float)
         v = np.zeros(3, dtype=float)
+        alpha_adam = 0.1
 
-        best_q = q.copy()
-        best_err = float(np.linalg.norm(self._fk_pos_from_q(q) - target))
+        epsilon   = 1e-6
+        max_iter  = 100000
+        best_q    = q.copy()
+        best_err  = cost(q, xd)
         no_improve = 0
-        RESTART_PATIENCE = 400
 
-        for t in range(1, MAX_IT + 1):
-            f = self._fk_pos_from_q(q)
-            e = target - f
-            nrm = float(np.linalg.norm(e))
-            if nrm < best_err:
-                best_err = nrm
-                best_q = q.copy()
+        # ===== Optimización =====
+        for i in range(max_iter):
+            f = forward_kinematics_dh(q)
+            e = xd - f
+            err = float(np.linalg.norm(e))
+
+            # Mejor-so-far
+            if err < best_err:
+                best_err  = err
+                best_q    = q.copy()
                 no_improve = 0
             else:
                 no_improve += 1
 
-            if nrm < TOL:
+            if err < epsilon:
                 break
 
-            # Gradiente numérico: J^T e  (deg-gradient)
-            J = self._jacobian_numeric_deg(q, delta_deg=1e-3)
-            g = J.T @ e  # (deg)
+            # Gradiente
+            J = numerical_jacobian(q)
+            grad = J.T @ e
 
-            # Adam
-            m = beta1 * m + (1 - beta1) * g
-            v = beta2 * v + (1 - beta2) * (g * g)
-            m_hat = m / (1 - beta1**t)
-            v_hat = v / (1 - beta2**t)
-            q = q + alpha * m_hat / (np.sqrt(v_hat) + eps_adam)
+            # ADAM
+            m = beta1*m + (1.0 - beta1)*grad
+            v = beta2*v + (1.0 - beta2)*(grad**2)
+            m_hat = m / (1.0 - beta1**(i+1))
+            v_hat = v / (1.0 - beta2**(i+1))
 
-            # Envolver/clamp cada paso
-            q = np.array([self._wrap_deg(vv) for vv in q], dtype=float)
-            q = self._clamp_to_limits(q)
+            q = q + alpha_adam * m_hat / (np.sqrt(v_hat) + eps_adam)
+            q = wrap_to_pi_vec(q)
 
-            # Reinicio suave si se estanca
-            if no_improve > RESTART_PATIENCE:
-                q = best_q + np.random.randn(3) * 0.05  # pequeña perturbación (deg)
-                q = np.array([self._wrap_deg(vv) for vv in q], dtype=float)
-                q = self._clamp_to_limits(q)
+            # Reinicio si estanca
+            if no_improve > 500:
+                q = best_q + np.random.randn(3)*0.1
+                q = wrap_to_pi_vec(q)
                 m[:] = 0.0; v[:] = 0.0
                 no_improve = 0
 
-        # Devuelve la mejor solución encontrada dentro de límites
-        return self._clamp_to_limits(np.round(best_q if best_err < float(np.linalg.norm(self._fk_pos_from_q(q) - target)) else q, 6))
+        # Resultado final (mejor alcanzado)
+        q = best_q
+        q_deg = np.degrees(q).astype(float)
+        q_deg = np.array([self._wrap_deg(v) for v in q_deg], dtype=float)
+        return q_deg
 
-    # ------------------- Fallbacks restantes -------------------
+    # ------------------- Fallbacks -------------------
     def solve_ik_geom(self, P_xyz_m: np.ndarray, q_seed_deg: np.ndarray) -> np.ndarray:
         self.get_logger().warn("⚠️ IK GEOM no implementado aún — usando ALG (down) como fallback.")
         return self.solve_ik_alg(P_xyz_m, q_seed_deg)
@@ -422,23 +509,18 @@ class IKManager(Node):
             return
 
         meas = np.array(vals, dtype=float)
-
-        # [LIMITS] clamp visual de medidos
         meas_clamped = self._clamp_to_limits(meas)
 
-        # 1) Estado medido → all_joints
         start = 0 if self.selected_arm == 'A' else 3
         for k in range(3):
             self.all_joints[start + k] = round(float(meas_clamped[k]), 2)
 
-        # 2) Estado cartesiano REAL desde FK del feedback clampado
         try:
             P_meas = self._fk_pos_from_q(meas_clamped)
             self._set_curr_cart_real(self.selected_arm, P_meas)
         except Exception as e:
             self.get_logger().warn(f"FK desde feedback falló: {e}")
 
-        # 3) ACK por paso en REAL
         if self.selected_mode == 'D' and self.traj_active:
             if self.last_sent_geom_q is not None:
                 ref = self._clamp_to_limits(self.last_sent_geom_q)
@@ -462,12 +544,13 @@ class IKManager(Node):
             else:
                 self.waiting_ack = False
 
-    # ------------------- Timer principal -------------------
+    # ------------------- Timer principal (interpolación corregida) -------------------
     def timer_cb(self):
         if not self.traj_active:
             return
 
-        if self.i > self.step:
+        # Finaliza cuando ya hicimos 'step' envíos
+        if self.i >= self.step:
             self.traj_active = False
             self.waiting_ack = False
             if self.selected_mode == 'C':
@@ -485,15 +568,15 @@ class IKManager(Node):
             self.get_logger().info("🏁 Interpolación cartesiana finalizada.")
             return
 
-        # Punto cartesiano interpolado del paso i (sin recortar)
-        s = self.i / float(self.step)
+        # ---- Interpolación lineal: primer paso ya avanza hacia el goal ----
+        s = (self.i + 1) / float(self.step)
+        if s > 1.0:
+            s = 1.0
         P = (1.0 - s) * self.P_base + s * self.P_goal
 
-        # Semilla por brazo (clamp preventivo)
         q_seed = (self.q_seed_A if self.selected_arm == 'A' else self.q_seed_B).copy()
         q_seed = self._clamp_to_limits(q_seed)
 
-        # ======= IK según solver =======
         mode = self.ik_mode
         if mode == 'ALG':
             q_ik_raw = self.solve_ik_alg(P, q_seed)
@@ -511,14 +594,26 @@ class IKManager(Node):
             self.get_logger().warn(f"⚠️ IK mode desconocido '{mode}', usando ALG.")
             q_ik_raw = self.solve_ik_alg(P, q_seed)
 
-        # [LIMITS] Clamp articular (no se recortan coordenadas)
         q_ik = self._clamp_to_limits(np.round(q_ik_raw, 2))
 
-        # Actualiza semilla con la IK clampada
+        # === NUEVO: publicar grados puros y con offset por el MISMO tópico '/ik_deg' ===
+        # puros: q_ik (q2,q4,q5) en deg del método seleccionado
+        # con offset: q_ik + offset_{A|B} (clamp a límites)
+        q_off = q_ik.copy()
+        if self.selected_arm == 'A':
+            q_off = [(-1*q_off[0])+90,q_off[1], (1 * q_off[2]) + 180]
+        else:
+            q_off = [-1*(q_off[0]+90),q_off[1], (-1 * q_off[2]) - 90]
+            
+
+        ik_msg = Float32MultiArray()
+        # data: [q2_puro, q4_puro, q5_puro, q2_off, q4_off, q5_off]
+        ik_msg.data = list(np.concatenate([q_ik, q_off]).astype(float))
+        self.ik_pub.publish(ik_msg)
+
         if self.selected_arm == 'A': self.q_seed_A = q_ik.copy()
         else:                         self.q_seed_B = q_ik.copy()
 
-        # ======= MAPEO A SERVOS =======
         out3 = q_ik.copy()
         if self.selected_mode == 'C':
             out3 = [90 - out3[0], 180 - out3[1], 180 + out3[2]]
@@ -531,17 +626,14 @@ class IKManager(Node):
         start = 0 if self.selected_arm == 'A' else 3
 
         if self.selected_mode == 'C':
-            # ======== SIM ========
             for k in range(3):
-                self.all_joints[start + k] = float(out3[k])  # visual en SIM
+                self.all_joints[start + k] = float(out3[k])
             msg = Float32MultiArray(); msg.data = self.all_joints
             self.sim_pub.publish(msg)
 
-            # Guardar última IK SIM
             if self.selected_arm == 'A': self.last_sim_geom_q_A = q_ik.copy()
             else:                        self.last_sim_geom_q_B = q_ik.copy()
 
-            # Estado cartesiano SIM = FK(q_ik) ejecutable
             try:
                 P_exec = self._fk_pos_from_q(q_ik)
             except Exception:
@@ -553,21 +645,16 @@ class IKManager(Node):
                 f"📤 SIM {self.i}/{self.step}  P=[{P[0]:.3f}, {P[1]:.3f}, {P[2]:.3f}]  "
                 f"q_deg={q_ik.tolist()}  q_sim={np.round(out3,2)}"
             )
-
-            # Base = lo ejecutado (coherencia)
             self.P_base = P_exec.copy()
 
         else:
-            # ======== REAL ========
             if self.waiting_ack:
-                return  # esperando feedback del paso anterior
+                return
 
-            # Payload (no tocar all_joints)
             cmd6 = self._build_cmd_payload(out3, self.selected_arm)
             msg = Float32MultiArray(); msg.data = cmd6
             self.cmd_pub.publish(msg)
 
-            # Guardar refs para ACK
             self.last_sent_geom_q = q_ik.copy()
             self.last_sent_cmd_q  = np.array(out3, float)
             self.waiting_ack = True
@@ -577,7 +664,6 @@ class IKManager(Node):
                 f"📤 REAL {self.i}/{self.step}  P=[{P[0]:.3f}, {P[1]:.3f}, {P[2]:.3f}]  "
                 f"q_deg={q_ik.tolist()}   q_cmd={np.round(out3,2)} → ACK"
             )
-            # En REAL: P_base NO se actualiza aquí (se hace en on_feedback al ACK)
 
     # ------------------- Callbacks -------------------
     def goal_callback(self, msg: PoseStamped):
@@ -585,7 +671,6 @@ class IKManager(Node):
         goal = np.array([float(p.x), float(p.y), float(p.z)], dtype=float)
         curr = self._get_curr_cart_for_mode(self.selected_arm)
 
-        # Validar alcanzabilidad (workspace general: geométrico + límites articulares)
         if not self._is_reachable(goal):
             self.waiting_ack = False
             self.last_sent_geom_q = None

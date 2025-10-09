@@ -201,15 +201,18 @@ class FKManager(Node):
         if not self.traj_active:
             return
 
-        if self.i > self.step:
+        # <<< CAMBIO: condición de término para no generar paso extra
+        if self.i >= self.step:
             self.traj_active = False
             self.waiting_ack = False
             self.first_step_sent = False
             self.get_logger().info("🏁 Interpolación finalizada (por pasos agotados)")
             return
 
-        # Interpolación
-        s = self.i / float(self.step)
+        # <<< CAMBIO: interpolación con primer paso útil
+        s = (self.i + 1) / float(self.step)
+        if s > 1.0:
+            s = 1.0
         q = (1.0 - s) * self.q1 + s * self.q2
 
         # === Redondeo uniforme (1 decimal) ===

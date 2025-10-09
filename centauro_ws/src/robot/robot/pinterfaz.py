@@ -88,7 +88,39 @@ class Ros2Bridge(Node):
         self.run_mode_pub = self.create_publisher(String, '/run_mode', 10) 
         self.ik_mode_pub = self.create_publisher(String, '/ik_mode', 10)
 
+        # ==== Subscriber a /ik_deg (6 ángulos: 3 puros + 3 con offset) ====
+        self.ik_deg_sub = self.create_subscription(
+            Float32MultiArray, '/ik_deg', self.on_ik_deg, 10
+        )
+        # Listener (callback) que puede registrar la UI para imprimir los 6 ángulos
+        self._ik_listener = None
+        self._last_ik_deg = None
+        # ==================================================================
+
         self.get_logger().info(f'Ros2Bridge listo para publicar en  /cmd_arm_select, /ik_goal, /fk_goal y /run_mode')
+
+    # Permitir que la UI registre un callback para mostrar los 6 ángulos
+    def register_ik_listener(self, fn):
+        """Registra una función fn(list[float]) para recibir los 6 ángulos cuando lleguen por /ik_deg."""
+        self._ik_listener = fn
+        # Si ya teníamos un último valor, notifícalo al registrar (opcional)
+        if self._last_ik_deg is not None:
+            try:
+                self._ik_listener(self._last_ik_deg)
+            except Exception:
+                pass
+
+    # callback del subscriber /ik_deg
+    def on_ik_deg(self, msg: Float32MultiArray):
+        data = list(msg.data or [])
+        # Guardamos y disparamos listener si existe
+        self._last_ik_deg = data
+        if self._ik_listener is not None:
+            try:
+                self._ik_listener(data)
+            except Exception as e:
+                # Solo log; no modificamos nada más
+                self.get_logger().warn(f'Listener /ik_deg lanzó excepción: {e}')
 
     #Funciones para publicar en los topicos
     def publish_fk_goal(self, angles_deg):
@@ -206,6 +238,16 @@ class VentanaPrincipal(ctk.CTk):
         # Al cerrar la ventana principal cerramos ROS
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
+        # === BOMBEAR ROS EN UI ===
+        self.after(10, self._ros_spin)
+
+    def _ros_spin(self):
+        try:
+            rclpy.spin_once(self.ros, timeout_sec=0.0)
+        except Exception:
+            pass
+        self.after(10, self._ros_spin)
+
     def cambio_upper_body(self):
         self.destroy()
         segunda = UpperBody(self.ros)
@@ -294,8 +336,8 @@ class UpperBody(ctk.CTk):
         # Configuración de rangos específicos
         slider_configs = [
             {"min": 75,   "max": 140},   # J1
-            {"min": 90,  "max": 165},   # J2
-            {"min": 0,  "max": 60}    # J3
+            {"min": 90,  "max": 175},   # J2
+            {"min": 0,  "max": 55}    # J3
         ]
 
         for i, cfg in enumerate(slider_configs):
@@ -459,10 +501,18 @@ class UpperBody(ctk.CTk):
         # No cerramos todo ROS al cerrar solo esta ventana (volver al menú)
         self.protocol("WM_DELETE_WINDOW", self.on_close)
 
+        # Spin ROS dentro de esta ventana también
+        self.after(10, self._ros_spin)
 
         self.on_arm_selection()
         self.run_mode_selection()
 
+    def _ros_spin(self):
+        try:
+            rclpy.spin_once(self.ros, timeout_sec=0.0)
+        except Exception:
+            pass
+        self.after(10, self._ros_spin)
 
     #Callbacks UI
 
@@ -637,7 +687,7 @@ class LowerBody(ctk.CTk):
         self.ros = ros
 
         self.title("LOWER BODY")
-        self.geometry("420x480")
+        self.geometry("420x620")
         self.resizable(False, False)
 
         # ===== Top bar: selección de brazo =====
@@ -734,7 +784,7 @@ class LowerBody(ctk.CTk):
         rb_sim.grid(row=0, column=0, padx=10)
         rb_real.grid(row=0, column=1, padx=10)
 
-        # ===== NUEVO: Selectores de Modo IK (ALG, GRAD, NEWT, MTH, GEOM) =====
+        # ===== Selectores de Modo IK (ALG, GRAD, NEWT, MTH, GEOM) =====
         ik_frame = ctk.CTkFrame(container, fg_color="transparent")
         ik_frame.grid(row=6, column=0, columnspan=3, pady=(10, 0))
         ik_frame.grid_columnconfigure((0, 1, 2, 3, 4), weight=1)
@@ -762,6 +812,35 @@ class LowerBody(ctk.CTk):
         rb_mth.grid(row=1, column=3, padx=6)
         rb_geom.grid(row=1, column=4, padx=6)
 
+        # ===== Panel para imprimir los 6 ángulos recibidos por /ik_deg =====
+        angles_frame = ctk.CTkFrame(container, fg_color="transparent")
+        angles_frame.grid(row=7, column=0, columnspan=3, pady=(16, 0), sticky="ew")
+        angles_frame.grid_columnconfigure((0,1,2,3,4,5), weight=1)
+
+        # Títulos
+        ctk.CTkLabel(angles_frame, text="MRPT", text_color="#cfcfcf", font=("Arial", 16)).grid(row=0, column=0, columnspan=3, pady=(0,4))
+        ctk.CTkLabel(angles_frame, text="INTERFAZ", text_color="#cfcfcf", font=("Arial", 16)).grid(row=2, column=0, columnspan=3, pady=(8,4))
+
+        # Fila MRPT (primeros 3)
+        self._mrpt_labels = []
+        for j in range(3):
+            lbl = ctk.CTkLabel(angles_frame, text="—", text_color="white", font=("Arial", 16))
+            lbl.grid(row=1, column=j, padx=6, pady=4)
+            self._mrpt_labels.append(lbl)
+
+        # Fila INTERFAZ (últimos 3)
+        self._interf_labels = []
+        for j in range(3):
+            lbl = ctk.CTkLabel(angles_frame, text="—", text_color="white", font=("Arial", 16))
+            lbl.grid(row=3, column=j, padx=6, pady=4)
+            self._interf_labels.append(lbl)
+
+        # Registrar listener para que Ros2Bridge nos pase los 6 ángulos
+        try:
+            self.ros.register_ik_listener(self.update_ik_labels)
+        except Exception:
+            pass
+
         # ===== Botón HOME =====
         btn_home = ctk.CTkButton(
             container, text="HOME",
@@ -770,12 +849,22 @@ class LowerBody(ctk.CTk):
             command=self.home,
             width=120, height=48
         )
-        btn_home.grid(row=7, column=0, columnspan=3, pady=(16, 0))
+        btn_home.grid(row=8, column=0, columnspan=3, pady=(16, 0))
 
         # Inicializaciones
         self.on_arm_selection()
         self.run_mode_selection()
         self.ik_mode_selection()  # publica el modo por defecto
+
+        # Spin ROS dentro de esta ventana también (para asegurar callbacks)
+        self.after(10, self._ros_spin)
+
+    def _ros_spin(self):
+        try:
+            rclpy.spin_once(self.ros, timeout_sec=0.0)
+        except Exception:
+            pass
+        self.after(10, self._ros_spin)
 
     def on_arm_selection(self):
         val = self.arm_choice.get()
@@ -812,7 +901,7 @@ class LowerBody(ctk.CTk):
             self.ros.publish_run_mode('D')  # Vida real
 
     def home(self):
-        self.ros.publish_ik_goal(x=0.0, y=0.025, z=-0.370)
+        self.ros.publish_ik_goal(x=0.0, y=0.025, z=-0.370,frame='base_link')
 
     def ik_mode_selection(self):
         # Usa la variable correcta de los selectores de IK
@@ -828,7 +917,38 @@ class LowerBody(ctk.CTk):
         elif val == 5:
             self.ros.publish_ik_mode('GEOM')   # GEOM
 
-        
+    # método para imprimir los 6 ángulos en la UI (dos filas)
+    def update_ik_labels(self, data):
+        """
+        data: lista con 6 floats:
+              [q2_puro, q4_puro, q5_puro, q2_offset, q4_offset, q5_offset]
+        """
+        try:
+            vals = list(data or [])
+        except Exception:
+            vals = []
+        if len(vals) < 6:
+            return
+
+        def _apply():
+            # MRPT (primeros 3)
+            for i in range(3):
+                try:
+                    self._mrpt_labels[i].configure(text=f"{float(vals[i]):.2f}")
+                except Exception:
+                    self._mrpt_labels[i].configure(text=str(vals[i]))
+            # INTERFAZ (últimos 3)
+            for i in range(3):
+                try:
+                    self._interf_labels[i].configure(text=f"{float(vals[3+i]):.2f}")
+                except Exception:
+                    self._interf_labels[i].configure(text=str(vals[3+i]))
+
+        try:
+            self.after(0, _apply)
+        except Exception:
+            _apply()
+
 #-----------------------------------------------------------
 
 #================ Main ===================

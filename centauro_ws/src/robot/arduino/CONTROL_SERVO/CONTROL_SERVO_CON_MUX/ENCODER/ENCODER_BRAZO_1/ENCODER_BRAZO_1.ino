@@ -19,14 +19,14 @@
 static const uint8_t SERVO_CH[3] = { 0, 2, 13 };   // J1, J2, J3
 
 // ====== Canales TCA9548A (encoders) ======
-static uint8_t ENCODER_CH[3] = { 0, 1, 2 };
+static uint8_t ENCODER_CH[3] = { 0, 1, 3 };
 
 // ====== Frecuencia del PWM ======
 #define SERVO_FREQ_HZ 50  // 50 Hz
 
 // ====== Control ======
 const uint16_t CTRL_DT_MS = 125;  // 50 Hz lazo
-int DIR = +1;                     // invierte si va al revés
+int DIR = +1;                     // invierte global si lo necesitas
 
 // ====== Estado ======
 volatile float targetDeg[3] = {90.0f, 90.0f, 90.0f};
@@ -68,16 +68,13 @@ static inline void tcaSelect(uint8_t ch){
 static inline float clamp180(float a){ if(a<0)a=0; if(a>180)a=180; return a; }
 static inline float angNorm360(float a){ while(a<0)a+=360; while(a>=360)a-=360; return a; }
 
+// ====== Utilidades de ángulos + signo por-junta ======  // <<<
+static inline float wrap180(float a){ while(a<=-180)a+=360; while(a>180)a-=360; return a; }  // <<<
+static inline float angDiffDeg(float a, float b){ return wrap180(a - b); }                    // <<<
+int8_t SIGN[3] = { +1, +1, -1 }; // SOLO J3 invertida (J3 = índice 2)                     // <<<
+
 // ================================================================
 // ========== CALIBRACIÓN POR-SERVO (ajústala a tus servos) =======
-// Cada servo tiene:
-//   - Ventana RAW en µs (raw_us_min/max) y su mapeo a grados físicos (raw_deg_min/max)
-//   - Ventana objetivo física deseada (target_deg_min/max) dentro de la RAW
-//   - Límites duros en µs (hard_us_min/max) nunca sobrepasados
-//   - invert (true invierte sentido lógico 0..180)
-//   - offset_deg suma (desplaza) la referencia lógica
-//   - logic_min/max recorta el rango lógico permitido desde host (0..180)
-// ================================================================
 struct ServoCal {
   uint16_t raw_us_min, raw_us_max;   // µs donde el servo responde (crudo)
   float    raw_deg_min, raw_deg_max; // grados físicos asociados a esos µs
@@ -92,17 +89,15 @@ struct ServoCal {
 
 // —— Calibra J1,J2,J3 aquí (valores ejemplo, AJUSTA a tu hardware) ——
 ServoCal cal[3] = {
-  // J1: el offset del struct no se usa; el offset se aplica por tramo abajo.
+  // J1
   {650,2350,     0,   180,     0,   180,     500,2500,   false,    0.0f,   0.0f, 180.0f},
   // J2
-  {650,2350,   0,   194,     0,   180,     500,2500,  false,    0.0f,   0.0f, 180.0f},
+  {650,2350,     0,   194,     0,   180,     500,2500,   false,    -10.0f,   0.0f, 180.0f},
   // J3
-  {650,2350,    0,   160,     0,   180,     420,2600,  false,    -15.0f,   0.0f, 180.0f}
+  {650,2350,     0,   160,     0,   180,     420,2600,   false,   -15.0f,  0.0f, 180.0f}
 };
 
 // —— OFFSETS POR TRAMO SOLO PARA J1 ————————————————————————————————
-//   • En 90..180 → offset = -40
-//   • En 0..90   → offset = -20  (ajústalo si lo necesitas distinto)
 #ifndef J1_OFFSET_LO
 #define J1_OFFSET_LO (-20.0f)
 #endif
@@ -139,14 +134,14 @@ void servoWriteDeg(uint8_t i, float deg_logic_in){
   // 0) Compensación SOLO para J1: offset por tramo (sin tocar ganancia)
   float deg_logic = deg_logic_in;
   if (i == 0) {
-    float off = (deg_logic_in >= 90.0f) ? J1_OFFSET_HI : J1_OFFSET_LO;  // -40 arriba, -20 abajo
+    float off = (deg_logic_in >= 90.0f) ? J1_OFFSET_HI : J1_OFFSET_LO;
     deg_logic = deg_logic_in + off;
   } else {
     // Para J2/J3 usa el offset del struct si lo configuras
     deg_logic = deg_logic_in + c.offset_deg;
   }
 
-  // 1) inversión lógica si aplica
+  // 1) inversión lógica si aplica (calibración propia, NO la de encoder) 
   if (c.invert) deg_logic = 180.0f - deg_logic;
 
   // 2) recorta ventana lógica permitida
@@ -217,9 +212,15 @@ float readCorrected_idx(uint8_t i){
   lastCorr[i]=c; return c;
 }
 
-float corrToArt(float corr){
-  float a=corr; if(a<0)a+=360; if(a>=360)a-=360;
-  if(a>180)a=360-a; return a;
+// ====== NUEVO: mapea medición a 0..180 manteniendo sentido, con signo por-junta ====== // <<<
+float corrToArt_idx(uint8_t i, float corr){
+  // centro en TARE=90°; error respecto al centro:
+  float e = angDiffDeg(corr, 90.0f);
+  // aplica signo SOLO por esa junta (J3 ya viene con SIGN[2]=-1)
+  e *= (float)SIGN[i];
+  float a = 90.0f + e;
+  if(a < 0) a = 0; if(a > 180) a = 180;
+  return a;
 }
 
 // ====== TARE bloqueante ======
@@ -234,13 +235,18 @@ void verifyMagnetAndTare(){
     Serial.print("# TARE J"); Serial.print(i+1);
     Serial.print(" start="); Serial.println(startAngle[i],2);
   }
-  Serial.println("✅ TARE aplicado (90,90,90)");
+  Serial.print("✅ TARE aplicado (90,90,90)  SIGN=[");
+  Serial.print((int)SIGN[0]); Serial.print(",");
+  Serial.print((int)SIGN[1]); Serial.print(",");
+  Serial.print((int)SIGN[2]); Serial.println("]");
 }
 
 // ====== PID ======
 float pid_tick(float ref, float meas, uint8_t i){
-  float ref_eff  = (DIR>0)? ref  : (180.0f - ref);
-  float meas_eff = (DIR>0)? meas : (180.0f - meas);
+  // aplica signo efectivo = DIR global * SIGN por-junta                // <<<
+  int effSign = ((DIR>0)? +1 : -1) * SIGN[i];                           // <<<
+  float ref_eff  = (effSign>0)? ref  : (180.0f - ref);                  // <<<
+  float meas_eff = (effSign>0)? meas : (180.0f - meas);                 // <<<
   float e = ref_eff - meas_eff;
 
   float dRaw = (meas_eff - prevMeasEff[i])/Ts;
@@ -255,7 +261,8 @@ float pid_tick(float ref, float meas, uint8_t i){
   float u = ref_eff + Kc*( e + (Ts/Ti)*integ[i] - Td*dFilt[i] );
 
   if(u>U_MAX)u=U_MAX; if(u<U_MIN)u=U_MIN;
-  float u_phys = (DIR>0)? u : (180.0f - u);
+  // deshacer mapeo de signo para escribir a servo                      // <<<
+  float u_phys = (effSign>0)? u : (180.0f - u);                         // <<<
   return u_phys;
 }
 
@@ -270,7 +277,7 @@ void controlStep(){
 
   for(uint8_t i=0;i<3;i++){
     corr[i]=readCorrected_idx(i);
-    meas[i]=corrToArt(corr[i]);
+    meas[i]=corrToArt_idx(i, corr[i]);   // <<<
     ref[i]=targetDeg[i];
   }
 
@@ -296,8 +303,10 @@ void controlStep(){
 
   bool all_ok=true;
   for(uint8_t i=0;i<3;i++){
-    float ref_eff  = (DIR>0)? ref[i]  : (180.0f - ref[i]);
-    float meas_eff = (DIR>0)? meas[i] : (180.0f - meas[i]);
+    // el mismo signo efectivo que en pid_tick:
+    int effSign = ((DIR>0)? +1 : -1) * SIGN[i];                     // <<<
+    float ref_eff  = (effSign>0)? ref[i]  : (180.0f - ref[i]);      // <<<
+    float meas_eff = (effSign>0)? meas[i] : (180.0f - meas[i]);     // <<<
     float aerr=fabs(ref_eff-meas_eff);
     if(aerr<=tolDeg){ if(hits[i]<255) hits[i]++; }
     else { hits[i]=0; all_ok=false; }
@@ -346,7 +355,9 @@ void applyTargets(float a,float b,float c){
   // Reset PID consistente con nuevas metas
   for(uint8_t i=0;i<3;i++){
     integ[i]=0; dFilt[i]=0;
-    float ref_eff = (DIR>0)? targetDeg[i] : (180.0f - targetDeg[i]);
+    // coherente con signo efectivo al entrar al lazo:                  // <<<
+    int effSign = ((DIR>0)? +1 : -1) * SIGN[i];                         // <<<
+    float ref_eff = (effSign>0)? targetDeg[i] : (180.0f - targetDeg[i]); // <<<
     prevMeasEff[i] = ref_eff;
     hits[i]=0;
   }
@@ -366,7 +377,7 @@ void parseAndApply(String s){
 
   if(s.equalsIgnoreCase("TARE")){ doTareAll(); return; }
   if(s.equalsIgnoreCase("ABORT")){ busy=false; for(uint8_t i=0;i<3;i++) hits[i]=0; ok_sent=false; control_enabled=false; Serial.println("# ACK<abort>"); return; }
-  if(s.equalsIgnoreCase("DIR -1")){ DIR=-1; Serial.println("# ACK<dir=-1>"); return; }
+  if(s.equalsIgnoreCase("DIR -1")){ DIR=-1; Serial.println("# ACK<dir=-1>"); return; }   // mantiene global si quieres
   if(s.equalsIgnoreCase("DIR 1")) { DIR=+1; Serial.println("# ACK<dir=+1>"); return; }
 
   if(s.equalsIgnoreCase("G<2>")){ active_group=2; Serial.println("# ACKA<G2>"); return; }
@@ -412,10 +423,12 @@ void setup(){
   // Inicializa estados sin tocar PWM (HOLD real)
   for(uint8_t i=0;i<3;i++){
     float corr = readCorrected_idx(i);
-    float meas = corrToArt(corr);
+    float meas = corrToArt_idx(i, corr);      // <<<
     targetDeg[i] = meas;                      // referencia interna = medición
     integ[i]=0; dFilt[i]=0;
-    prevMeasEff[i] = (DIR>0)? meas : (180.0f - meas);
+    // coherente con signo efectivo:                                         // <<<
+    int effSign = ((DIR>0)? +1 : -1) * SIGN[i];                              // <<<
+    prevMeasEff[i] = (effSign>0)? meas : (180.0f - meas);                    // <<<
     hits[i]=0;
   }
   busy=false; ok_sent=false;
