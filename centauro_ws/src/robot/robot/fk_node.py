@@ -31,11 +31,11 @@ class FKManager(Node):
         # ================== Trayectoria ====================
         self.traj_active = False
         self.i = 0
-        self.step = 5  # pasos de interpolación (ajustable)
+        self.step = 3  # pasos de interpolación (ajustable)
 
         # Estados en espacio q (no servo)
         self.q1 = np.array([90.0, 90.0, 90.0], dtype=float)
-        self.q2 = np.array([0.0, 0.0, 0.0], dtype=float)
+        self.q2 = np.array([90.0, 90.0, 90.0], dtype=float)
 
         # ======== ESTADOS SEPARADOS PARA SIM Y REAL =========
         self.q_curr_sim_A = np.array([90.0, 90.0, 90.0], dtype=float)

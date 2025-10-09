@@ -25,22 +25,22 @@ static uint8_t ENCODER_CH[3] = { 0, 1, 2 };
 #define SERVO_FREQ_HZ 50  // 50 Hz
 
 // ====== Control ======
-const uint16_t CTRL_DT_MS = 20;  // 50 Hz lazo
-int DIR = +1;                    // invierte si va al revés
+const uint16_t CTRL_DT_MS = 125;  // 50 Hz lazo
+int DIR = +1;                     // invierte si va al revés
 
 // ====== Estado ======
 volatile float targetDeg[3] = {90.0f, 90.0f, 90.0f};
 float startAngle[3] = {0,0,0};
 float lastCorr[3]  = {0,0,0};
 const float tolDeg = 0.5f;
-const uint8_t REACH_HITS = 3;
+const uint8_t REACH_HITS = 1;
 uint8_t hits[3] = {0,0,0};
 bool ok_sent = false;
 bool busy = false;
 bool control_enabled = false;   // lazo activo solo si llegaron metas
 
 // ====== PID (IMC λ=0.40) ======
-const float Kc = 0.235f;
+const float Kc = 0.260f;
 const float Ti = 0.264f;
 const float Td = 0.0645f;
 const float Tf = 0.112f;
@@ -91,15 +91,24 @@ struct ServoCal {
 #define SAFE_MODE false  // si true, satura a [0..1] el mapeo RAW
 
 // —— Calibra J1,J2,J3 aquí (valores ejemplo, AJUSTA a tu hardware) ——
-// Nota: estos son similares a tu snippet de 6 servos para CH0..CH2
 ServoCal cal[3] = {
-  // J1
-  {650,2350,     0,   180,     0,   180,     500,2500,   false,   -15.0f,   0.0f, 180.0f},
+  // J1: el offset del struct no se usa; el offset se aplica por tramo abajo.
+  {650,2350,     0,   180,     0,   180,     500,2500,   false,    0.0f,   0.0f, 180.0f},
   // J2
-  {650,2350,   0,   194,     0,   180,     500,2500,  false,   20.3f,   0.0f, 180.0f},
+  {650,2350,   0,   194,     0,   180,     500,2500,  false,    0.0f,   0.0f, 180.0f},
   // J3
-  {650,2350,    0,   160,     0,   180,     420,2600,  false,  0.0f,   0.0f, 180.0f}
+  {650,2350,    0,   160,     0,   180,     420,2600,  false,    -15.0f,   0.0f, 180.0f}
 };
+
+// —— OFFSETS POR TRAMO SOLO PARA J1 ————————————————————————————————
+//   • En 90..180 → offset = -40
+//   • En 0..90   → offset = -20  (ajústalo si lo necesitas distinto)
+#ifndef J1_OFFSET_LO
+#define J1_OFFSET_LO (-20.0f)
+#endif
+#ifndef J1_OFFSET_HI
+#define J1_OFFSET_HI (-45.0f)
+#endif
 
 // µs -> ticks (0..4095) usando tick_us calculado en setup
 uint16_t us_to_ticks(uint16_t us){
@@ -127,8 +136,17 @@ void servoWriteDeg(uint8_t i, float deg_logic_in){
   if (i >= 3) return;
   const ServoCal &c = cal[i];
 
-  // 1) aplica offset e inversión lógica
-  float deg_logic = deg_logic_in + c.offset_deg;
+  // 0) Compensación SOLO para J1: offset por tramo (sin tocar ganancia)
+  float deg_logic = deg_logic_in;
+  if (i == 0) {
+    float off = (deg_logic_in >= 90.0f) ? J1_OFFSET_HI : J1_OFFSET_LO;  // -40 arriba, -20 abajo
+    deg_logic = deg_logic_in + off;
+  } else {
+    // Para J2/J3 usa el offset del struct si lo configuras
+    deg_logic = deg_logic_in + c.offset_deg;
+  }
+
+  // 1) inversión lógica si aplica
   if (c.invert) deg_logic = 180.0f - deg_logic;
 
   // 2) recorta ventana lógica permitida
@@ -273,7 +291,7 @@ void controlStep(){
   // ===== PID normal =====
   for(uint8_t i=0;i<3;i++){
     u[i]=pid_tick(ref[i],meas[i],i);
-    servoWriteDeg(i,u[i]);   // ahora con calibración por-servo
+    servoWriteDeg(i,u[i]);   // J1 con offset por tramo; J2/J3 normal
   }
 
   bool all_ok=true;
@@ -383,12 +401,12 @@ void setup(){
   pca.begin();
   pca.setPWMFreq(SERVO_FREQ_HZ);
   tick_us = 1000000.0f / (SERVO_FREQ_HZ * 4096.0f);
-
+  
   // APAGA SALIDAS AL ARRANCAR (0% duty)
   for(uint8_t i=0;i<3;i++){
     pca.setPWM(SERVO_CH[i], 0, 0);
   }
-
+  
   verifyMagnetAndTare(); // bloqueante, aplica TARE=90,90,90
 
   // Inicializa estados sin tocar PWM (HOLD real)

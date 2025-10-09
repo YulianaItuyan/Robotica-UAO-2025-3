@@ -131,7 +131,7 @@ class Ros2Bridge(Node):
         msg = String()
         msg.data = mode_code
         self.ik_mode_pub.publish(msg)
-        self.get_logger().info(f'Publicado en /run_mode: {msg.data}')
+        self.get_logger().info(f'Publicado en /ik_mode: {msg.data}')
 
 
 #-----------------------------------------------------------
@@ -294,8 +294,8 @@ class UpperBody(ctk.CTk):
         # Configuración de rangos específicos
         slider_configs = [
             {"min": 75,   "max": 140},   # J1
-            {"min": 90,  "max": 140},   # J2
-            {"min": 0,  "max": 30}    # J3
+            {"min": 90,  "max": 165},   # J2
+            {"min": 0,  "max": 60}    # J3
         ]
 
         for i, cfg in enumerate(slider_configs):
@@ -812,7 +812,7 @@ class LowerBody(ctk.CTk):
             self.ros.publish_run_mode('D')  # Vida real
 
     def home(self):
-        self.ros.publish_ik_goal(x=0.0, y=0.0, z=-0.371)
+        self.ros.publish_ik_goal(x=0.0, y=0.025, z=-0.370)
 
     def ik_mode_selection(self):
         # Usa la variable correcta de los selectores de IK
