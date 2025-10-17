@@ -25,7 +25,7 @@ static uint8_t ENCODER_CH[3] = { 7, 6, 5 };
 #define SERVO_FREQ_HZ 50  // 50 Hz
 
 // ====== Control ======
-const uint16_t CTRL_DT_MS = 125;  // 50 Hz lazo
+const uint16_t CTRL_DT_MS = 100;  // 50 Hz lazo
 int DIR = +1;                     // invierte global si lo necesitas
 
 // ====== Estado ======
@@ -40,7 +40,7 @@ bool busy = false;
 bool control_enabled = false;   // lazo activo solo si llegaron metas
 
 // ====== PID (IMC λ=0.40) ======
-const float Kc = 0.260f;
+const float Kc = 0.160f;
 const float Ti = 0.264f;
 const float Td = 0.0645f;
 const float Tf = 0.112f;
@@ -94,7 +94,7 @@ ServoCal cal[3] = {
   // J2
   {650,2350,     0,   194,     0,   180,     500,2500,   false,    -10.0f,   0.0f, 180.0f},
   // J3
-  {650,2350,     0,   160,     0,   180,     420,2600,   false,   -15.0f,  0.0f, 180.0f}
+  {650,2350,     0,   160,     0,   180,     500,2500,   false,   -15.0f,  0.0f, 180.0f}
 };
 
 // —— OFFSETS POR TRAMO SOLO PARA J1 ————————————————————————————————

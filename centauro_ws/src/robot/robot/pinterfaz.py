@@ -20,7 +20,6 @@ def dh_standard(theta, d, a, alpha):
     """
     Matriz de transformación homogénea 4x4 usando parámetros DH estándar.
     """
-    
     alpha = np.deg2rad(alpha)
     theta = np.deg2rad(theta)
 
@@ -39,10 +38,8 @@ def dh_standard(theta, d, a, alpha):
     
 
 #=========Forward Kinematics=========
-
 def fk_from_dh(q,arm):
     """
-
     Calcula la cinemática directa con d y a fijos.
     q: lista de ángulos variables [theta1, theta3, theta4] en grados.
     """
@@ -50,23 +47,23 @@ def fk_from_dh(q,arm):
         # Brazo izquierdo
         dh_table = [
         (q[0],   -0.051,  -0.025, 0 ),   # link 1 -> θ1 variable
-        (90,     0.0, 0.0,  90),   # link 2 -> θ2 fijo = 90°
-        (q[1],   0.017, -0.105, 0),  # link 3 -> θ3 variable
-        (q[2],   0.0075, 0.215,  0)  # link 4 -> θ4 variable ]
+        (90,     0.0, 0.0,  90),         # link 2 -> θ2 fijo = 90°
+        (q[1],   0.017, -0.105, 0),      # link 3 -> θ3 variable
+        (q[2],   0.0075, 0.215,  0)      # link 4 -> θ4 variable
          ]
     else: 
         # Brazo derecho
         dh_table = [
-        (q[0],  -0.051, 0.025, 0 ),   # link 1 -> θ1 variable
-        (90,     0.0, 0.0,  90),   # link 2 -> θ2 fijo = 90°
-        (q[1],   -0.017, -0.105, 0),  # link 3 -> θ3 variable
-        (q[2],  -0.0075, 0.215, 0)  # link 4 -> θ4 variabl
+        (q[0],  -0.051, 0.025, 0 ),      # link 1 -> θ1 variable
+        (90,     0.0, 0.0,  90),         # link 2 -> θ2 fijo = 90°
+        (q[1],   -0.017, -0.105, 0),     # link 3 -> θ3 variable
+        (q[2],  -0.0075, 0.215, 0)       # link 4 -> θ4 variable
         ]
     
     # --- Producto de transformaciones ---
     T = np.eye(4)
     for (theta, d, a, alpha) in dh_table:
-        T = T @ dh_standard(theta, d, a, alpha, )
+        T = T @ dh_standard(theta, d, a, alpha)
 
     return T
 
@@ -78,15 +75,24 @@ def fk_from_dh(q,arm):
 
 class Ros2Bridge(Node):
     def __init__(self):
-        super().__init__('pinterfaz')# Nombre del nodo
+        super().__init__('pinterfaz')  # Nombre del nodo
 
         print("Nodo pinterfaz cargado correctamente")
         
         self.arm_select_publisher_ = self.create_publisher(String, '/cmd_arm_select', 10) 
-        self.goal_pub = self.create_publisher(PoseStamped, '/ik_goal', 10)  
-        self.fk_pub = self.create_publisher(Float32MultiArray, '/fk_goal', 10)  
+        self.goal_pub   = self.create_publisher(PoseStamped, '/ik_goal', 10)  
+        self.fk_pub     = self.create_publisher(Float32MultiArray, '/fk_goal', 10)  
         self.run_mode_pub = self.create_publisher(String, '/run_mode', 10) 
-        self.ik_mode_pub = self.create_publisher(String, '/ik_mode', 10)
+        self.ik_mode_pub  = self.create_publisher(String, '/ik_mode', 10)
+
+        # ==== NUEVO: serial connect/pub ====
+        self.serial_connect_pub = self.create_publisher(Empty, '/serial_connect', 10)
+        self.serial_port_sub = self.create_subscription(
+            String, '/serial_port', self.on_serial_port, 10
+        )
+        self._port_listener = None
+        self._last_port = None
+        # ===================================
 
         # ==== Subscriber a /ik_deg (6 ángulos: 3 puros + 3 con offset) ====
         self.ik_deg_sub = self.create_subscription(
@@ -97,13 +103,40 @@ class Ros2Bridge(Node):
         self._last_ik_deg = None
         # ==================================================================
 
-        self.get_logger().info(f'Ros2Bridge listo para publicar en  /cmd_arm_select, /ik_goal, /fk_goal y /run_mode')
+        self.get_logger().info('Ros2Bridge listo para publicar en  /cmd_arm_select, /ik_goal, /fk_goal y /run_mode')
+
+    # ======== NUEVO: registro/recepción del puerto =========
+    def register_port_listener(self, fn):
+        """Registra una función fn(str) para recibir el puerto anunciado por /serial_port."""
+        self._port_listener = fn
+        if self._last_port is not None:
+            try:
+                self._port_listener(self._last_port)
+            except Exception:
+                pass
+
+    def on_serial_port(self, msg: String):
+        port = (msg.data or "").strip()
+        self._last_port = port
+        if self._port_listener is not None:
+            try:
+                self._port_listener(port)
+            except Exception as e:
+                self.get_logger().warn(f'Listener /serial_port lanzó excepción: {e}')
+
+    def publish_serial_connect(self):
+        """Publica Empty en /serial_connect para solicitar reconexión del nodo serial."""
+        try:
+            self.serial_connect_pub.publish(Empty())
+            self.get_logger().info('Solicitada reconexión en /serial_connect')
+        except Exception as e:
+            self.get_logger().warn(f'No se pudo publicar en /serial_connect: {e}')
+    # =======================================================
 
     # Permitir que la UI registre un callback para mostrar los 6 ángulos
     def register_ik_listener(self, fn):
         """Registra una función fn(list[float]) para recibir los 6 ángulos cuando lleguen por /ik_deg."""
         self._ik_listener = fn
-        # Si ya teníamos un último valor, notifícalo al registrar (opcional)
         if self._last_ik_deg is not None:
             try:
                 self._ik_listener(self._last_ik_deg)
@@ -113,13 +146,11 @@ class Ros2Bridge(Node):
     # callback del subscriber /ik_deg
     def on_ik_deg(self, msg: Float32MultiArray):
         data = list(msg.data or [])
-        # Guardamos y disparamos listener si existe
         self._last_ik_deg = data
         if self._ik_listener is not None:
             try:
                 self._ik_listener(data)
             except Exception as e:
-                # Solo log; no modificamos nada más
                 self.get_logger().warn(f'Listener /ik_deg lanzó excepción: {e}')
 
     #Funciones para publicar en los topicos
@@ -173,14 +204,10 @@ class Ros2Bridge(Node):
 # Estilo global UI
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
-
-
-
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("blue")
 
-#Venarna principal    
-
+#Ventana principal    
 class VentanaPrincipal(ctk.CTk):
     def __init__(self, ros: Ros2Bridge):
         super().__init__()
@@ -204,7 +231,6 @@ class VentanaPrincipal(ctk.CTk):
                                    hover_color="#838181")
         self.boton1.grid(row=0, column=0, pady=10)
 
-       
         self.boton2 = ctk.CTkButton(self,
                                    text="Inverse Kinematics",
                                    command=self.cambio_lower_body,  
@@ -259,13 +285,11 @@ class VentanaPrincipal(ctk.CTk):
         segunda.mainloop()
 
     def boton_deshabilitado(self):
-        """Función placeholder para botones deshabilitados - no hace nada"""
         print("Esta opción no está disponible aún")
         pass
 
     def on_close(self):
         try:
-            # Apagamos nodo ROS antes de cerrar
             try:
                 self.ros.get_logger().info("Cerrando nodo ROS desde ventana principal")
                 self.ros.destroy_node()
@@ -277,8 +301,6 @@ class VentanaPrincipal(ctk.CTk):
 
 
 #UPPERBODY(Forward Kinematics)
-
-
 class UpperBody(ctk.CTk):
     def __init__(self, ros: Ros2Bridge):
         super().__init__()
@@ -294,8 +316,7 @@ class UpperBody(ctk.CTk):
 
         self.all_joints = [90.0] * 6
 
-        # CORREGIDO: Variable de instancia definida correctamente
-        self.arm_choice = ctk.IntVar(value=1)  # CORREGIDO: era arm_choise
+        self.arm_choice = ctk.IntVar(value=1)
         
         rb1 = ctk.CTkRadioButton(top_frame, text="Brazo Izquierdo",
                          variable=self.arm_choice, value=2,
@@ -308,6 +329,7 @@ class UpperBody(ctk.CTk):
         rb1.grid(row=0, column=0, sticky="w", pady=2)
         rb2.grid(row=1, column=0, sticky="w", pady=2)
 
+        # (Botón RECORDS original se mantiene en UpperBody)
         self.boton_records = ctk.CTkButton(top_frame, text="RECORDS", fg_color="#737373", text_color="white",
                                            corner_radius=7, font=("Arial", 20), width=120, height=20,
                                            hover_color="#838181")
@@ -321,23 +343,21 @@ class UpperBody(ctk.CTk):
         sliders_frame = ctk.CTkFrame(self, fg_color="transparent")
         sliders_frame.pack(fill="x", padx=10, pady=10)
 
-        # Ajusta columnas: deja un espacio de expansión al final
         sliders_frame.grid_columnconfigure(0, weight=1)
-        sliders_frame.grid_columnconfigure(1, weight=0)  # etiqueta J#
-        sliders_frame.grid_columnconfigure(2, weight=0)  # valor actual
-        sliders_frame.grid_columnconfigure(3, weight=1)  # slider
-        sliders_frame.grid_columnconfigure(4, weight=0)  # rango
-        sliders_frame.grid_columnconfigure(5, weight=0)  # botón -
-        sliders_frame.grid_columnconfigure(6, weight=0)  # botón +
-        sliders_frame.grid_columnconfigure(7, weight=1)  # espacio
+        sliders_frame.grid_columnconfigure(1, weight=0)
+        sliders_frame.grid_columnconfigure(2, weight=0)
+        sliders_frame.grid_columnconfigure(3, weight=1)
+        sliders_frame.grid_columnconfigure(4, weight=0)
+        sliders_frame.grid_columnconfigure(5, weight=0)
+        sliders_frame.grid_columnconfigure(6, weight=0)
+        sliders_frame.grid_columnconfigure(7, weight=1)
 
         self.slider_vars = []
 
-        # Configuración de rangos específicos
         slider_configs = [
             {"min": 75,   "max": 140},   # J1
-            {"min": 90,  "max": 170},   # J2
-            {"min": 0,  "max": 55}    # J3
+            {"min": 90,   "max": 170},   # J2
+            {"min": 0,    "max": 55}     # J3
         ]
 
         for i, cfg in enumerate(slider_configs):
@@ -345,17 +365,14 @@ class UpperBody(ctk.CTk):
                                text_color="#737373", font=("Arial", 15))
             lbl.grid(row=i, column=1, padx=5, pady=5, sticky="w")
 
-            # Valor inicial centrado en el rango
             init_val = round(((cfg["min"] + cfg["max"]) / 2),0)
             slider_value = ctk.DoubleVar(value=init_val)
             self.slider_vars.append(slider_value)
 
-            # Label dinámico con valor actual
             value_lbl = ctk.CTkLabel(sliders_frame, textvariable=slider_value, 
                                      text_color="white", font=("Arial", 15))
             value_lbl.grid(row=i, column=2, padx=5, pady=5, sticky="n")
 
-            # Slider con sus límites personalizados
             slider = ctk.CTkSlider(sliders_frame, 
                                    from_=cfg["min"], to=cfg["max"], 
                                    number_of_steps=int(cfg["max"] - cfg["min"]),
@@ -363,13 +380,11 @@ class UpperBody(ctk.CTk):
                                    command=lambda val, var=slider_value: var.set(int(float(val))))
             slider.grid(row=i, column=3, padx=5, pady=5, sticky="ew")
 
-            # Mostrar rango real al lado
             range_lbl = ctk.CTkLabel(sliders_frame, 
                                      text=f"{cfg['min']} - {cfg['max']}", 
                                      text_color="#737373", font=("Arial", 10))
             range_lbl.grid(row=i, column=4, padx=5, pady=5, sticky="e")
 
-            # Botón "−" (decrementa 1)
             btn_minus = ctk.CTkButton(
                 sliders_frame, text="−",
                 width=28, height=28,
@@ -379,7 +394,6 @@ class UpperBody(ctk.CTk):
             )
             btn_minus.grid(row=i, column=5, padx=(8,4), pady=5)
 
-            # Botón "+" (incrementa 1)
             btn_plus = ctk.CTkButton(
                 sliders_frame, text="+",
                 width=28, height=28,
@@ -389,7 +403,7 @@ class UpperBody(ctk.CTk):
             )
             btn_plus.grid(row=i, column=6, padx=(4,8), pady=5)
 
-               # === Botones Confirmar + Selectores ===========
+        # === Botones Confirmar + Selectores ===========
         debajosliders_frame = ctk.CTkFrame(self, fg_color="transparent")
         debajosliders_frame.pack(fill="x", padx=10, pady=10)
 
@@ -408,10 +422,7 @@ class UpperBody(ctk.CTk):
         )
         Confirmar_btn.grid(row=0, column=2, padx=10, pady=(5, 2))
 
-        # --- Selectores debajo de CONFIRMAR --
-
         self.mode_choice = ctk.IntVar(value=1)  # 1: Simulación, 2: Vida real
-
 
         rb_sim = ctk.CTkRadioButton(
             debajosliders_frame, text="Simulación",
@@ -429,30 +440,24 @@ class UpperBody(ctk.CTk):
         rb_sim.grid(row=1, column=2, pady=(5,2), sticky="n")
         rb_real.grid(row=2, column=2, pady=(2,5), sticky="n")
 
-
-     
-        # Divisor
         self.divisoria2 = ctk.CTkFrame(self, height=2, corner_radius=0, fg_color="#3B3B3B")
         self.divisoria2.pack(fill="x", padx=10, pady=20)
 
-        # ------------------ MATRIZ DE TRANSFORMACIÓN HOMOGÉNEA 4x4 ------------------
+        # ------------------ MATRIZ DE T 4x4 ------------------
         matrix_frame = ctk.CTkFrame(self, fg_color="transparent")
         matrix_frame.pack(fill="both", padx=10, pady=2)
 
         matrix_frame.grid_columnconfigure(0, weight=1)
         matrix_frame.grid_columnconfigure(5, weight=1)
 
-        # cabeceras de columnas
         header = ["", "", "", "", ""]
         for j, h in enumerate(header):
             c = ctk.CTkLabel(matrix_frame, text=h, text_color="#737373", font=("Arial", 14))
             c.grid(row=1, column=j, padx=6, pady=2)
 
-        # etiquetas 4x4 para los valores de T
         self.T_labels = []
         for i in range(4):
             row_labels = []
-            # cabecera de fila
             r = ctk.CTkLabel(matrix_frame, text=f"", text_color="#737373", font=("Arial", 14))
             r.grid(row=2+i, column=0, padx=6, pady=2, sticky="e")
             for j in range(4):
@@ -463,7 +468,7 @@ class UpperBody(ctk.CTk):
                 val.grid(row=2+i, column=1+j, padx=4, pady=4)
                 row_labels.append(val)
             self.T_labels.append(row_labels)
-        # -----------------------------------------------------------------------------------------
+        # -----------------------------------------------------
 
         self.divisoria3 = ctk.CTkFrame(self, height=2, corner_radius=0, fg_color="#3B3B3B")
         self.divisoria3.pack(fill="x", padx=10, pady=20)
@@ -498,10 +503,7 @@ class UpperBody(ctk.CTk):
                                  width=80, height=70, hover_color="#838181")
         home_btn.grid(row=0, column=3, padx=10, pady=20)
 
-        # No cerramos todo ROS al cerrar solo esta ventana (volver al menú)
         self.protocol("WM_DELETE_WINDOW", self.on_close)
-
-        # Spin ROS dentro de esta ventana también
         self.after(10, self._ros_spin)
 
         self.on_arm_selection()
@@ -515,9 +517,7 @@ class UpperBody(ctk.CTk):
         self.after(10, self._ros_spin)
 
     #Callbacks UI
-
     def read_sliders(self):
-        """Return list of 3 slider values (float) in the order [s1,s2,s3]."""
         return [float(v.get()) for v in self.slider_vars]
     
     def confirmar(self):
@@ -527,40 +527,32 @@ class UpperBody(ctk.CTk):
         arm = int(self.arm_choice.get())
         if mode == 1:
             if arm == 2:
-                sliders_send = [ 180-sliders[0], 180-sliders[1],sliders[2]]# three values from GUI (these are the angles DH expects)
+                sliders_send = [ 180-sliders[0], 180-sliders[1],sliders[2]]
             else :
                 sliders_send = [ sliders[0],180 -sliders[1],sliders[2]]
             start = 0 if arm == 1 else 3
         else: 
             if arm == 2:
-                sliders_send = [ sliders[0], sliders[1],sliders[2]]# three values from GUI (these are the angles DH expects)
+                sliders_send = [ sliders[0], sliders[1],sliders[2]]
             else :
                 sliders_send = [ sliders[0],180 - sliders[1],(sliders[2]* -1) + 90]
             start = 0 if arm == 1 else 3
 
-
-        # Update internal all_joints state
         for i, val in enumerate(sliders_send):
             self.all_joints[start + i] = val
 
-        # Publish 6 values (L1..L3, R1..R3)
         self.ros.publish_fk_goal(self.all_joints)
 
-        # Compute DH FK using the sliders as [joint1, joint3, joint4]
-        # Mapping: slider1 -> joint1, slider2 -> joint3, slider3 -> joint4
-        # Aplicar correcciones específicas similar al código 2
         if arm == 2:
             theta1 = sliders[0] - 90
             theta3 = sliders[1] 
-            theta4 = sliders[2] - 180    # theta4 correction
+            theta4 = sliders[2] - 180
         else:
             theta1 = ((sliders[0]) * -1) + 90
             theta3 = sliders[1]
-            theta4 = sliders[2] -180      # theta4 correction       
-        
+            theta4 = sliders[2] -180
         try:
-            T = fk_from_dh([theta1, theta3, theta4],arm) # usa ángulos corregidos
-            # Update transformation matrix display
+            T = fk_from_dh([theta1, theta3, theta4],arm)
             self.update_T(T)
         except Exception as e:
             print(f"[FK-DH] Error calculando FK: {e}")
@@ -579,32 +571,19 @@ class UpperBody(ctk.CTk):
         elif val == 2:
             self.ros.publish_arm_selection('B')
 
-
-
-    
-
     def stop(self):
-        
         pass
-
     
     def home(self):
-        
-        # Primeros 3 valores determinan brazo derecho, los otros tres son el brazo izquierdo
         mode = self.mode_choice.get()
         if mode == 1:
             neutral = [90, 90, 0,  90, 90, 0]
         else:
-            neutral = [90, 90, 90,  90, 90, 0]            
+            neutral = [90, 90, 90,  90, 90, 0]
 
-        # Actualizar estado interno
         self.all_joints = neutral.copy()
         self.all_real = [90,90,0,90,90,0]
 
-        # Publicar al tópico
-       
-
-        # --- Actualizar sliders del brazo activo ---
         arm = int(self.arm_choice.get())
         start = 0 if arm == 1 else 3
         for i in range(3):
@@ -612,36 +591,28 @@ class UpperBody(ctk.CTk):
 
         self.ros.publish_fk_goal(self.all_joints)
 
-        # --- Calcular y mostrar matriz de transformación ---
-        sliders = self.read_sliders()  # lee los 3 sliders ya actualizados
-
+        sliders = self.read_sliders()
         if arm == 2:
             theta1 = sliders[0] -90
             theta3 = sliders[1] 
-            theta4 = sliders[2] -180  # theta4 correction
+            theta4 = sliders[2] -180
         else:
             theta1 = ((sliders[0]) * -1) + 90
             theta3 = sliders[1]
-            theta4 = sliders[2] -180     # theta4 correction       
-        
+            theta4 = sliders[2] -180
         try:
-            T = fk_from_dh([theta1, theta3, theta4],arm) # usa ángulos corregidos
-            # Update transformation matrix display
+            T = fk_from_dh([theta1, theta3, theta4],arm)
             self.update_T(T)
         except Exception as e:
             print(f"[FK-DH] Error calculando FK: {e}")
         
-
     def volver_menu(self):
         self.destroy()
         v = VentanaPrincipal(self.ros)
         v.mainloop()
         
-
     def on_close(self):
-        # Cerramos solo la ventana; el nodo ROS sigue vivo si retornas al menú
         try:
-            # usar el logger del nodo ROS
             try:
                 self.ros.get_logger().info("Cerrando ventana UpperBody")
             except Exception:
@@ -650,16 +621,11 @@ class UpperBody(ctk.CTk):
             self.destroy()
 
     def _nudge_slider(self, idx, delta, minv, maxv):
-        """Incrementa/decrementa el slider idx en 'delta', respetando su rango."""
         val = float(self.slider_vars[idx].get())
         new_val = max(minv, min(maxv, val + delta))
         self.slider_vars[idx].set(int(round(new_val)))
 
     def update_T(self, T):
-        """
-        Actualiza las 16 celdas con la matriz de transformación 4x4.
-        Se usa self.after(0,...) para ser thread-safe si se llama desde otro hilo.
-        """
         try:
             T = np.array(T, dtype=float).reshape(4, 4)
         except Exception as e:
@@ -680,7 +646,6 @@ class UpperBody(ctk.CTk):
 
 
 #LOWERBODY(Inverse Kinematics)
-
 class LowerBody(ctk.CTk):
     def __init__(self, ros: Ros2Bridge):
         super().__init__()
@@ -710,6 +675,21 @@ class LowerBody(ctk.CTk):
         )
         rb_left.grid(row=0, column=0, sticky="w", padx=6)
         rb_right.grid(row=1, column=0, sticky="w", padx=6)
+
+        # ===== NUEVO: barra de estado del puerto + botón reconectar (reemplaza el “record”) =====
+        self.port_var = ctk.StringVar(value="—")
+        port_bar = ctk.CTkFrame(top_frame, fg_color="transparent")
+        lbl_puerto = ctk.CTkLabel(port_bar, text="Puerto:", text_color="#cfcfcf", font=("Arial", 14))
+        val_puerto = ctk.CTkLabel(port_bar, textvariable=self.port_var, text_color="white", font=("Arial", 14))
+        btn_recon = ctk.CTkButton(port_bar, text="↻", width=36, height=28,
+                                  fg_color="#5e5e5e", hover_color="#6b6b6b",
+                                  text_color="white", corner_radius=6,
+                                  command=self._request_reconnect)
+        lbl_puerto.grid(row=0, column=0, padx=(0,6))
+        val_puerto.grid(row=0, column=1, padx=(0,6))
+        btn_recon.grid(row=0, column=2)
+        # Lo colocamos a la derecha sin afectar el grid existente de los radios
+        port_bar.place(relx=1, x=-10, rely=0.15, anchor="ne")
 
         # ===== Contenido principal =====
         container = ctk.CTkFrame(self, fg_color="transparent")
@@ -817,27 +797,28 @@ class LowerBody(ctk.CTk):
         angles_frame.grid(row=7, column=0, columnspan=3, pady=(16, 0), sticky="ew")
         angles_frame.grid_columnconfigure((0,1,2,3,4,5), weight=1)
 
-        # Títulos
         ctk.CTkLabel(angles_frame, text="MRPT", text_color="#cfcfcf", font=("Arial", 16)).grid(row=0, column=0, columnspan=3, pady=(0,4))
         ctk.CTkLabel(angles_frame, text="INTERFAZ", text_color="#cfcfcf", font=("Arial", 16)).grid(row=2, column=0, columnspan=3, pady=(8,4))
 
-        # Fila MRPT (primeros 3)
         self._mrpt_labels = []
         for j in range(3):
             lbl = ctk.CTkLabel(angles_frame, text="—", text_color="white", font=("Arial", 16))
             lbl.grid(row=1, column=j, padx=6, pady=4)
             self._mrpt_labels.append(lbl)
 
-        # Fila INTERFAZ (últimos 3)
         self._interf_labels = []
         for j in range(3):
             lbl = ctk.CTkLabel(angles_frame, text="—", text_color="white", font=("Arial", 16))
             lbl.grid(row=3, column=j, padx=6, pady=4)
             self._interf_labels.append(lbl)
 
-        # Registrar listener para que Ros2Bridge nos pase los 6 ángulos
+        # Registrar listeners para recibir datos de ROS
         try:
             self.ros.register_ik_listener(self.update_ik_labels)
+        except Exception:
+            pass
+        try:
+            self.ros.register_port_listener(self.update_port_label)  # NUEVO
         except Exception:
             pass
 
@@ -851,12 +832,9 @@ class LowerBody(ctk.CTk):
         )
         btn_home.grid(row=8, column=0, columnspan=3, pady=(16, 0))
 
-        # Inicializaciones
         self.on_arm_selection()
         self.run_mode_selection()
-        self.ik_mode_selection()  # publica el modo por defecto
-
-        # Spin ROS dentro de esta ventana también (para asegurar callbacks)
+        self.ik_mode_selection()
         self.after(10, self._ros_spin)
 
     def _ros_spin(self):
@@ -874,7 +852,6 @@ class LowerBody(ctk.CTk):
             self.ros.publish_arm_selection('B')
 
     def _send_goal_from_entries(self):
-        """Lee X/Y/Z de la UI, valida y publica PoseStamped a ik_goal."""
         try:
             x = float(self.entry_x.get().strip())
             y = float(self.entry_y.get().strip())
@@ -901,23 +878,35 @@ class LowerBody(ctk.CTk):
             self.ros.publish_run_mode('D')  # Vida real
 
     def home(self):
-        self.ros.publish_ik_goal(x=0.0, y=0.025, z=-0.370,frame='base_link')
+        self.ros.publish_ik_goal(x=0.0, y=0.0, z=-0.371,frame='base_link')
 
     def ik_mode_selection(self):
-        # Usa la variable correcta de los selectores de IK
         val = self.ik_choice.get()
         if val == 1:
-            self.ros.publish_ik_mode('ALG')   # ALG
+            self.ros.publish_ik_mode('ALG')
         elif val == 2:
-            self.ros.publish_ik_mode('GRAD')   # GRAD
+            self.ros.publish_ik_mode('GRAD')
         elif val == 3:
-            self.ros.publish_ik_mode('NEWT')   # NEWT
+            self.ros.publish_ik_mode('NEWT')
         elif val == 4:
-            self.ros.publish_ik_mode('MTH')   # MTH
+            self.ros.publish_ik_mode('MTH')
         elif val == 5:
-            self.ros.publish_ik_mode('GEOM')   # GEOM
+            self.ros.publish_ik_mode('GEOM')
 
-    # método para imprimir los 6 ángulos en la UI (dos filas)
+    # ===== NUEVO: UI puerto + reconexión =====
+    def update_port_label(self, port: str):
+        try:
+            self.port_var.set(port if port else "—")
+        except Exception:
+            self.port_var.set("—")
+
+    def _request_reconnect(self):
+        try:
+            self.ros.publish_serial_connect()
+        except Exception as e:
+            print(f"[LowerBody] Error solicitando reconexión: {e}")
+    # =========================================
+
     def update_ik_labels(self, data):
         """
         data: lista con 6 floats:
@@ -931,13 +920,11 @@ class LowerBody(ctk.CTk):
             return
 
         def _apply():
-            # MRPT (primeros 3)
             for i in range(3):
                 try:
                     self._mrpt_labels[i].configure(text=f"{float(vals[i]):.2f}")
                 except Exception:
                     self._mrpt_labels[i].configure(text=str(vals[i]))
-            # INTERFAZ (últimos 3)
             for i in range(3):
                 try:
                     self._interf_labels[i].configure(text=f"{float(vals[3+i]):.2f}")
@@ -958,14 +945,12 @@ def main():
     ros = Ros2Bridge()
     app = VentanaPrincipal(ros)
     app.mainloop()
-    # Al cerrar la ventana principal:
     if rclpy.ok():
         try:
             ros.destroy_node()
         except Exception:
             pass
         rclpy.shutdown()
-
 
 if __name__ == "__main__":
     main()

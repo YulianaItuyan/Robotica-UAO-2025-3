@@ -3,6 +3,13 @@
 ```
 centauro_ws/
   src/        # paquetes ROS2
+  	robot/
+  		robot/
+  			fk_node
+  			ik_node
+  			joint_commander_deg
+  			serial_node
+  			pinterfaz
   build/      # (autogenerado por colcon)
   install/    # (autogenerado por colcon)
   log/        # (autogenerado por colcon)
